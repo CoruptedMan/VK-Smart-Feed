@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".AppStartActivity"
+    android:background="#E3F2FD">
+
+    <TextView
+        android:id="@+id/logoType"
+        android:text="SmartFeed"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="30sp"
+        android:focusableInTouchMode="false"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="80dp"/>
+
+    <Button
+        android:id="@+id/btn_change_scene"
+        android:theme="@style/LoginButton"
+        android:drawableEnd="@drawable/vk"
+        android:text="@string/continue_with"
+        android:layout_gravity="center_horizontal"
+        android:layout_below="@+id/relaviteForContainer"
+        android:layout_centerHorizontal="true"
+        android:textAllCaps="false"
+        android:textSize="18sp"
+        android:enabled="true"
+        android:layout_height="60dp"
+        android:layout_width="200dp"
+        android:layout_marginTop="50dp"/>
+
+    <RelativeLayout
+        android:id="@+id/relaviteForContainer"
+        tools:context=".AppStartActivity"
+        android:layout_below="@+id/logoType"
+        android:layout_width="match_parent"
+        android:layout_height="300dp">
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/indicator"/>
+
+        <me.relex.circleindicator.CircleIndicator
+            android:id="@+id/indicator"
+            app:ci_drawable="@drawable/circle_indicator_repaint"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true" />
+    </RelativeLayout>
+
+    <android.support.design.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/coordinatorLayout"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true" />
+
+</RelativeLayout>
+
