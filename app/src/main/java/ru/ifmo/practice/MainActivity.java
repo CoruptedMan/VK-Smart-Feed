@@ -18,8 +18,11 @@ import com.vk.sdk.api.VKResponse;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DateFormatSymbols;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 
 import ru.ifmo.practice.model.Group;
 import ru.ifmo.practice.model.User;
@@ -113,13 +116,10 @@ public class MainActivity extends AppCompatActivity {
                     String groupName = mResponse.getJSONArray("groups").getJSONObject(i).get
                             ("name").toString();
                     mGroups.add(new Group(groupId, groupName));
-                    System.out.println("Group #" + i + ": (" + groupId + "; " + groupName + "\n"
-                            + photoUrl);
                     if (groupId == id) {
-                        System.out.println("group: " + groupId + "|" + id);
                         sourceName = groupName;
                         photoUrl = mResponse.getJSONArray("groups").getJSONObject(i).get
-                                ("photo_50").toString();
+                                ("photo_100").toString();
                     }
                 }
 
@@ -132,13 +132,10 @@ public class MainActivity extends AppCompatActivity {
                     String userLastName = mResponse.getJSONArray("profiles").getJSONObject(i).get
                             ("last_name").toString();
                     mUsers.add(new User(userId, userFirstName, userLastName));
-                    System.out.println("User #" + i + ": (" + userId + "; " + userFirstName + " "
-                            + userLastName + "\n" + photoUrl);
                     if (userId == id) {
-                        System.out.println("user: " + userId + "|" + id);
                         sourceName = userFirstName + " " + userLastName;
                         photoUrl = mResponse.getJSONArray("profiles").getJSONObject(i).get
-                                ("photo_50").toString();
+                                ("photo_100").toString();
                     }
                 }
 
@@ -152,7 +149,9 @@ public class MainActivity extends AppCompatActivity {
                                                     .getJSONObject(index)
                                                     .get("date")
                                                     .toString());
-                Date date = new Date(unixTime * 1000);
+                SimpleDateFormat dateFormat = new SimpleDateFormat("d MMMM 'в' H:mm", Locale
+                        .getDefault());
+                String date = dateFormat.format(new Date(unixTime * 1000));
                 int likes = Integer.parseInt(mResponse
                         .getJSONArray("items")
                         .getJSONObject(index)
@@ -171,8 +170,41 @@ public class MainActivity extends AppCompatActivity {
                         .getJSONObject("reposts")
                         .get("count")
                         .toString());
-                Wall note = new Wall(id, sourceName, context, date, photoUrl, likes, comments,
-                        reposts);
+                boolean userLikes = Integer.parseInt(mResponse
+                        .getJSONArray("items")
+                        .getJSONObject(index)
+                        .getJSONObject("likes")
+                        .get("user_likes")
+                        .toString()) == 1;
+                boolean canLike = !userLikes;
+                boolean canComment = Integer.parseInt(mResponse
+                        .getJSONArray("items")
+                        .getJSONObject(index)
+                        .getJSONObject("comments")
+                        .get("can_post")
+                        .toString()) == 1;
+                boolean userReposted = Integer.parseInt(mResponse
+                        .getJSONArray("items")
+                        .getJSONObject(index)
+                        .getJSONObject("reposts")
+                        .get("user_reposted")
+                        .toString()) == 1;
+                boolean canRepost = !userReposted;
+
+                Wall note = new Wall(
+                                    id,
+                                    sourceName,
+                                    context,
+                                    date,
+                                    photoUrl,
+                                    likes,
+                                    userLikes,
+                                    canLike,
+                                    comments,
+                                    canComment,
+                                    reposts,
+                                    userReposted,
+                                    canRepost);
                 results.add(index, note);
             }
         } catch (JSONException pE) {
@@ -180,4 +212,12 @@ public class MainActivity extends AppCompatActivity {
         }
         return results;
     }
+
+    private static DateFormatSymbols myDateFormatSymbols = new DateFormatSymbols(){
+        @Override
+        public String[] getMonths() {
+            return new String[]{"Января", "Февраля", "Марта", "Апреля", "Мая", "Июня",
+                    "Июля", "Августа", "Сентября", "Октября", "Ноября", "Декабря"};
+        }
+    };
 }

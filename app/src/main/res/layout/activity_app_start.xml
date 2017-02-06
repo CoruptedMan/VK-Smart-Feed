@@ -26,7 +26,7 @@
         android:drawableEnd="@drawable/vk"
         android:text="@string/continue_with"
         android:layout_gravity="center_horizontal"
-        android:layout_below="@+id/relaviteForContainer"
+        android:layout_below="@+id/relativeForContainer"
         android:layout_centerHorizontal="true"
         android:textAllCaps="false"
         android:textSize="18sp"
@@ -36,7 +36,7 @@
         android:layout_marginTop="50dp"/>
 
     <RelativeLayout
-        android:id="@+id/relaviteForContainer"
+        android:id="@+id/relativeForContainer"
         tools:context=".AppStartActivity"
         android:layout_below="@+id/logoType"
         android:layout_width="match_parent"

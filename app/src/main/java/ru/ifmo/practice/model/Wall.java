@@ -1,27 +1,46 @@
 package ru.ifmo.practice.model;
 
-import java.util.Date;
-
 public class Wall {
     private long id;
     private String sourceName;
     private String context;
-    private Date date;
+    private String date;
     private String photoUrl;
     private int likesCount;
+    private boolean userLikes;
+    private boolean canLike;
     private int commentsCount;
+    private boolean canComment;
     private int repostsCount;
+    private boolean userReposted;
+    private boolean canRepost;
 
-    public Wall(long pId, String pSourceName, String pContext, Date pDate, String pPhotoUrl, int
-            pLikesCount, int pCommentsCount, int pRepostsCount) {
+    public Wall(long pId,
+                String pSourceName,
+                String pContext,
+                String pDate,
+                String pPhotoUrl,
+                int pLikesCount,
+                boolean pUserLikes,
+                boolean pCanLike,
+                int pCommentsCount,
+                boolean pCanComment,
+                int pRepostsCount,
+                boolean pUserReposted,
+                boolean pCanRepost) {
         id = pId;
         sourceName = pSourceName;
         context = pContext;
         date = pDate;
         photoUrl = pPhotoUrl;
         likesCount = pLikesCount;
+        userLikes = pUserLikes;
+        canLike = pCanLike;
         commentsCount = pCommentsCount;
+        canComment = pCanComment;
         repostsCount = pRepostsCount;
+        userReposted = pUserReposted;
+        canRepost = pCanRepost;
     }
 
     public long getId() {
@@ -47,11 +66,11 @@ public class Wall {
         context = pContext;
     }
 
-    public Date getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(Date pDate) {
+    public void setDate(String pDate) {
         date = pDate;
     }
 
@@ -87,9 +106,51 @@ public class Wall {
         repostsCount = pRepostsCount;
     }
 
+    public boolean getUserLikes() {
+        return userLikes;
+    }
+
+    public void setUserLikes(boolean pUserLikes) {
+        userLikes = pUserLikes;
+    }
+
+    public boolean getCanLike() {
+        return canLike;
+    }
+
+    public void setCanLike(boolean pCanLike) {
+        canLike = pCanLike;
+    }
+
+    public boolean getCanComment() {
+        return canComment;
+    }
+
+    public void setCanComment(boolean pCanComment) {
+        canComment = pCanComment;
+    }
+
+    public boolean getUserReposted() {
+        return userReposted;
+    }
+
+    public void setUserReposted(boolean pUserReposted) {
+        userReposted = pUserReposted;
+    }
+
+    public boolean getCanRepost() {
+        return canRepost;
+    }
+
+    public void setCanRepost(boolean pCanRepost) {
+        canRepost = pCanRepost;
+    }
+
     @Override
     public String toString() {
         return "id" + id + "| " + sourceName + "\n" + context +
                 "\nat " + date;
     }
+
+
 }
