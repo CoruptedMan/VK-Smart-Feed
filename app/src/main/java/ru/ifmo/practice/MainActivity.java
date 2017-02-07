@@ -18,7 +18,6 @@ import com.vk.sdk.api.VKResponse;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -102,11 +101,16 @@ public class MainActivity extends AppCompatActivity {
         });
         try {
             for (int index = 0; index < 5; index++) {
-                int id = Math.abs(Integer.parseInt(mResponse
-                                                    .getJSONArray("items")
-                                                    .getJSONObject(index)
-                                                    .get("source_id")
-                                                    .toString()));
+                long sourceId = Math.abs(Integer.parseInt(mResponse
+                        .getJSONArray("items")
+                        .getJSONObject(index)
+                        .get("source_id")
+                        .toString()));
+                long id = Math.abs(Integer.parseInt(mResponse
+                        .getJSONArray("items")
+                        .getJSONObject(index)
+                        .get("post_id")
+                        .toString()));
                 String sourceName = "null";
                 String photoUrl = "null";
                 int groupCount = mResponse.getJSONArray("groups").length();
@@ -116,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
                     String groupName = mResponse.getJSONArray("groups").getJSONObject(i).get
                             ("name").toString();
                     mGroups.add(new Group(groupId, groupName));
-                    if (groupId == id) {
+                    if (groupId == sourceId) {
                         sourceName = groupName;
                         photoUrl = mResponse.getJSONArray("groups").getJSONObject(i).get
                                 ("photo_100").toString();
@@ -132,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
                     String userLastName = mResponse.getJSONArray("profiles").getJSONObject(i).get
                             ("last_name").toString();
                     mUsers.add(new User(userId, userFirstName, userLastName));
-                    if (userId == id) {
+                    if (userId == sourceId) {
                         sourceName = userFirstName + " " + userLastName;
                         photoUrl = mResponse.getJSONArray("profiles").getJSONObject(i).get
                                 ("photo_100").toString();
@@ -191,8 +195,8 @@ public class MainActivity extends AppCompatActivity {
                         .toString()) == 1;
                 boolean canRepost = !userReposted;
 
-                Wall note = new Wall(
-                                    id,
+                Wall note = new Wall(id,
+                                    sourceId,
                                     sourceName,
                                     context,
                                     date,
@@ -212,12 +216,4 @@ public class MainActivity extends AppCompatActivity {
         }
         return results;
     }
-
-    private static DateFormatSymbols myDateFormatSymbols = new DateFormatSymbols(){
-        @Override
-        public String[] getMonths() {
-            return new String[]{"Января", "Февраля", "Марта", "Апреля", "Мая", "Июня",
-                    "Июля", "Августа", "Сентября", "Октября", "Ноября", "Декабря"};
-        }
-    };
 }

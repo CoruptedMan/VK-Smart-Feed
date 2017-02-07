@@ -18,7 +18,12 @@ import android.widget.TextView;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKCallback;
 import com.vk.sdk.VKSdk;
+import com.vk.sdk.api.VKApi;
 import com.vk.sdk.api.VKError;
+import com.vk.sdk.api.VKRequest;
+import com.vk.sdk.api.VKResponse;
+
+import org.json.JSONException;
 
 import me.relex.circleindicator.CircleIndicator;
 
@@ -28,6 +33,7 @@ public class AppStartActivity extends Activity {
     CoordinatorLayout coordinatorLayout;
     ViewPager mViewPager;
     CircleIndicator mCircleIndicator;
+    public static long userId;
 
     @Override
     protected void onCreate(Bundle pSavedInstanceState) {
@@ -51,6 +57,33 @@ public class AppStartActivity extends Activity {
         mViewPager.setAdapter(lSectionsPagerAdapter);
         mCircleIndicator.setViewPager(mViewPager);
         if (VKAccessToken.currentToken() != null && !VKAccessToken.currentToken().isExpired()) {
+            VKRequest request = VKApi.users().get();
+            request.executeSyncWithListener(new VKRequest.VKRequestListener() {
+                @Override
+                public void onComplete(VKResponse response) {
+                    try {
+                        userId = Integer.parseInt(response
+                                .json
+                                .getJSONArray("response")
+                                .getJSONObject(0)
+                                .get("id")
+                                .toString());
+                        System.out.println("now id is " + userId);
+                    } catch (JSONException pE) {
+                        pE.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void attemptFailed(VKRequest request, int attemptNumber, int totalAttempts) {
+                    super.attemptFailed(request, attemptNumber, totalAttempts);
+                }
+
+                @Override
+                public void onError(VKError error) {
+                    super.onError(error);
+                }
+            });
             startActivity(new Intent(getApplicationContext(), MainActivity.class));
             overridePendingTransition(R.anim.slide_in_right ,R.anim.slide_out_right);
             finish();
@@ -63,14 +96,39 @@ public class AppStartActivity extends Activity {
         if (!VKSdk.onActivityResult(requestCode, resultCode, data, new VKCallback<VKAccessToken>() {
             @Override
             public void onResult(VKAccessToken res) {
-                // Пользователь успешно авторизовался
+                VKRequest request = VKApi.users().get();
+                request.executeSyncWithListener(new VKRequest.VKRequestListener() {
+                            @Override
+                            public void onComplete(VKResponse response) {
+                                try {
+                                    userId = Integer.parseInt(response
+                                            .json
+                                            .getJSONArray("response")
+                                            .getJSONObject(0)
+                                            .get("id")
+                                            .toString());
+                                    System.out.println("now id is " + userId);
+                                } catch (JSONException pE) {
+                                    pE.printStackTrace();
+                                }
+                    }
+
+                    @Override
+                    public void attemptFailed(VKRequest request, int attemptNumber, int totalAttempts) {
+                        super.attemptFailed(request, attemptNumber, totalAttempts);
+                    }
+
+                    @Override
+                    public void onError(VKError error) {
+                        super.onError(error);
+                    }
+                });
                 startActivity(new Intent(getApplicationContext(), MainActivity.class));
                 overridePendingTransition(R.anim.slide_in_right ,R.anim.slide_out_right);
                 finish();
             }
             @Override
             public void onError(VKError error) {
-                // Произошла ошибка авторизации (например, пользователь запретил авторизацию)
                 Snackbar.make(coordinatorLayout, "Auth Error!", Snackbar.LENGTH_SHORT).show();
             }
         })) {

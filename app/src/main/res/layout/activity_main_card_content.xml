@@ -1,76 +1,89 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
+    android:id="@+id/main_layout"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    xmlns:app="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:foreground="?android:attr/selectableItemBackground"
+    android:animateLayoutChanges="true">
 
     <android.support.v7.widget.CardView
-        android:id="@+id/card_view"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
-        android:layout_marginTop="5dp"
         android:layout_gravity="center"
-        android:animateLayoutChanges="true"
-        card_view:cardCornerRadius="0dp"
-        card_view:cardElevation="3dp">
+        android:layout_margin="5dp"
+        card_view:cardElevation="3dp"
+        card_view:cardCornerRadius="5dp">
 
         <RelativeLayout
+            android:id="@+id/card_layout"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:layout_marginTop="10dp"
-            android:id="@+id/card_layout">
+            android:layout_marginTop="10dp">
 
-            <RelativeLayout
+            <android.support.v7.widget.CardView
                 android:id="@+id/source_info"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp">
+                android:layout_marginEnd="56dp"
+                android:foreground="?android:attr/selectableItemBackground"
+                card_view:cardElevation="0dp"
+                card_view:cardCornerRadius="30dp">
 
-                <TextView
-                    android:id="@+id/source_name"
+                <RelativeLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_alignParentTop="true"
-                    android:layout_toEndOf="@+id/source_photo"
-                    android:scrollHorizontally="false"
-                    android:textSize="16sp"
-                    android:textColor="@color/colorPrimary"/>
+                    android:padding="5dp">
+                        <de.hdodenhof.circleimageview.CircleImageView
+                            android:id="@+id/source_photo"
+                            android:layout_width="49dp"
+                            android:layout_height="49dp"
+                            android:layout_alignParentTop="true"
+                            android:layout_alignParentStart="true"/>
+                        <TextView
+                            android:id="@+id/source_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="20dp"
+                            android:layout_marginEnd="10dp"
+                            android:layout_alignParentTop="true"
+                            android:layout_toEndOf="@+id/source_photo"
+                            android:maxLines="1"
+                            android:ellipsize="end"
+                            android:textSize="16sp"
+                            android:textColor="@color/colorPrimary"/>
+                        <TextView
+                            android:id="@+id/note_date"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="10dp"
+                            android:layout_alignBottom="@+id/source_photo"
+                            android:layout_alignStart="@+id/source_name"
+                            android:textSize="14sp"
+                            android:textColor="@color/colorTextSecondary"/>
+                </RelativeLayout>
+            </android.support.v7.widget.CardView>
 
-                <TextView
-                    android:id="@+id/note_date"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="10dp"
-                    android:layout_alignBottom="@+id/source_photo"
-                    android:layout_alignStart="@+id/source_name"
-                    android:textSize="14sp"
-                    android:textColor="@color/colorTextSecondary"/>
-
-                <com.makeramen.roundedimageview.RoundedImageView
-                    android:id="@+id/source_photo"
-                    android:layout_width="49dp"
-                    android:layout_height="49dp"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentStart="true"
-                    app:riv_corner_radius="100dip"
-                    app:riv_oval="true"/>
-            </RelativeLayout>
-
-            <ImageView
-                android:id="@+id/options"
+            <android.support.v7.widget.CardView
+                android:id="@+id/options_block"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                card_view:srcCompat="@drawable/ic_more_vert_white_36dp"
                 android:layout_alignTop="@+id/source_info"
                 android:layout_alignParentEnd="true"
-                android:layout_marginEnd="10dp"/>
+                android:layout_marginEnd="10dp"
+                android:foreground="?android:attr/selectableItemBackground"
+                card_view:cardElevation="0dp"
+                card_view:cardCornerRadius="17dp">
+                <ImageView
+                    android:id="@+id/options"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    card_view:srcCompat="@drawable/ic_more_vert_white_24dp"
+                    android:padding="5dp"/>
+                </android.support.v7.widget.CardView>
 
             <TextView
                 android:id="@+id/context"
@@ -81,34 +94,36 @@
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
                 android:layout_marginBottom="10dp"
-                android:textColor="@color/colorTextPrimary"/>
+                android:textColor="@color/colorTextPrimary"
+                android:autoLink="web"
+                android:textColorLink="@color/colorPrimary"/>
 
             <LinearLayout
-                android:orientation="horizontal"
+                android:id="@+id/social_actions"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/context"
-                android:background="@color/colorPrimary"
                 android:layout_marginTop="10dp"
-                android:id="@+id/social_actions">
+                android:orientation="horizontal"
+                android:background="@color/colorPrimary">
 
                 <RelativeLayout
+                    android:id="@+id/like_block"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:foreground="?android:attr/selectableItemBackground"
+                    android:gravity="center"
                     android:paddingBottom="10dp"
                     android:paddingTop="10dp"
-                    android:gravity="center"
-                    android:id="@+id/like_block">
+                    android:foreground="?android:attr/selectableItemBackground">
                     <ImageView
                         android:id="@+id/like"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignBottom="@+id/likes_count"
                         android:layout_alignTop="@+id/likes_count"
-                        card_view:srcCompat="@drawable/ic_favorite_white_18dp"
-                        android:contentDescription="likes counter"/>
+                        android:contentDescription="likes counter"
+                        card_view:srcCompat="@drawable/ic_favorite_white_18dp"/>
                     <TextView
                         android:id="@+id/likes_count"
                         android:layout_width="wrap_content"
@@ -121,22 +136,22 @@
                 </RelativeLayout>
 
                 <RelativeLayout
+                    android:id="@+id/comment_block"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:foreground="?android:attr/selectableItemBackground"
+                    android:gravity="center"
                     android:paddingBottom="10dp"
                     android:paddingTop="10dp"
-                    android:gravity="center"
-                    android:id="@+id/comment_block">
+                    android:foreground="?android:attr/selectableItemBackground">
                     <ImageView
                         android:id="@+id/comment"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignBottom="@+id/comments_count"
                         android:layout_alignTop="@+id/comments_count"
-                        card_view:srcCompat="@drawable/ic_question_answer_white_18dp"
-                        android:contentDescription="comments counter"/>
+                        android:contentDescription="comments counter"
+                        card_view:srcCompat="@drawable/ic_question_answer_white_18dp"/>
                     <TextView
                         android:id="@+id/comments_count"
                         android:layout_width="wrap_content"
@@ -149,22 +164,22 @@
                 </RelativeLayout>
 
                 <RelativeLayout
+                    android:id="@+id/repost_block"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:foreground="?android:attr/selectableItemBackground"
+                    android:gravity="center"
                     android:paddingBottom="10dp"
                     android:paddingTop="10dp"
-                    android:gravity="center"
-                    android:id="@+id/repost_block">
+                    android:foreground="?android:attr/selectableItemBackground">
                     <ImageView
                         android:id="@+id/repost"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignBottom="@+id/reposts_count"
                         android:layout_alignTop="@+id/reposts_count"
-                        card_view:srcCompat="@drawable/ic_reply_white_18dp"
-                        android:contentDescription="repost counter"/>
+                        android:contentDescription="repost counter"
+                        card_view:srcCompat="@drawable/ic_reply_white_18dp"/>
                     <TextView
                         android:id="@+id/reposts_count"
                         android:layout_width="wrap_content"

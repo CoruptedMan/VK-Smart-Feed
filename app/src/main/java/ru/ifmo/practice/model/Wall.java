@@ -2,6 +2,7 @@ package ru.ifmo.practice.model;
 
 public class Wall {
     private long id;
+    private long sourceId;
     private String sourceName;
     private String context;
     private String date;
@@ -16,6 +17,7 @@ public class Wall {
     private boolean canRepost;
 
     public Wall(long pId,
+                long pSourceId,
                 String pSourceName,
                 String pContext,
                 String pDate,
@@ -29,6 +31,7 @@ public class Wall {
                 boolean pUserReposted,
                 boolean pCanRepost) {
         id = pId;
+        sourceId = pSourceId;
         sourceName = pSourceName;
         context = pContext;
         date = pDate;
@@ -50,6 +53,15 @@ public class Wall {
     public void setId(long pId) {
         id = pId;
     }
+
+    public long getSourceId() {
+        return sourceId;
+    }
+
+    public void setSourceId(long pSourceId) {
+        sourceId = pSourceId;
+    }
+
     public String getSourceName() {
         return sourceName;
     }

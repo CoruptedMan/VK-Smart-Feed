@@ -4,15 +4,14 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.util.Log;
-
-import com.makeramen.roundedimageview.RoundedImageView;
+import android.widget.ImageView;
 
 import java.io.InputStream;
 
 class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-    private RoundedImageView bmImage;
+    private ImageView bmImage;
 
-    DownloadImageTask(RoundedImageView bmImage) {
+    DownloadImageTask(ImageView bmImage) {
         this.bmImage = bmImage;
     }
 
