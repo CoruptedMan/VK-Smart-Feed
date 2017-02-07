@@ -32,7 +32,6 @@ import ru.ifmo.practice.utils.MyRecyclerViewAdapter;
 public class MainActivity extends AppCompatActivity {
 
     private MyRecyclerViewAdapter mAdapter;
-    private static String LOG_TAG = "CardViewActivity";
     private JSONObject mResponse;
     private ArrayList<Wall> mNotes;
     private ArrayList<User> mUsers;
@@ -56,21 +55,14 @@ public class MainActivity extends AppCompatActivity {
         lRecyclerView.setAdapter(mAdapter);
 
         swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
-        // Setup refresh listener which triggers new data loading
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                // Your code to refresh the list here.
-                // Make sure you call swipeContainer.setRefreshing(false)
-                // once the network request has completed successfully.
-                //mNotes.clear();
                 mAdapter.clear();
-                //mNotes = getDataSet();
                 mAdapter.addAll(getDataSet());
                 swipeContainer.setRefreshing(false);
             }
         });
-        // Configure the refreshing colors
         swipeContainer.setColorSchemeResources(R.color.colorAccent,
                 R.color.colorPrimary,
                 R.color.colorPrimaryDark);

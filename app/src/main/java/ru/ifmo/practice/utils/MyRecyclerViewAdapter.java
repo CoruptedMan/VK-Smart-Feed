@@ -32,28 +32,26 @@ import static ru.ifmo.practice.R.id.options;
 public class MyRecyclerViewAdapter
         extends RecyclerView.Adapter<MyRecyclerViewAdapter.DataObjectHolder> {
     private static ArrayList<Wall> mDataSet;
-    private static long mNoteId;
 
     static class DataObjectHolder extends RecyclerView.ViewHolder {
         private JSONObject mResponse;
 
-        TextView sourceNameText;
-        TextView contextText;
-        TextView dateText;
-        TextView likesCountText;
-        TextView commentsCountText;
-        TextView repostsCountText;
-        ImageView likeIcon;
-        ImageView commentIcon;
-        ImageView repostIcon;
-        ImageView sourcePhoto;
-        ImageView optionsPhoto;
-        RelativeLayout likeBlock;
-        RelativeLayout commentBlock;
-        RelativeLayout repostBlock;
-        CardView sourceInfoBlock;
-        CardView optionsBlock;
-        LinearLayout mainLayout;
+        private TextView sourceNameText;
+        private TextView contextText;
+        private TextView dateText;
+        private TextView likesCountText;
+        private TextView commentsCountText;
+        private TextView repostsCountText;
+        private ImageView likeIcon;
+        private ImageView repostIcon;
+        private ImageView sourcePhoto;
+        private ImageView optionsPhoto;
+        private RelativeLayout likeBlock;
+        private RelativeLayout commentBlock;
+        private RelativeLayout repostBlock;
+        private CardView sourceInfoBlock;
+        private CardView optionsBlock;
+        private LinearLayout mainLayout;
 
         DataObjectHolder(View itemView) {
             super(itemView);
@@ -65,7 +63,6 @@ public class MyRecyclerViewAdapter
             repostsCountText = (TextView) itemView.findViewById(R.id.reposts_count);
             sourcePhoto = (ImageView) itemView.findViewById(R.id.source_photo);
             likeIcon = (ImageView) itemView.findViewById(like);
-            commentIcon = (ImageView) itemView.findViewById(R.id.comment);
             repostIcon = (ImageView) itemView.findViewById(R.id.repost);
             optionsPhoto = (ImageView) itemView.findViewById(options);
             likeBlock = (RelativeLayout) itemView.findViewById(R.id.like_block);
@@ -78,12 +75,14 @@ public class MyRecyclerViewAdapter
             likeBlock.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    VKRequest request;
+                    int likes = mDataSet.get(getAdapterPosition()).getLikesCount();
                     //TODO: complete request for correct liking all types of content.
                     if (mDataSet.get(getAdapterPosition()).getUserLikes()) {
-                        VKRequest request = new VKRequest("likes.delete",
-                                VKParameters.from("type", "post",
-                                        "owner_id", -mDataSet.get(getAdapterPosition()).getSourceId(),
-                                        "item_id", mDataSet.get(getAdapterPosition()).getId()));
+                        request = new VKRequest("likes.delete", VKParameters.from(
+                                "type", "post",
+                                "owner_id", -mDataSet.get(getAdapterPosition()).getSourceId(),
+                                "item_id", mDataSet.get(getAdapterPosition()).getId()));
                         request.executeSyncWithListener(new VKRequest.VKRequestListener() {
                             @Override
                             public void onComplete(VKResponse response) {
@@ -105,28 +104,25 @@ public class MyRecyclerViewAdapter
                             }
                         });
 
-                        int likes = 0;
                         try {
                             likes = Integer.parseInt(mResponse.get("likes").toString());
                         } catch (JSONException pE) {
                             pE.printStackTrace();
                         }
                         mDataSet.get(getAdapterPosition()).setLikesCount(likes);
-                        if (mDataSet.get(getAdapterPosition()).getLikesCount() == 0) {
-                            likesCountText.setText("");
-                        }
-                        else {
-                            likesCountText.setText(String.valueOf(likes));
-                        }
+                        likesCountText.setText(mDataSet.get(
+                                getAdapterPosition()).getLikesCount() != 0
+                                    ? String.valueOf(likes)
+                                    : "");
                         mDataSet.get(getAdapterPosition()).setUserLikes(false);
                         likeIcon.setImageDrawable(VKSmartFeedApplication.context().getDrawable(
                                 R.drawable.ic_favorite_white_18dp));
                     }
                     else {
-                        VKRequest request = new VKRequest("likes.add",
-                                VKParameters.from("type", "post",
-                                        "owner_id", -mDataSet.get(getAdapterPosition()).getSourceId(),
-                                        "item_id", mDataSet.get(getAdapterPosition()).getId()));
+                        request = new VKRequest("likes.add", VKParameters.from(
+                                "type", "post",
+                                "owner_id", -mDataSet.get(getAdapterPosition()).getSourceId(),
+                                "item_id", mDataSet.get(getAdapterPosition()).getId()));
                         request.executeSyncWithListener(new VKRequest.VKRequestListener() {
                             @Override
                             public void onComplete(VKResponse response) {
@@ -148,7 +144,6 @@ public class MyRecyclerViewAdapter
                             }
                         });
 
-                        int likes = 0;
                         try {
                             likes = Integer.parseInt(mResponse.get("likes").toString());
                         } catch (JSONException pE) {
@@ -167,24 +162,28 @@ public class MyRecyclerViewAdapter
             commentBlock.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    // ...
                 }
             });
 
             repostBlock.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    // ...
                 }
             });
 
             sourceInfoBlock.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    // ...
                 }
             });
 
             optionsBlock.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    // ...
                 }
             });
 
@@ -212,80 +211,49 @@ public class MyRecyclerViewAdapter
 
     @Override
     public void onBindViewHolder(DataObjectHolder holder, int position) {
-        mNoteId = mDataSet.get(position).getId();
         holder.sourceNameText.setText(mDataSet.get(position).getSourceName());
         holder.dateText.setText(mDataSet.get(position).getDate());
         new DownloadImageTask(holder.sourcePhoto).execute(mDataSet.get(position).getPhotoUrl());
 
-        if (!mDataSet.get(position).getContext().equals("")) {
-            holder.contextText.setText(mDataSet.get(position).getContext());
-        }
-        else {
-            holder.contextText.setVisibility(View.GONE);
-        }
 
-        if (mDataSet.get(position).getUserLikes()) {
-            holder.likeIcon.setImageDrawable(ResourcesCompat.getDrawable(
-                    VKSmartFeedApplication.context().getResources(),
-                    R.drawable.ic_favorite_red_18dp,
-                    null));
-        }
-        else  {
-            holder.likeIcon.setImageDrawable(ResourcesCompat.getDrawable(
-                    VKSmartFeedApplication.context().getResources(),
-                    R.drawable.ic_favorite_white_18dp,
-                    null));
-        }
-        if (mDataSet.get(position).getLikesCount() != 0) {
-            holder.likesCountText.setText(String.valueOf(mDataSet.get(position).getLikesCount()));
-        }
-        else {
-            holder.likesCountText.setText("");
-        }
-        if (mDataSet.get(position).getCanComment()) {
-            if (mDataSet.get(position).getCommentsCount() != 0) {
-                holder.commentsCountText.setText(String.valueOf(mDataSet.get(position).getCommentsCount()));
-            }
-            else {
-                holder.commentsCountText.setText("");
-            }
-        }
-        else {
-            holder.commentBlock.setVisibility(View.GONE);
-        }
-        if (mDataSet.get(position).getUserReposted()) {
-            holder.repostIcon.setImageDrawable(ResourcesCompat.getDrawable(
-                    VKSmartFeedApplication.context().getResources(),
-                    R.drawable.ic_reply_yellow_18dp,
-                    null));
-        }
-        else {
-            holder.repostIcon.setImageDrawable(ResourcesCompat.getDrawable(
-                    VKSmartFeedApplication.context().getResources(),
-                    R.drawable.ic_reply_white_18dp,
-                    null));
-        }
-        if (mDataSet.get(position).getRepostsCount() != 0) {
-            holder.repostsCountText.setText(String.valueOf(mDataSet.get(position).getRepostsCount()));
-        }
-        else {
-            holder.repostsCountText.setText("");
-        }
-    }
+        holder.contextText.setVisibility(mDataSet.get(position).getContext().equals("")
+                ?   View.GONE
+                :   View.VISIBLE);
+        holder.contextText.setText(mDataSet.get(position).getContext());
 
-    public void addItem(Wall dataObj, int index) {
-        mDataSet.add(index, dataObj);
-        notifyItemInserted(index);
-    }
+        holder.likeIcon.setImageDrawable(ResourcesCompat.getDrawable(
+                VKSmartFeedApplication.context().getResources(),
+                mDataSet.get(position).getUserLikes()
+                ?   R.drawable.ic_favorite_red_18dp
+                :   R.drawable.ic_favorite_white_18dp,
+                null));
 
-    public void deleteItem(int index) {
-        mDataSet.remove(index);
-        notifyItemRemoved(index);
+        holder.likesCountText.setText(mDataSet.get(position).getLikesCount() != 0
+                ?   String.valueOf(mDataSet.get(position).getLikesCount())
+                :   "");
+
+        holder.commentBlock.setVisibility(mDataSet.get(position).getCanComment()
+                ?   View.VISIBLE
+                :   View.GONE);
+        holder.commentsCountText.setText(mDataSet.get(position).getCommentsCount() != 0
+                ?   String.valueOf(mDataSet.get(position).getCommentsCount())
+                :   "");
+
+        holder.repostIcon.setImageDrawable(ResourcesCompat.getDrawable(
+                VKSmartFeedApplication.context().getResources(),
+                mDataSet.get(position).getUserReposted()
+                ?   R.drawable.ic_reply_yellow_18dp
+                :   R.drawable.ic_reply_white_18dp,
+                null));
+        holder.repostsCountText.setText(mDataSet.get(position).getRepostsCount() != 0
+                ?   String.valueOf(mDataSet.get(position).getRepostsCount())
+                :   "");
     }
 
     public void clear() {
         mDataSet.clear();
         notifyDataSetChanged();
+
     }
 
     public void addAll(ArrayList<Wall> list) {
@@ -298,10 +266,6 @@ public class MyRecyclerViewAdapter
     @Override
     public int getItemCount() {
         return mDataSet.size();
-    }
-
-    public interface MyClickListener {
-        void onItemClick(int position, View v);
     }
 
 }
