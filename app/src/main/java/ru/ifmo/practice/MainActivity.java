@@ -2,6 +2,7 @@ package ru.ifmo.practice;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -36,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<Wall> mNotes;
     private ArrayList<User> mUsers;
     private ArrayList<Group> mGroups;
+    private SwipeRefreshLayout swipeContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +55,27 @@ public class MainActivity extends AppCompatActivity {
         mAdapter = new MyRecyclerViewAdapter(mNotes);
         lRecyclerView.setAdapter(mAdapter);
 
+        swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
+        // Setup refresh listener which triggers new data loading
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // Your code to refresh the list here.
+                // Make sure you call swipeContainer.setRefreshing(false)
+                // once the network request has completed successfully.
+                //mNotes.clear();
+                mAdapter.clear();
+                //mNotes = getDataSet();
+                mAdapter.addAll(getDataSet());
+                swipeContainer.setRefreshing(false);
+            }
+        });
+        // Configure the refreshing colors
+        swipeContainer.setColorSchemeResources(R.color.colorAccent,
+                R.color.colorPrimary,
+                R.color.colorPrimaryDark);
+
+
         findViewById(R.id.logout).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -62,17 +85,6 @@ public class MainActivity extends AppCompatActivity {
                 finish();
             }
         });
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        /*mAdapter.setOnItemClickListener(new MyRecyclerViewAdapter.MyClickListener() {
-            @Override
-            public void onItemClick(int position, View v) {
-                Log.i(LOG_TAG, " Clicked on Item " + position);
-            }
-        });*/
     }
 
     private ArrayList<Wall> getDataSet() {
@@ -209,7 +221,7 @@ public class MainActivity extends AppCompatActivity {
                                     reposts,
                                     userReposted,
                                     canRepost);
-                results.add(index, note);
+                results.add(note);
             }
         } catch (JSONException pE) {
             pE.printStackTrace();

@@ -160,8 +160,10 @@ public class Wall {
 
     @Override
     public String toString() {
-        return "id" + id + "| " + sourceName + "\n" + context +
-                "\nat " + date;
+        return "Post id" + id + "\n" +
+                "Source id" + sourceId + " " + sourceName + "\n"
+                + context + "\nL: " + likesCount + "| C: " + commentsCount + "| R: " +
+                repostsCount + "\n" + date;
     }
 
 

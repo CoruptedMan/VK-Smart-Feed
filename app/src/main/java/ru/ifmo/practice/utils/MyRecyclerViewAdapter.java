@@ -3,7 +3,6 @@ package ru.ifmo.practice.utils;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,20 +29,10 @@ import ru.ifmo.practice.model.Wall;
 import static ru.ifmo.practice.R.id.like;
 import static ru.ifmo.practice.R.id.options;
 
-public class MyRecyclerViewAdapter extends RecyclerView
-        .Adapter<MyRecyclerViewAdapter
-        .DataObjectHolder> {
+public class MyRecyclerViewAdapter
+        extends RecyclerView.Adapter<MyRecyclerViewAdapter.DataObjectHolder> {
     private static ArrayList<Wall> mDataSet;
     private static long mNoteId;
-    private static MyClickListener myClickListener;
-
-    public ArrayList<Wall> getDataSet() {
-        return mDataSet;
-    }
-
-    public void setDataSet(ArrayList<Wall> pDataSet) {
-        mDataSet = pDataSet;
-    }
 
     static class DataObjectHolder extends RecyclerView.ViewHolder {
         private JSONObject mResponse;
@@ -202,22 +191,10 @@ public class MyRecyclerViewAdapter extends RecyclerView
             mainLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    System.out.println(mDataSet.get(getAdapterPosition()).toString());
                 }
             });
-
-            String LOG_TAG = "MyRecyclerViewAdapter";
-            Log.i(LOG_TAG, "Adding Listener");
-            /*itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    myClickListener.onItemClick(getAdapterPosition(), v);
-                }
-            });*/
         }
-    }
-
-    public void setOnItemClickListener(MyClickListener myClickListener) {
-        MyRecyclerViewAdapter.myClickListener = myClickListener;
     }
 
     public MyRecyclerViewAdapter(ArrayList<Wall> myDataset) {
@@ -253,12 +230,24 @@ public class MyRecyclerViewAdapter extends RecyclerView
                     R.drawable.ic_favorite_red_18dp,
                     null));
         }
+        else  {
+            holder.likeIcon.setImageDrawable(ResourcesCompat.getDrawable(
+                    VKSmartFeedApplication.context().getResources(),
+                    R.drawable.ic_favorite_white_18dp,
+                    null));
+        }
         if (mDataSet.get(position).getLikesCount() != 0) {
             holder.likesCountText.setText(String.valueOf(mDataSet.get(position).getLikesCount()));
+        }
+        else {
+            holder.likesCountText.setText("");
         }
         if (mDataSet.get(position).getCanComment()) {
             if (mDataSet.get(position).getCommentsCount() != 0) {
                 holder.commentsCountText.setText(String.valueOf(mDataSet.get(position).getCommentsCount()));
+            }
+            else {
+                holder.commentsCountText.setText("");
             }
         }
         else {
@@ -270,10 +259,18 @@ public class MyRecyclerViewAdapter extends RecyclerView
                     R.drawable.ic_reply_yellow_18dp,
                     null));
         }
+        else {
+            holder.repostIcon.setImageDrawable(ResourcesCompat.getDrawable(
+                    VKSmartFeedApplication.context().getResources(),
+                    R.drawable.ic_reply_white_18dp,
+                    null));
+        }
         if (mDataSet.get(position).getRepostsCount() != 0) {
             holder.repostsCountText.setText(String.valueOf(mDataSet.get(position).getRepostsCount()));
         }
-
+        else {
+            holder.repostsCountText.setText("");
+        }
     }
 
     public void addItem(Wall dataObj, int index) {
@@ -286,6 +283,18 @@ public class MyRecyclerViewAdapter extends RecyclerView
         notifyItemRemoved(index);
     }
 
+    public void clear() {
+        mDataSet.clear();
+        notifyDataSetChanged();
+    }
+
+    public void addAll(ArrayList<Wall> list) {
+        for (int i = 0; i < list.size(); i++) {
+            mDataSet.add(list.get(i));
+        }
+        notifyDataSetChanged();
+    }
+
     @Override
     public int getItemCount() {
         return mDataSet.size();
@@ -294,4 +303,5 @@ public class MyRecyclerViewAdapter extends RecyclerView
     public interface MyClickListener {
         void onItemClick(int position, View v);
     }
+
 }
