@@ -68,7 +68,6 @@ public class AppStartActivity extends Activity {
                                 .getJSONObject(0)
                                 .get("id")
                                 .toString());
-                        System.out.println("now id is " + userId);
                     } catch (JSONException pE) {
                         pE.printStackTrace();
                     }
@@ -107,7 +106,6 @@ public class AppStartActivity extends Activity {
                                             .getJSONObject(0)
                                             .get("id")
                                             .toString());
-                                    System.out.println("now id is " + userId);
                                 } catch (JSONException pE) {
                                     pE.printStackTrace();
                                 }

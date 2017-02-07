@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">VK Smart Feed</string>
+    <string name="continue_with">Войти через</string>
+    <string name="page_description1">Удивительная простота и лёгкость</string>
+    <string name="page_description2">Неповторимая скорость работы</string>
+    <string name="page_description3">Ощутите радость чтения новостей</string>
+    <string name="page_description4">Выбери свою судьбу</string>
+    <string name="page_title1">Просто</string>
+    <string name="page_title2">Быстро</string>
+    <string name="page_title3">Легко</string>
+    <string name="page_title4">Свободно</string>
+    <string name="feed">Новости</string>
+</resources>

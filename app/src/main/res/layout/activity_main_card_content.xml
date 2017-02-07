@@ -1,28 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
-    android:id="@+id/main_layout"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:foreground="?android:attr/selectableItemBackground"
     android:animateLayoutChanges="true">
-
     <android.support.v7.widget.CardView
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_margin="5dp"
         card_view:cardElevation="3dp"
-        card_view:cardCornerRadius="5dp">
-
+        card_view:cardCornerRadius="5dp"
+        card_view:cardBackgroundColor="@color/cardview_light_background">
         <RelativeLayout
             android:id="@+id/card_layout"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_marginTop="10dp">
-
             <android.support.v7.widget.CardView
                 android:id="@+id/source_info"
                 android:layout_width="wrap_content"
@@ -31,8 +29,8 @@
                 android:layout_marginEnd="56dp"
                 android:foreground="?android:attr/selectableItemBackground"
                 card_view:cardElevation="0dp"
-                card_view:cardCornerRadius="30dp">
-
+                card_view:cardCornerRadius="30dp"
+                card_view:cardBackgroundColor="@color/cardview_light_background">
                 <RelativeLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -76,7 +74,8 @@
                 android:layout_marginEnd="10dp"
                 android:foreground="?android:attr/selectableItemBackground"
                 card_view:cardElevation="0dp"
-                card_view:cardCornerRadius="17dp">
+                card_view:cardCornerRadius="17dp"
+                card_view:cardBackgroundColor="@color/cardview_light_background">
                 <ImageView
                     android:id="@+id/options"
                     android:layout_width="wrap_content"
@@ -98,11 +97,23 @@
                 android:autoLink="web"
                 android:textColorLink="@color/colorPrimary"/>
 
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/note_photos_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/context"
+                android:layout_marginTop="15dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                android:scrollbars="horizontal"/>
+
+
             <LinearLayout
                 android:id="@+id/social_actions"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/context"
+                android:layout_below="@+id/note_photos_recycler_view"
                 android:layout_marginTop="10dp"
                 android:orientation="horizontal"
                 android:background="@color/colorPrimary">

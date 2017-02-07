@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">VK Smart Feed</string>
     <string name="continue_with">Continue with</string>
-    <string name="content_format">%1$s</string>
+    <string name="content_format" translatable="false">%1$s</string>
 
     <!--integers-->
     <integer name="com_vk_sdk_AppId">5805873</integer>
@@ -12,8 +12,10 @@
     <string name="page_title3">Light</string>
     <string name="page_title4">Move</string>
     <string name="page_description1">incredible simplicity and ease</string>
-    <string name="page_description2">amazingly fast and etc.</string>
-    <string name="page_description3">You won\'t even observe it!</string>
-    <string name="page_description4">Choose your destiny!</string>
+    <string name="page_description2">amazingly fast, etc</string>
+    <string name="page_description3">You won\'t even observe it</string>
+    <string name="page_description4">Choose your destiny</string>
 
+    <!-- Strings related to MainActivity -->
+    <string name="feed">Feed</string>
 </resources>

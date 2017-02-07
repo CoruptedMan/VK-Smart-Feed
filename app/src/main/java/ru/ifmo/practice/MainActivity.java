@@ -3,9 +3,11 @@ package ru.ifmo.practice;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Toast;
 
@@ -25,18 +27,20 @@ import java.util.Date;
 import java.util.Locale;
 
 import ru.ifmo.practice.model.Group;
+import ru.ifmo.practice.model.Note;
+import ru.ifmo.practice.model.Photo;
 import ru.ifmo.practice.model.User;
-import ru.ifmo.practice.model.Wall;
-import ru.ifmo.practice.utils.MyRecyclerViewAdapter;
+import ru.ifmo.practice.util.FeedRecyclerViewAdapter;
 
 public class MainActivity extends AppCompatActivity {
 
-    private MyRecyclerViewAdapter mAdapter;
+    private FeedRecyclerViewAdapter mAdapter;
     private JSONObject mResponse;
-    private ArrayList<Wall> mNotes;
+    private ArrayList<Note> mNotes;
     private ArrayList<User> mUsers;
     private ArrayList<Group> mGroups;
     private SwipeRefreshLayout swipeContainer;
+    private static final int MIN_NOTES_COUNT = 6;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,11 +51,23 @@ public class MainActivity extends AppCompatActivity {
         mGroups = new ArrayList<>();
         mNotes = getDataSet();
 
-        RecyclerView lRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
+        Toolbar tb = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(tb);
+
+        // Get the ActionBar here to configure the way it behaves.
+        final ActionBar ab = getSupportActionBar();
+        //ab.setHomeAsUpIndicator(R.drawable.ic_menu); // set a custom icon for the default home button
+        if (ab != null) {
+            ab.setDisplayShowHomeEnabled(true); // show or hide the default home button
+            //ab.setDisplayHomeAsUpEnabled(true);
+            ab.setDisplayShowCustomEnabled(true); // enable overriding the default toolbar layout
+            ab.setDisplayShowTitleEnabled(false); // disable the default title element here (for centered title)
+        }
+        RecyclerView lRecyclerView = (RecyclerView) findViewById(R.id.feed_recycler_view);
         RecyclerView.LayoutManager linearLayoutManager = new LinearLayoutManager(this);
         lRecyclerView.setHasFixedSize(true);
         lRecyclerView.setLayoutManager(linearLayoutManager);
-        mAdapter = new MyRecyclerViewAdapter(mNotes);
+        mAdapter = new FeedRecyclerViewAdapter(getApplicationContext(), mNotes);
         lRecyclerView.setAdapter(mAdapter);
 
         swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
@@ -63,12 +79,9 @@ public class MainActivity extends AppCompatActivity {
                 swipeContainer.setRefreshing(false);
             }
         });
-        swipeContainer.setColorSchemeResources(R.color.colorAccent,
-                R.color.colorPrimary,
-                R.color.colorPrimaryDark);
+        swipeContainer.setColorSchemeResources(R.color.colorPrimary, R.color.colorPrimaryDark);
 
-
-        findViewById(R.id.logout).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.log_out).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 VKSdk.logout();
@@ -79,10 +92,10 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private ArrayList<Wall> getDataSet() {
-        ArrayList<Wall> results = new ArrayList<>();
+    private ArrayList<Note> getDataSet() {
+        ArrayList<Note> results = new ArrayList<>();
         VKRequest request = new VKRequest("newsfeed.get", VKParameters.from(VKApiConst.FILTERS,
-                "post", VKApiConst.COUNT, "5"));
+                "post", VKApiConst.COUNT, MIN_NOTES_COUNT));
         request.executeSyncWithListener(new VKRequest.VKRequestListener() {
             @Override
             public void onComplete(VKResponse response) {
@@ -104,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         try {
-            for (int index = 0; index < 5; index++) {
+            for (int index = 0; index < MIN_NOTES_COUNT; index++) {
                 long sourceId = Math.abs(Integer.parseInt(mResponse
                         .getJSONArray("items")
                         .getJSONObject(index)
@@ -160,6 +173,40 @@ public class MainActivity extends AppCompatActivity {
                 SimpleDateFormat dateFormat = new SimpleDateFormat("d MMMM 'в' H:mm", Locale
                         .getDefault());
                 String date = dateFormat.format(new Date(unixTime * 1000));
+
+                int i = 0;
+                ArrayList<Photo> attachmentsPhotos = new ArrayList<>();
+                if (mResponse
+                        .getJSONArray("items")
+                        .getJSONObject(index)
+                        .optJSONArray("attachments") != null) {
+                    while (!mResponse
+                            .getJSONArray("items")
+                            .getJSONObject(index)
+                            .getJSONArray("attachments")
+                            .isNull(i)) {
+                        if (mResponse
+                                .getJSONArray("items")
+                                .getJSONObject(index)
+                                .getJSONArray("attachments")
+                                .getJSONObject(i)
+                                .get("type")
+                                .toString()
+                                .equals("photo")) {
+                            attachmentsPhotos.add(new Photo(
+                                    mResponse
+                                            .getJSONArray("items")
+                                            .getJSONObject(index)
+                                            .getJSONArray("attachments")
+                                            .getJSONObject(i)
+                                            .getJSONObject("photo")
+                                            .get("photo_604")
+                                            .toString()));
+                        }
+                        i++;
+                    }
+                }
+
                 int likes = Integer.parseInt(mResponse
                         .getJSONArray("items")
                         .getJSONObject(index)
@@ -184,7 +231,6 @@ public class MainActivity extends AppCompatActivity {
                         .getJSONObject("likes")
                         .get("user_likes")
                         .toString()) == 1;
-                boolean canLike = !userLikes;
                 boolean canComment = Integer.parseInt(mResponse
                         .getJSONArray("items")
                         .getJSONObject(index)
@@ -197,22 +243,20 @@ public class MainActivity extends AppCompatActivity {
                         .getJSONObject("reposts")
                         .get("user_reposted")
                         .toString()) == 1;
-                boolean canRepost = !userReposted;
 
-                Wall note = new Wall(id,
+                Note note = new Note(id,
                                     sourceId,
                                     sourceName,
                                     context,
                                     date,
                                     photoUrl,
+                                    attachmentsPhotos,
                                     likes,
                                     userLikes,
-                                    canLike,
                                     comments,
                                     canComment,
                                     reposts,
-                                    userReposted,
-                                    canRepost);
+                                    userReposted);
                 results.add(note);
             }
         } catch (JSONException pE) {
