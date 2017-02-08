@@ -35,30 +35,15 @@ public class FeedRecyclerViewAdapter
         extends RecyclerView.Adapter<FeedRecyclerViewAdapter.DataObjectHolder> {
 
     private static ArrayList<Note> mDataSet;
-    private Context mContext;
+    private final Context mContext;
     /*private EndlessRecyclerViewScrollListener onLoadMoreListener;
 
     public interface EndlessRecyclerViewScrollListener {
         void onLoadMore();
     }*/
 
-    public FeedRecyclerViewAdapter(Context context, ArrayList<Note> myDataset) {
-        mContext = context;
-        mDataSet = myDataset;
-    }
-
-    @Override
-    public DataObjectHolder onCreateViewHolder(ViewGroup parent,
-                                               int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.activity_main_card_content, parent, false);
-
-        return new DataObjectHolder(view);
-    }
-
-    static class DataObjectHolder extends RecyclerView.ViewHolder {
+    public final static class DataObjectHolder extends RecyclerView.ViewHolder {
         private JSONObject mResponse;
-
         private TextView sourceNameText;
         private TextView contextText;
         private TextView dateText;
@@ -81,6 +66,7 @@ public class FeedRecyclerViewAdapter
         DataObjectHolder(View itemView) {
             super(itemView);
 
+            final Context context = itemView.getContext();
             sourceNameText = (TextView) itemView.findViewById(R.id.source_name);
             contextText = (TextView) itemView.findViewById(R.id.context);
             dateText = (TextView) itemView.findViewById(R.id.note_date);
@@ -98,6 +84,12 @@ public class FeedRecyclerViewAdapter
             optionsBlock = (CardView) itemView.findViewById(R.id.options_block);
             mainLayout = (LinearLayout) itemView.findViewById(R.id.main_layout);
             mRecyclerView = (RecyclerView) itemView.findViewById(R.id.note_photos_recycler_view);
+            mRecyclerView.setHasFixedSize(true);
+            RecyclerView.LayoutManager linearLayoutManager = new LinearLayoutManager
+                    (context, LinearLayoutManager.HORIZONTAL, false);
+            mAdapter = new NotePhotosRecyclerViewAdapter();
+            mRecyclerView.setAdapter(mAdapter);
+            mRecyclerView.setLayoutManager(linearLayoutManager);
 
             likeBlock.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -121,12 +113,12 @@ public class FeedRecyclerViewAdapter
                             }
                             @Override
                             public void onError(VKError error) {
-                                Toast.makeText(VKSmartFeedApplication.context(), error.toString(), Toast
+                                Toast.makeText(context, error.toString(), Toast
                                         .LENGTH_LONG).show();
                             }
                             @Override
                             public void attemptFailed(VKRequest request, int attemptNumber, int totalAttempts) {
-                                Toast.makeText(VKSmartFeedApplication.context(), "Attempt Failed!", Toast
+                                Toast.makeText(context, "Attempt Failed!", Toast
                                         .LENGTH_LONG).show();
                             }
                         });
@@ -139,10 +131,10 @@ public class FeedRecyclerViewAdapter
                         mDataSet.get(getAdapterPosition()).setLikesCount(likes);
                         likesCountText.setText(mDataSet.get(
                                 getAdapterPosition()).getLikesCount() != 0
-                                    ? String.valueOf(likes)
-                                    : "");
+                                ? String.valueOf(likes)
+                                : "");
                         mDataSet.get(getAdapterPosition()).setUserLikes(false);
-                        likeIcon.setImageDrawable(VKSmartFeedApplication.context().getDrawable(
+                        likeIcon.setImageDrawable(context.getDrawable(
                                 R.drawable.ic_favorite_white_18dp));
                     }
                     else {
@@ -161,12 +153,12 @@ public class FeedRecyclerViewAdapter
                             }
                             @Override
                             public void onError(VKError error) {
-                                Toast.makeText(VKSmartFeedApplication.context(), error.toString(), Toast
+                                Toast.makeText(context, error.toString(), Toast
                                         .LENGTH_LONG).show();
                             }
                             @Override
                             public void attemptFailed(VKRequest request, int attemptNumber, int totalAttempts) {
-                                Toast.makeText(VKSmartFeedApplication.context(), "Attempt Failed!", Toast
+                                Toast.makeText(context, "Attempt Failed!", Toast
                                         .LENGTH_LONG).show();
                             }
                         });
@@ -179,7 +171,7 @@ public class FeedRecyclerViewAdapter
                         mDataSet.get(getAdapterPosition()).setLikesCount(likes);
                         likesCountText.setText(String.valueOf(likes));
                         mDataSet.get(getAdapterPosition()).setUserLikes(true);
-                        likeIcon.setImageDrawable(VKSmartFeedApplication.context().getDrawable(
+                        likeIcon.setImageDrawable(context.getDrawable(
                                 R.drawable.ic_favorite_red_18dp));
                     }
 
@@ -223,15 +215,28 @@ public class FeedRecyclerViewAdapter
         }
     }
 
+    public FeedRecyclerViewAdapter(Context context, ArrayList<Note> dataSet) {
+        mContext = context;
+        if (dataSet != null) {
+            mDataSet = new ArrayList<>(dataSet);
+        }
+        else {
+            mDataSet = new ArrayList<>();
+        }
+    }
+
     @Override
-    public void onBindViewHolder(DataObjectHolder holder, int position) {
-        holder.mRecyclerView.setHasFixedSize(true);
-        RecyclerView.LayoutManager linearLayoutManager = new LinearLayoutManager
-                (mContext, LinearLayoutManager.HORIZONTAL, false);
-        holder.mRecyclerView.setLayoutManager(linearLayoutManager);
-        holder.mAdapter = new NotePhotosRecyclerViewAdapter(mDataSet
-                .get(position).getAttachmentsPhotos());
-        holder.mRecyclerView.setAdapter(holder.mAdapter);
+    public DataObjectHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        final View view = LayoutInflater.from(mContext)
+                .inflate(R.layout.activity_main_card_content, parent, false);
+
+        return new DataObjectHolder(view);
+    }
+
+    @Override
+    public void onBindViewHolder(DataObjectHolder holder, final int position) {
+        holder.mAdapter.setData(mDataSet.get(position).getAttachmentsPhotos());
+        holder.mAdapter.setRowIndex(position);
         holder.sourceNameText.setText(mDataSet.get(position).getSourceName());
         holder.dateText.setText(mDataSet.get(position).getDate());
         new DownloadImageTask(holder.sourcePhoto).execute(mDataSet.get(position).getPhotoUrl());
@@ -272,15 +277,12 @@ public class FeedRecyclerViewAdapter
 
     public void clear() {
         mDataSet.clear();
-        notifyDataSetChanged();
-
     }
 
     public void addAll(ArrayList<Note> list) {
         for (int i = 0; i < list.size(); i++) {
             mDataSet.add(list.get(i));
         }
-        notifyDataSetChanged();
     }
 
     @Override

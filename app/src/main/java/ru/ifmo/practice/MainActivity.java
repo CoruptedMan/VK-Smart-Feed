@@ -75,7 +75,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onRefresh() {
                 mAdapter.clear();
+                mAdapter.notifyDataSetChanged();
                 mAdapter.addAll(getDataSet());
+                mAdapter.notifyDataSetChanged();
                 swipeContainer.setRefreshing(false);
             }
         });

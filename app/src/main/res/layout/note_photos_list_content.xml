@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main_layout"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:foreground="?android:attr/selectableItemBackground"
@@ -13,11 +13,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:layout_margin="5dp"
         card_view:cardElevation="2dp"
         card_view:cardCornerRadius="3dp"
         card_view:cardBackgroundColor="@color/cardview_light_background"
-        android:layout_margin="5dp"
-        card_view:contentPadding="0dp">
+        card_view:contentPadding="3dp">
 
         <ImageView
             android:id="@+id/content"

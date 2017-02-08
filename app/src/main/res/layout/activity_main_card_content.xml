@@ -99,14 +99,13 @@
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/note_photos_recycler_view"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/context"
                 android:layout_marginTop="15dp"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
-                android:layout_marginBottom="10dp"
-                android:scrollbars="horizontal"/>
+                android:layout_marginBottom="10dp"/>
 
 
             <LinearLayout

@@ -11,13 +11,24 @@ import java.util.ArrayList;
 import ru.ifmo.practice.R;
 import ru.ifmo.practice.model.Photo;
 
-public class NotePhotosRecyclerViewAdapter
-        extends RecyclerView.Adapter<NotePhotosRecyclerViewAdapter.DataObjectHolder> {
+class NotePhotosRecyclerViewAdapter
+        extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private static ArrayList<Photo> mDataSet;
+    private int mRowIndex = -1;
 
-    public NotePhotosRecyclerViewAdapter(ArrayList<Photo> myDataset) {
-        mDataSet = myDataset;
+    NotePhotosRecyclerViewAdapter() {
+    }
+
+    public void setData(ArrayList<Photo> data) {
+        if (mDataSet != data) {
+            mDataSet = data;
+            notifyDataSetChanged();
+        }
+    }
+
+    public void setRowIndex(int index) {
+        mRowIndex = index;
     }
 
     @Override
@@ -27,7 +38,7 @@ public class NotePhotosRecyclerViewAdapter
         return new DataObjectHolder(view);
     }
 
-    static class DataObjectHolder extends RecyclerView.ViewHolder {
+    private static class DataObjectHolder extends RecyclerView.ViewHolder {
         private ImageView contentPhoto;
 
         DataObjectHolder(View itemView) {
@@ -37,9 +48,9 @@ public class NotePhotosRecyclerViewAdapter
     }
 
     @Override
-    public void onBindViewHolder(DataObjectHolder holder, int position) {
+    public void onBindViewHolder(RecyclerView.ViewHolder pHolder, int position) {
+        DataObjectHolder holder = (DataObjectHolder) pHolder;
         new DownloadImageTask(holder.contentPhoto).execute(mDataSet.get(position).getThumbnailUrl());
-        System.out.println(mDataSet.get(position).getThumbnailUrl());
     }
 
     @Override
