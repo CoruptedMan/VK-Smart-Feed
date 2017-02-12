@@ -3,7 +3,6 @@ package ru.ifmo.practice.util;
 import android.content.Context;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.CardView;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,47 +20,44 @@ import com.vk.sdk.api.VKResponse;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.ocpsoft.prettytime.PrettyTime;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 import ru.ifmo.practice.R;
 import ru.ifmo.practice.VKSmartFeedApplication;
 import ru.ifmo.practice.model.Note;
-
-import static ru.ifmo.practice.R.id.like;
-import static ru.ifmo.practice.R.id.options;
 
 public class FeedRecyclerViewAdapter
         extends RecyclerView.Adapter<FeedRecyclerViewAdapter.DataObjectHolder> {
 
     private static ArrayList<Note> mDataSet;
     private final Context mContext;
-    /*private EndlessRecyclerViewScrollListener onLoadMoreListener;
 
-    public interface EndlessRecyclerViewScrollListener {
-        void onLoadMore();
-    }*/
-
-    public final static class DataObjectHolder extends RecyclerView.ViewHolder {
+    final static class DataObjectHolder extends RecyclerView.ViewHolder {
         private JSONObject mResponse;
         private TextView sourceNameText;
         private TextView contextText;
+        private TextView seeMoreText;
         private TextView dateText;
         private TextView likesCountText;
         private TextView commentsCountText;
         private TextView repostsCountText;
         private ImageView likeIcon;
+        private ImageView commentIcon;
         private ImageView repostIcon;
-        private ImageView sourcePhoto;
         private ImageView optionsPhoto;
+        private ImageView sourcePhoto;
         private RelativeLayout likeBlock;
         private RelativeLayout commentBlock;
         private RelativeLayout repostBlock;
         private CardView sourceInfoBlock;
         private CardView optionsBlock;
+        private CardView cardLayout;
         private LinearLayout mainLayout;
-        private NotePhotosRecyclerViewAdapter mAdapter;
-        private RecyclerView mRecyclerView;
+        private LinearLayout socialAcionsLayout;
 
         DataObjectHolder(View itemView) {
             super(itemView);
@@ -69,27 +65,24 @@ public class FeedRecyclerViewAdapter
             final Context context = itemView.getContext();
             sourceNameText = (TextView) itemView.findViewById(R.id.source_name);
             contextText = (TextView) itemView.findViewById(R.id.context);
+            seeMoreText = (TextView) itemView.findViewById(R.id.see_more);
             dateText = (TextView) itemView.findViewById(R.id.note_date);
             likesCountText = (TextView) itemView.findViewById(R.id.likes_count);
             commentsCountText = (TextView) itemView.findViewById(R.id.comments_count);
             repostsCountText = (TextView) itemView.findViewById(R.id.reposts_count);
             sourcePhoto = (ImageView) itemView.findViewById(R.id.source_photo);
-            likeIcon = (ImageView) itemView.findViewById(like);
-            repostIcon = (ImageView) itemView.findViewById(R.id.repost);
-            optionsPhoto = (ImageView) itemView.findViewById(options);
+            likeIcon = (ImageView) itemView.findViewById(R.id.like_icon);
+            commentIcon = (ImageView) itemView.findViewById(R.id.comment_icon);
+            repostIcon = (ImageView) itemView.findViewById(R.id.repost_icon);
+            optionsPhoto = (ImageView) itemView.findViewById(R.id.options);
             likeBlock = (RelativeLayout) itemView.findViewById(R.id.like_block);
             commentBlock = (RelativeLayout) itemView.findViewById(R.id.comment_block);
             repostBlock = (RelativeLayout) itemView.findViewById(R.id.repost_block);
             sourceInfoBlock = (CardView) itemView.findViewById(R.id.source_info);
             optionsBlock = (CardView) itemView.findViewById(R.id.options_block);
+            cardLayout = (CardView) itemView.findViewById(R.id.note);
             mainLayout = (LinearLayout) itemView.findViewById(R.id.main_layout);
-            mRecyclerView = (RecyclerView) itemView.findViewById(R.id.note_photos_recycler_view);
-            mRecyclerView.setHasFixedSize(true);
-            RecyclerView.LayoutManager linearLayoutManager = new LinearLayoutManager
-                    (context, LinearLayoutManager.HORIZONTAL, false);
-            mAdapter = new NotePhotosRecyclerViewAdapter();
-            mRecyclerView.setAdapter(mAdapter);
-            mRecyclerView.setLayoutManager(linearLayoutManager);
+            socialAcionsLayout = (LinearLayout) itemView.findViewById(R.id.social_actions);
 
             likeBlock.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -135,7 +128,7 @@ public class FeedRecyclerViewAdapter
                                 : "");
                         mDataSet.get(getAdapterPosition()).setUserLikes(false);
                         likeIcon.setImageDrawable(context.getDrawable(
-                                R.drawable.ic_favorite_white_18dp));
+                                R.drawable.ic_favorite_white_24dp));
                     }
                     else {
                         request = new VKRequest("likes.add", VKParameters.from(
@@ -172,7 +165,7 @@ public class FeedRecyclerViewAdapter
                         likesCountText.setText(String.valueOf(likes));
                         mDataSet.get(getAdapterPosition()).setUserLikes(true);
                         likeIcon.setImageDrawable(context.getDrawable(
-                                R.drawable.ic_favorite_red_18dp));
+                                R.drawable.ic_favorite_pressed_24dp));
                     }
 
                 }
@@ -235,44 +228,90 @@ public class FeedRecyclerViewAdapter
 
     @Override
     public void onBindViewHolder(DataObjectHolder holder, final int position) {
-        holder.mAdapter.setData(mDataSet.get(position).getAttachmentsPhotos());
-        holder.mAdapter.setRowIndex(position);
-        holder.sourceNameText.setText(mDataSet.get(position).getSourceName());
-        holder.dateText.setText(mDataSet.get(position).getDate());
-        new DownloadImageTask(holder.sourcePhoto).execute(mDataSet.get(position).getPhotoUrl());
+        Note tmpNote = mDataSet.get(position);
+        if (position == 0) {
+            holder.cardLayout.setRadius(0);
+            holder.cardLayout.setCardElevation(12);
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            layoutParams.setMargins(0, 0, 0, 18);
+            holder.cardLayout.setLayoutParams(layoutParams);
 
-        holder.contextText.setVisibility(mDataSet.get(position).getContext().equals("")
-                ?   View.GONE
-                :   View.VISIBLE);
-        holder.contextText.setText(mDataSet.get(position).getContext());
+            holder.contextText.setVisibility(View.GONE);
+            holder.seeMoreText.setVisibility(View.GONE);
+            holder.socialAcionsLayout.setVisibility(View.GONE);
 
-        holder.likeIcon.setImageDrawable(ResourcesCompat.getDrawable(
-                VKSmartFeedApplication.context().getResources(),
-                mDataSet.get(position).getUserLikes()
-                ?   R.drawable.ic_favorite_red_18dp
-                :   R.drawable.ic_favorite_white_18dp,
-                null));
+            holder.optionsPhoto.setImageDrawable(ResourcesCompat.getDrawable(
+                    VKSmartFeedApplication.context().getResources(),
+                    R.drawable.ic_camera_alt_white_24dp,
+                    null));
+            holder.sourceNameText.setText(tmpNote.getSourceName());
+            holder.dateText.setText("Что у Вас нового?");
+            new DownloadImageTask(holder.sourcePhoto).execute(tmpNote.getSourcePhotoUrl());
+        }
+        else {
+            holder.cardLayout.setRadius(9);
+            holder.cardLayout.setCardElevation(9);
 
-        holder.likesCountText.setText(mDataSet.get(position).getLikesCount() != 0
-                ?   String.valueOf(mDataSet.get(position).getLikesCount())
-                :   "");
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            layoutParams.setMargins(12, 12, 12, 12);
+            holder.cardLayout.setLayoutParams(layoutParams);
 
-        holder.commentBlock.setVisibility(mDataSet.get(position).getCanComment()
-                ?   View.VISIBLE
-                :   View.GONE);
-        holder.commentsCountText.setText(mDataSet.get(position).getCommentsCount() != 0
-                ?   String.valueOf(mDataSet.get(position).getCommentsCount())
-                :   "");
+            holder.socialAcionsLayout.setVisibility(View.VISIBLE);
 
-        holder.repostIcon.setImageDrawable(ResourcesCompat.getDrawable(
-                VKSmartFeedApplication.context().getResources(),
-                mDataSet.get(position).getUserReposted()
-                ?   R.drawable.ic_reply_yellow_18dp
-                :   R.drawable.ic_reply_white_18dp,
-                null));
-        holder.repostsCountText.setText(mDataSet.get(position).getRepostsCount() != 0
-                ?   String.valueOf(mDataSet.get(position).getRepostsCount())
-                :   "");
+            holder.sourceNameText.setText(tmpNote.getSourceName());
+            holder.dateText.setText(new PrettyTime(Locale.getDefault()).format(new Date(tmpNote.getDate() *
+                    1000)));
+            new DownloadImageTask(holder.sourcePhoto).execute(tmpNote.getSourcePhotoUrl());
+
+            holder.optionsPhoto.setImageDrawable(ResourcesCompat.getDrawable(
+                    VKSmartFeedApplication.context().getResources(),
+                    R.drawable.ic_more_vert_white_24dp,
+                    null));
+
+            holder.contextText.setVisibility(tmpNote.getContext().equals("")
+                    ? View.GONE
+                    : View.VISIBLE);
+            holder.seeMoreText.setVisibility(tmpNote.getContextPreview().equals("")
+                    ? View.GONE
+                    : View.VISIBLE);
+            holder.contextText.setText(holder.seeMoreText.getVisibility() == View.VISIBLE
+                    ? tmpNote.getContextPreview()
+                    : tmpNote.getContext());
+
+            holder.likeIcon.setImageDrawable(ResourcesCompat.getDrawable(
+                    VKSmartFeedApplication.context().getResources(),
+                    tmpNote.getUserLikes()
+                            ? R.drawable.ic_favorite_pressed_24dp
+                            : R.drawable.ic_favorite_white_24dp,
+                    null));
+
+            holder.likesCountText.setText(tmpNote.getLikesCount() != 0
+                    ? String.valueOf(tmpNote.getLikesCount())
+                    : "");
+
+            holder.commentBlock.setVisibility(tmpNote.getCanComment()
+                    ? View.VISIBLE
+                    : View.GONE);
+            holder.commentIcon.setImageDrawable(ResourcesCompat.getDrawable(
+                    VKSmartFeedApplication.context().getResources(),
+                    R.drawable.ic_question_answer_white_24dp,
+                    null));
+            holder.commentsCountText.setText(tmpNote.getCommentsCount() != 0
+                    ? String.valueOf(tmpNote.getCommentsCount())
+                    : "");
+
+            holder.repostIcon.setImageDrawable(ResourcesCompat.getDrawable(
+                    VKSmartFeedApplication.context().getResources(),
+                    tmpNote.getUserReposted()
+                            ? R.drawable.ic_reply_pressed_24dp
+                            : R.drawable.ic_reply_white_24dp,
+                    null));
+            holder.repostsCountText.setText(tmpNote.getRepostsCount() != 0
+                    ? String.valueOf(tmpNote.getRepostsCount())
+                    : "");
+        }
     }
 
     public void clear() {

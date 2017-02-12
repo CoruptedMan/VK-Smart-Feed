@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.Snackbar;
 import android.support.v13.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
@@ -18,14 +17,15 @@ import android.widget.TextView;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKCallback;
 import com.vk.sdk.VKSdk;
-import com.vk.sdk.api.VKApi;
 import com.vk.sdk.api.VKError;
+import com.vk.sdk.api.VKParameters;
 import com.vk.sdk.api.VKRequest;
 import com.vk.sdk.api.VKResponse;
 
 import org.json.JSONException;
 
 import me.relex.circleindicator.CircleIndicator;
+import ru.ifmo.practice.model.Account;
 
 public class AppStartActivity extends Activity {
 
@@ -33,7 +33,7 @@ public class AppStartActivity extends Activity {
     CoordinatorLayout coordinatorLayout;
     ViewPager mViewPager;
     CircleIndicator mCircleIndicator;
-    public static long userId;
+    public static Account mAccount;
 
     @Override
     protected void onCreate(Bundle pSavedInstanceState) {
@@ -57,17 +57,37 @@ public class AppStartActivity extends Activity {
         mViewPager.setAdapter(lSectionsPagerAdapter);
         mCircleIndicator.setViewPager(mViewPager);
         if (VKAccessToken.currentToken() != null && !VKAccessToken.currentToken().isExpired()) {
-            VKRequest request = VKApi.users().get();
+            VKRequest request = new VKRequest("users.get", VKParameters.from("fields",
+                    "photo_100"));
             request.executeSyncWithListener(new VKRequest.VKRequestListener() {
                 @Override
                 public void onComplete(VKResponse response) {
                     try {
-                        userId = Integer.parseInt(response
+                        long userId = Integer.parseInt(response
                                 .json
                                 .getJSONArray("response")
                                 .getJSONObject(0)
                                 .get("id")
                                 .toString());
+                        String firstName = response
+                                .json
+                                .getJSONArray("response")
+                                .getJSONObject(0)
+                                .get("first_name")
+                                .toString();
+                        String lastName = response
+                                .json
+                                .getJSONArray("response")
+                                .getJSONObject(0)
+                                .get("last_name")
+                                .toString();
+                        String photoUrl = response
+                                .json
+                                .getJSONArray("response")
+                                .getJSONObject(0)
+                                .get("photo_100")
+                                .toString();
+                        mAccount = new Account(userId, firstName, lastName, photoUrl);
                     } catch (JSONException pE) {
                         pE.printStackTrace();
                     }
@@ -95,20 +115,40 @@ public class AppStartActivity extends Activity {
         if (!VKSdk.onActivityResult(requestCode, resultCode, data, new VKCallback<VKAccessToken>() {
             @Override
             public void onResult(VKAccessToken res) {
-                VKRequest request = VKApi.users().get();
+                VKRequest request = new VKRequest("users.get", VKParameters.from("fields",
+                        "photo_100"));
                 request.executeSyncWithListener(new VKRequest.VKRequestListener() {
-                            @Override
-                            public void onComplete(VKResponse response) {
-                                try {
-                                    userId = Integer.parseInt(response
-                                            .json
-                                            .getJSONArray("response")
-                                            .getJSONObject(0)
-                                            .get("id")
-                                            .toString());
-                                } catch (JSONException pE) {
-                                    pE.printStackTrace();
-                                }
+                    @Override
+                    public void onComplete(VKResponse response) {
+                        try {
+                            long userId = Integer.parseInt(response
+                                    .json
+                                    .getJSONArray("response")
+                                    .getJSONObject(0)
+                                    .get("id")
+                                    .toString());
+                            String firstName = response
+                                    .json
+                                    .getJSONArray("response")
+                                    .getJSONObject(0)
+                                    .get("first_name")
+                                    .toString();
+                            String lastName = response
+                                    .json
+                                    .getJSONArray("response")
+                                    .getJSONObject(0)
+                                    .get("last_name")
+                                    .toString();
+                            String photoUrl = response
+                                    .json
+                                    .getJSONArray("response")
+                                    .getJSONObject(0)
+                                    .get("photo_100")
+                                    .toString();
+                            mAccount = new Account(userId, firstName, lastName, photoUrl);
+                        } catch (JSONException pE) {
+                            pE.printStackTrace();
+                        }
                     }
 
                     @Override
@@ -121,13 +161,15 @@ public class AppStartActivity extends Activity {
                         super.onError(error);
                     }
                 });
+
                 startActivity(new Intent(getApplicationContext(), MainActivity.class));
                 overridePendingTransition(R.anim.slide_in_right ,R.anim.slide_out_right);
                 finish();
             }
             @Override
             public void onError(VKError error) {
-                Snackbar.make(coordinatorLayout, "Auth Error!", Snackbar.LENGTH_SHORT).show();
+                //TODO: Better log it.
+                //Snackbar.make(coordinatorLayout, "Auth Error!", Snackbar.LENGTH_SHORT).show();
             }
         })) {
             super.onActivityResult(requestCode, resultCode, data);

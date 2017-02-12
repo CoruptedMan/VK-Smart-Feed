@@ -7,9 +7,10 @@ public class Note {
     private long sourceId;
     private String sourceName;
     private String context;
-    private String date;
-    private String photoUrl;
-    private ArrayList<Photo> attachmentsPhotos;
+    private String contextPreview;
+    private long date;
+    private String sourcePhotoUrl;
+    private ArrayList<String> attachmentsPhotos;
     private int likesCount;
     private boolean userLikes;
     private int commentsCount;
@@ -21,9 +22,10 @@ public class Note {
                 long pSourceId,
                 String pSourceName,
                 String pContext,
-                String pDate,
-                String pPhotoUrl,
-                ArrayList<Photo> pAttachmentsPhotos,
+                String pContextPreview,
+                long pDate,
+                String pSourcePhotoUrl,
+                ArrayList<String> pAttachmentsPhotos,
                 int pLikesCount,
                 boolean pUserLikes,
                 int pCommentsCount,
@@ -34,8 +36,9 @@ public class Note {
         sourceId = pSourceId;
         sourceName = pSourceName;
         context = pContext;
+        contextPreview = pContextPreview;
         date = pDate;
-        photoUrl = pPhotoUrl;
+        sourcePhotoUrl = pSourcePhotoUrl;
         attachmentsPhotos = pAttachmentsPhotos;
         likesCount = pLikesCount;
         userLikes = pUserLikes;
@@ -69,12 +72,12 @@ public class Note {
         context = pContext;
     }
 
-    public String getDate() {
+    public long getDate() {
         return date;
     }
 
-    public String getPhotoUrl() {
-        return photoUrl;
+    public String getSourcePhotoUrl() {
+        return sourcePhotoUrl;
     }
 
     public int getLikesCount() {
@@ -108,12 +111,9 @@ public class Note {
     public boolean getUserReposted() {
         return userReposted;
     }
-    public ArrayList<Photo> getAttachmentsPhotos() {
-        return attachmentsPhotos;
-    }
 
-    public void setAttachmentsPhotos(ArrayList<Photo> pAttachmentsPhotos) {
-        attachmentsPhotos = pAttachmentsPhotos;
+    public String getContextPreview() {
+        return contextPreview;
     }
 
     @Override
@@ -125,6 +125,4 @@ public class Note {
                 + "Photos: " + attachmentsPhotos.size() + "\n"
                 + date;
     }
-
-
 }

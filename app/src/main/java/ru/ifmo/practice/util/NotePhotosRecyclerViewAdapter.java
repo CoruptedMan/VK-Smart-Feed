@@ -9,18 +9,17 @@ import android.widget.ImageView;
 import java.util.ArrayList;
 
 import ru.ifmo.practice.R;
-import ru.ifmo.practice.model.Photo;
 
 class NotePhotosRecyclerViewAdapter
         extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private static ArrayList<Photo> mDataSet;
+    private static ArrayList<String> mDataSet;
     private int mRowIndex = -1;
 
     NotePhotosRecyclerViewAdapter() {
     }
 
-    public void setData(ArrayList<Photo> data) {
+    public void setData(ArrayList<String> data) {
         if (mDataSet != data) {
             mDataSet = data;
             notifyDataSetChanged();
@@ -50,7 +49,7 @@ class NotePhotosRecyclerViewAdapter
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder pHolder, int position) {
         DataObjectHolder holder = (DataObjectHolder) pHolder;
-        new DownloadImageTask(holder.contentPhoto).execute(mDataSet.get(position).getThumbnailUrl());
+        new DownloadImageTask(holder.contentPhoto).execute(mDataSet.get(position));
     }
 
     @Override

@@ -14,7 +14,7 @@ public class VKSmartFeedApplication extends Application {
         @Override
         public void onVKAccessTokenChanged(VKAccessToken oldToken, VKAccessToken newToken) {
             if (newToken == null) {
-                // VKAccessToken is invalid
+
             }
         }
     };
