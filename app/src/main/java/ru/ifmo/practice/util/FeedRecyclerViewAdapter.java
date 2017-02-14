@@ -1,6 +1,8 @@
 package ru.ifmo.practice.util;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -26,22 +28,27 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
+import ru.ifmo.practice.NoteViewActivity;
 import ru.ifmo.practice.R;
 import ru.ifmo.practice.VKSmartFeedApplication;
 import ru.ifmo.practice.model.Note;
+
+import static com.vk.sdk.VKUIHelper.getApplicationContext;
 
 public class FeedRecyclerViewAdapter
         extends RecyclerView.Adapter<FeedRecyclerViewAdapter.DataObjectHolder> {
 
     private static ArrayList<Note> mDataSet;
+    private static Activity mActivity;
     private final Context mContext;
 
     final static class DataObjectHolder extends RecyclerView.ViewHolder {
         private JSONObject mResponse;
         private TextView sourceNameText;
+        private TextView dateText;
+        private TextView addNewNoteText;
         private TextView contextText;
         private TextView seeMoreText;
-        private TextView dateText;
         private TextView likesCountText;
         private TextView commentsCountText;
         private TextView repostsCountText;
@@ -53,10 +60,9 @@ public class FeedRecyclerViewAdapter
         private RelativeLayout likeBlock;
         private RelativeLayout commentBlock;
         private RelativeLayout repostBlock;
+        private RelativeLayout cardLayout;
         private CardView sourceInfoBlock;
         private CardView optionsBlock;
-        private CardView cardLayout;
-        private LinearLayout mainLayout;
         private LinearLayout socialAcionsLayout;
 
         DataObjectHolder(View itemView) {
@@ -64,9 +70,10 @@ public class FeedRecyclerViewAdapter
 
             final Context context = itemView.getContext();
             sourceNameText = (TextView) itemView.findViewById(R.id.source_name);
+            dateText = (TextView) itemView.findViewById(R.id.note_date);
+            addNewNoteText = (TextView) itemView.findViewById(R.id.add_note);
             contextText = (TextView) itemView.findViewById(R.id.context);
             seeMoreText = (TextView) itemView.findViewById(R.id.see_more);
-            dateText = (TextView) itemView.findViewById(R.id.note_date);
             likesCountText = (TextView) itemView.findViewById(R.id.likes_count);
             commentsCountText = (TextView) itemView.findViewById(R.id.comments_count);
             repostsCountText = (TextView) itemView.findViewById(R.id.reposts_count);
@@ -78,10 +85,9 @@ public class FeedRecyclerViewAdapter
             likeBlock = (RelativeLayout) itemView.findViewById(R.id.like_block);
             commentBlock = (RelativeLayout) itemView.findViewById(R.id.comment_block);
             repostBlock = (RelativeLayout) itemView.findViewById(R.id.repost_block);
+            cardLayout = (RelativeLayout) itemView.findViewById(R.id.note_relative_layout);
             sourceInfoBlock = (CardView) itemView.findViewById(R.id.source_info);
             optionsBlock = (CardView) itemView.findViewById(R.id.options_block);
-            cardLayout = (CardView) itemView.findViewById(R.id.note);
-            mainLayout = (LinearLayout) itemView.findViewById(R.id.main_layout);
             socialAcionsLayout = (LinearLayout) itemView.findViewById(R.id.social_actions);
 
             likeBlock.setOnClickListener(new View.OnClickListener() {
@@ -89,7 +95,6 @@ public class FeedRecyclerViewAdapter
                 public void onClick(View v) {
                     VKRequest request;
                     int likes = mDataSet.get(getAdapterPosition()).getLikesCount();
-                    //TODO: complete request for correct liking all types of content.
                     if (mDataSet.get(getAdapterPosition()).getUserLikes()) {
                         request = new VKRequest("likes.delete", VKParameters.from(
                                 "type", "post",
@@ -167,16 +172,22 @@ public class FeedRecyclerViewAdapter
                         likeIcon.setImageDrawable(context.getDrawable(
                                 R.drawable.ic_favorite_pressed_24dp));
                     }
-
                 }
             });
-
-            commentBlock.setOnClickListener(new View.OnClickListener() {
+            View.OnClickListener openNoteByClick = new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // ...
+                    mActivity.startActivity(new Intent(getApplicationContext(),
+                            NoteViewActivity.class));
+                    NoteViewActivity.mNote = mDataSet.get(getAdapterPosition());
+                    mActivity.overridePendingTransition(R.anim.slide_in_right ,R.anim
+                            .slide_out_right);
+                    mActivity.finish();
                 }
-            });
+            };
+            cardLayout.setOnClickListener(openNoteByClick);
+
+            commentBlock.setOnClickListener(openNoteByClick);
 
             repostBlock.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -198,18 +209,12 @@ public class FeedRecyclerViewAdapter
                     // ...
                 }
             });
-
-            mainLayout.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    System.out.println(mDataSet.get(getAdapterPosition()).toString());
-                }
-            });
         }
     }
 
-    public FeedRecyclerViewAdapter(Context context, ArrayList<Note> dataSet) {
+    public FeedRecyclerViewAdapter(Context context, Activity activity, ArrayList<Note> dataSet) {
         mContext = context;
+        mActivity = activity;
         if (dataSet != null) {
             mDataSet = new ArrayList<>(dataSet);
         }
@@ -230,35 +235,24 @@ public class FeedRecyclerViewAdapter
     public void onBindViewHolder(DataObjectHolder holder, final int position) {
         Note tmpNote = mDataSet.get(position);
         if (position == 0) {
-            holder.cardLayout.setRadius(0);
-            holder.cardLayout.setCardElevation(12);
-            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-            layoutParams.setMargins(0, 0, 0, 18);
-            holder.cardLayout.setLayoutParams(layoutParams);
-
             holder.contextText.setVisibility(View.GONE);
             holder.seeMoreText.setVisibility(View.GONE);
             holder.socialAcionsLayout.setVisibility(View.GONE);
+            holder.sourceNameText.setVisibility(View.GONE);
+            holder.dateText.setVisibility(View.GONE);
+            holder.addNewNoteText.setVisibility(View.VISIBLE);
 
             holder.optionsPhoto.setImageDrawable(ResourcesCompat.getDrawable(
                     VKSmartFeedApplication.context().getResources(),
                     R.drawable.ic_camera_alt_white_24dp,
                     null));
-            holder.sourceNameText.setText(tmpNote.getSourceName());
-            holder.dateText.setText("Что у Вас нового?");
             new DownloadImageTask(holder.sourcePhoto).execute(tmpNote.getSourcePhotoUrl());
         }
         else {
-            holder.cardLayout.setRadius(9);
-            holder.cardLayout.setCardElevation(9);
-
-            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-            layoutParams.setMargins(12, 12, 12, 12);
-            holder.cardLayout.setLayoutParams(layoutParams);
-
             holder.socialAcionsLayout.setVisibility(View.VISIBLE);
+            holder.sourceNameText.setVisibility(View.VISIBLE);
+            holder.dateText.setVisibility(View.VISIBLE);
+            holder.addNewNoteText.setVisibility(View.GONE);
 
             holder.sourceNameText.setText(tmpNote.getSourceName());
             holder.dateText.setText(new PrettyTime(Locale.getDefault()).format(new Date(tmpNote.getDate() *

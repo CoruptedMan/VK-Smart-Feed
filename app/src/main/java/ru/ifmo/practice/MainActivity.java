@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.vk.sdk.VKSdk;
@@ -32,12 +33,15 @@ public class MainActivity extends AppCompatActivity {
     private JSONObject mResponse;
     private FeedRecyclerViewAdapter mAdapter;
     private LinearLayoutManager mLinearLayoutManager;
+    private RecyclerView mRecyclerView;
     private SwipeRefreshLayout swipeContainer;
     private int visibleThreshold = MIN_NOTES_COUNT;
     private int firstVisibleItem;
     private int visibleItemCount;
     private int totalItemCount;
     private int previousTotal = 0;
+    public static int index = -1;
+    public static int top = -1;
     private long mOffset = 0;
     private boolean mLoading = true;
 
@@ -47,8 +51,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         Toolbar tb = (Toolbar) findViewById(R.id.toolbar);
+        ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress_spinner);
+        progressBar.setVisibility(View.VISIBLE);
         setSupportActionBar(tb);
-
         // Get the ActionBar here to configure the way it behaves.
         final ActionBar ab = getSupportActionBar();
         //ab.setHomeAsUpIndicator(R.drawable.ic_menu); // set a custom icon for the default home button
@@ -58,12 +63,13 @@ public class MainActivity extends AppCompatActivity {
             ab.setDisplayShowCustomEnabled(true); // enable overriding the default toolbar layout
             ab.setDisplayShowTitleEnabled(false); // disable the default title element here (for centered title)
         }
-        final RecyclerView rv = (RecyclerView) findViewById(R.id.feed_recycler_view);
+
+        mRecyclerView = (RecyclerView) findViewById(R.id.feed_recycler_view);
         mLinearLayoutManager = new LinearLayoutManager(this);
-        rv.setHasFixedSize(true);
-        rv.setLayoutManager(mLinearLayoutManager);
-        mAdapter = new FeedRecyclerViewAdapter(getApplicationContext(), addData(mOffset));
-        rv.setAdapter(mAdapter);
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setLayoutManager(mLinearLayoutManager);
+        mAdapter = new FeedRecyclerViewAdapter(getApplicationContext(), this, addData(mOffset));
+        mRecyclerView.setAdapter(mAdapter);
 
         tb.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onRefresh() {
                 mAdapter.clear();
-                rv.post(new Runnable() {
+                mRecyclerView.post(new Runnable() {
                     public void run() {
                         mAdapter.notifyDataSetChanged();
                     }
@@ -84,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
                 mOffset = 0;
                 previousTotal = 0;
                 mAdapter.addAll(addData(mOffset));
-                rv.post(new Runnable() {
+                mRecyclerView.post(new Runnable() {
                     public void run() {
                         mAdapter.notifyDataSetChanged();
                         swipeContainer.setRefreshing(false);
@@ -104,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        rv.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
@@ -113,25 +119,14 @@ public class MainActivity extends AppCompatActivity {
                 totalItemCount = mLinearLayoutManager.getItemCount();
                 firstVisibleItem = mLinearLayoutManager.findFirstVisibleItemPosition();
 
-                Log.v("onScrolled", String.valueOf("Loading before: " + mLoading));
-                Log.v("onScrolled", String.valueOf("totalItemCount: " + totalItemCount));
-                Log.v("onScrolled", String.valueOf("previousTotal: " + previousTotal));
                 if (mLoading) {
                     if (totalItemCount > previousTotal) {
                         mLoading = false;
                         previousTotal = totalItemCount;
                     }
                 }
-                Log.v("onScrolled", String.valueOf("Loading after: " + mLoading));
-
-                Log.v("onScrolled", String.valueOf("totalItemCount: " + totalItemCount));
-                Log.v("onScrolled", String.valueOf("previousTotal: " + previousTotal));
-                Log.v("onScrolled", String.valueOf("visibleItemCount: " + visibleItemCount));
-                Log.v("onScrolled", String.valueOf("firstVisibleItem: " + firstVisibleItem));
-                Log.v("onScrolled", String.valueOf("visibleThreshold: " + visibleThreshold));
                 if (!mLoading && (totalItemCount - visibleItemCount)
                         <= (firstVisibleItem + visibleThreshold)) {
-                    Log.v("onScrolled", "End!");
                     ArrayList<Note> tmpList = addData(mOffset);
                     mAdapter.addAll(tmpList);
                     recyclerView.post(new Runnable() {
@@ -141,7 +136,6 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });
                 }
-                Log.e("onScrolled", String.valueOf("Loading end: " + mLoading));
             }
         });
     }
@@ -352,4 +346,29 @@ public class MainActivity extends AppCompatActivity {
         }
         return results;
     }
+
+    private void showLocationDialog() {
+        
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        index = mLinearLayoutManager.findFirstVisibleItemPosition();
+        View v = mRecyclerView.getChildAt(0);
+        top = (v == null)
+                ? 0
+                : (v.getTop() - mRecyclerView.getPaddingTop());
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if(index != -1) {
+            mLinearLayoutManager.scrollToPositionWithOffset(index, top);
+        }
+    }
+
 }

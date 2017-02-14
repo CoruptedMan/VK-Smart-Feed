@@ -11,4 +11,16 @@
     <string name="page_title3">Легко</string>
     <string name="page_title4">Свободно</string>
     <string name="feed">Новости</string>
+    <string name="add_note">Добавить запись</string>
+    <string name="see_more">Показать полностью…</string>
+    <string name="comments_counter">количество комментариев</string>
+    <string name="likes_counter">количество отметок \"Мне нравится\"</string>
+    <string name="options_for_this_note">доступные для этой записи опции</string>
+    <string name="repost_counter">количество перепостов</string>
+    <string name="wall_note">Запись на стене</string>
+    <string name="load_more_comments">Показать ещё 100 комментариев</string>
+    <string name="your_message">Ваше сообщение</string>
+    <string name="send_message">отправить сообщение</string>
+    <string name="log_out">Выйти</string>
+    <string name="attach_media_to_message">Прикрепить медиа-файл</string>
 </resources>

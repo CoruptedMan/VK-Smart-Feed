@@ -1,136 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/comment_main_layout"
+    android:id="@+id/comment_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:foreground="@drawable/selectable_effect"
+    android:background="@drawable/bg_top_border">
     <android.support.v7.widget.CardView
-        android:id="@+id/comment_view"
-        android:layout_width="match_parent"
+        android:id="@+id/comment_author_info"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="0dp"
-        card_view:cardCornerRadius="0dp"
-        card_view:cardElevation="2dp"
-        style="@style/MyCardViewStyle">
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="56dp"
+        android:foreground="@drawable/selectable_effect"
+        card_view:cardElevation="3dp"
+        card_view:cardCornerRadius="25dp"
+        card_view:cardBackgroundColor="@color/colorLightPrimary"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        card_view:contentPadding="3dp">
         <RelativeLayout
-            android:id="@+id/comment_relative_layout"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent" >
-            <android.support.v7.widget.CardView
-                android:id="@+id/comment_author_info"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="56dp"
-                android:foreground="@drawable/selectable_effect"
-                card_view:cardElevation="0dp"
-                card_view:cardCornerRadius="25dp"
-                card_view:cardBackgroundColor="@color/colorLightPrimary"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp">
-                <RelativeLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingStart="0dp"
-                    android:paddingEnd="10dp">
-                    <de.hdodenhof.circleimageview.CircleImageView
-                        android:id="@+id/comment_author_photo"
-                        android:layout_width="49dp"
-                        android:layout_height="49dp"
-                        android:layout_alignParentTop="true"
-                        android:layout_alignParentStart="true"/>
-                    <TextView
-                        android:id="@+id/comment_author_name"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="20dp"
-                        android:layout_marginEnd="10dp"
-                        android:layout_alignParentTop="true"
-                        android:layout_toEndOf="@+id/comment_author_photo"
-                        android:maxLines="1"
-                        android:ellipsize="end"
-                        android:textSize="16sp"
-                        android:textColor="@color/colorPrimary"/>
-                    <TextView
-                        android:id="@+id/comment_date"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="10dp"
-                        android:layout_alignBottom="@+id/comment_author_photo"
-                        android:layout_alignStart="@+id/comment_author_name"
-                        android:textSize="14sp"
-                        android:textColor="@color/colorTextSecondary"/>
-                </RelativeLayout>
-            </android.support.v7.widget.CardView>
-
-            <android.support.v7.widget.CardView
-                android:id="@+id/comment_like_block"
-                android:layout_height="wrap_content"
-                android:layout_alignTop="@+id/comment_author_info"
-                android:layout_alignBottom="@+id/comment_author_info"
-                android:layout_alignParentEnd="true"
-                android:layout_marginEnd="10dp"
-                android:foreground="@drawable/selectable_effect"
-                card_view:cardElevation="0dp"
-                card_view:cardCornerRadius="25dp"
-                card_view:cardBackgroundColor="@color/colorLightPrimary"
-                android:layout_width="50dp">
-                <RelativeLayout
-                    android:id="@+id/comment_like_block_layout"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:paddingBottom="10dp"
-                    android:paddingTop="10dp"
-                    android:foreground="?android:attr/selectableItemBackground">
-                    <ImageView
-                        android:id="@+id/comment_like_icon"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignBottom="@+id/comment_likes_count"
-                        android:layout_alignTop="@+id/comment_likes_count"
-                        android:contentDescription="likes counter"
-                        card_view:srcCompat="@drawable/ic_favorite_gray_24dp"/>
-                    <TextView
-                        android:id="@+id/comment_likes_count"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/colorText"
-                        android:textAlignment="viewStart"
-                        android:layout_toEndOf="@+id/comment_like_icon"
-                        android:layout_marginStart="10dp"
-                        android:textSize="16sp"/>
-                </RelativeLayout>
-
-            </android.support.v7.widget.CardView>
-
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="0dp"
+            android:paddingEnd="10dp">
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/comment_author_photo"
+                android:layout_width="49dp"
+                android:layout_height="49dp"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentStart="true"/>
             <TextView
-                android:id="@+id/comment_context"
+                android:id="@+id/comment_author_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/comment_author_info"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="10dp"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
-                android:textColor="@color/colorTextPrimary"/>
-
+                android:layout_alignParentTop="true"
+                android:layout_toEndOf="@+id/comment_author_photo"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:textSize="16sp"
+                android:textColor="@color/colorPrimary"/>
             <TextView
-                android:id="@+id/comment_see_more"
+                android:id="@+id/comment_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/comment_context"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="10dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:text="Показать полностью..."
-                android:textColor="@color/colorPrimary"
-                android:textStyle="bold"/>
-
+                android:layout_alignBottom="@+id/comment_author_photo"
+                android:layout_alignStart="@+id/comment_author_name"
+                android:textSize="14sp"
+                android:textColor="@color/colorTextSecondary"/>
         </RelativeLayout>
     </android.support.v7.widget.CardView>
-</LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/comment_like_block"
+        android:layout_alignTop="@+id/comment_author_info"
+        android:layout_alignBottom="@+id/comment_author_info"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:foreground="@drawable/selectable_effect"
+        android:padding="10dp">
+        <ImageView
+            android:id="@+id/comment_like_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/comment_likes_count"
+            android:layout_alignTop="@+id/comment_likes_count"
+            android:contentDescription="likes counter"
+            card_view:srcCompat="@drawable/ic_favorite_gray_24dp"/>
+        <TextView
+            android:id="@+id/comment_likes_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorTextSecondary"
+            android:textAlignment="viewStart"
+            android:layout_toEndOf="@+id/comment_like_icon"
+            android:layout_marginStart="10dp"
+            android:textSize="16sp"/>
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/comment_context"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/comment_author_info"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginStart="79dp"
+        android:layout_marginEnd="10dp"
+        android:textColor="@color/colorTextPrimary"/>
+</RelativeLayout>

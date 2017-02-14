@@ -9,14 +9,6 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="MyCardViewStyle" parent="CardView">
-        <item name="cardBackgroundColor">@color/colorLightPrimary</item>
-        <item name="android:foreground">@drawable/selectable_effect</item>
-        <item name="android:background">@android:color/white</item>
-        <item name="android:clickable">true</item>
-        <item name="android:gravity">center</item>
-    </style>
-
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>

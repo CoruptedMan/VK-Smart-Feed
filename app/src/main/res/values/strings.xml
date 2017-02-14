@@ -18,4 +18,17 @@
 
     <!-- Strings related to MainActivity -->
     <string name="feed">Feed</string>
+    <string name="add_note">Write new note</string>
+    <string name="see_more">See more…</string>
+    <string name="likes_counter">likes counter</string>
+    <string name="comments_counter">comments counter</string>
+    <string name="repost_counter">repost counter</string>
+    <string name="options_for_this_note">options for this note</string>
+    <string name="attach_media_to_message">attach media to message</string>
+    <string name="add_emoji" translatable="false">Emoji</string>
+    <string name="send_message">send message</string>
+    <string name="log_out">Log Out</string>
+    <string name="wall_note">Wall Note</string>
+    <string name="your_message">Your message</string>
+    <string name="load_more_comments">Load {0} more comments</string>
 </resources>

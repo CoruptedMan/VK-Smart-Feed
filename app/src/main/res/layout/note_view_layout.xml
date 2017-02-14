@@ -2,231 +2,291 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/note_view_main_layout"
+    xmlns:app="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
-    <android.support.v7.widget.CardView
-        android:id="@+id/note_view"
+    android:layout_height="match_parent">
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/note_view_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        card_view:cardCornerRadius="0dp"
-        android:layout_margin="0dp"
-        style="@style/MyCardViewStyle">
-        <RelativeLayout
-            android:id="@+id/note_view_relative_layout"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent" >
-            <android.support.v7.widget.CardView
-                android:id="@+id/note_view_source_info"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="56dp"
-                android:foreground="@drawable/selectable_effect"
-                card_view:cardElevation="0dp"
-                card_view:cardCornerRadius="25dp"
-                card_view:cardBackgroundColor="@color/colorLightPrimary"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp">
-                <RelativeLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingStart="0dp"
-                    android:paddingEnd="10dp">
-                    <de.hdodenhof.circleimageview.CircleImageView
-                        android:id="@+id/note_view_source_photo"
-                        android:layout_width="49dp"
-                        android:layout_height="49dp"
-                        android:layout_alignParentTop="true"
-                        android:layout_alignParentStart="true"/>
-                    <TextView
-                        android:id="@+id/note_view_source_name"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="20dp"
-                        android:layout_marginEnd="10dp"
-                        android:layout_alignParentTop="true"
-                        android:layout_toEndOf="@+id/note_view_source_photo"
-                        android:maxLines="1"
-                        android:ellipsize="end"
-                        android:textSize="16sp"
-                        android:textColor="@color/colorPrimary"/>
-                    <TextView
-                        android:id="@+id/note_view_date"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="10dp"
-                        android:layout_alignBottom="@+id/note_view_source_photo"
-                        android:layout_alignStart="@+id/note_view_source_name"
-                        android:textSize="14sp"
-                        android:textColor="@color/colorTextSecondary"/>
-                </RelativeLayout>
-            </android.support.v7.widget.CardView>
-
-            <TextView
-                android:id="@+id/note_view_context"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/note_view_source_info"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="10dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:textColor="@color/colorTextPrimary"/>
-
-            <LinearLayout
-                android:id="@+id/note_view_social_actions"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/note_view_context"
-                android:layout_marginTop="10dp"
-                android:orientation="horizontal"
-                android:background="@color/colorPrimary"
-                android:baselineAligned="false">
-
-                <RelativeLayout
-                    android:id="@+id/note_view_like_block"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:paddingBottom="10dp"
-                    android:paddingTop="10dp"
-                    android:foreground="?android:attr/selectableItemBackground">
-                    <ImageView
-                        android:id="@+id/note_view_like_icon"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignBottom="@+id/note_view_likes_count"
-                        android:layout_alignTop="@+id/note_view_likes_count"
-                        android:contentDescription="likes counter"/>
-                    <TextView
-                        android:id="@+id/note_view_likes_count"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/colorText"
-                        android:textAlignment="viewStart"
-                        android:layout_toEndOf="@+id/note_view_like_icon"
-                        android:layout_marginStart="10dp"
-                        android:textSize="16sp"/>
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:id="@+id/note_view_comment_block"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:paddingBottom="10dp"
-                    android:paddingTop="10dp"
-                    android:foreground="?android:attr/selectableItemBackground">
-                    <ImageView
-                        android:id="@+id/note_view_comment_icon"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignBottom="@+id/note_view_comments_count"
-                        android:layout_alignTop="@+id/note_view_comments_count"
-                        android:contentDescription="repost counter"/>
-                    <TextView
-                        android:id="@+id/note_view_comments_count"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/colorText"
-                        android:textAlignment="viewStart"
-                        android:layout_toEndOf="@+id/note_view_comment_icon"
-                        android:layout_marginStart="10dp"
-                        android:textSize="16sp"/>
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:id="@+id/note_view_repost_block"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:paddingBottom="10dp"
-                    android:paddingTop="10dp"
-                    android:foreground="?android:attr/selectableItemBackground">
-                    <ImageView
-                        android:id="@+id/note_view_repost_icon"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignBottom="@+id/note_view_reposts_count"
-                        android:layout_alignTop="@+id/note_view_reposts_count"
-                        android:contentDescription="repost counter"/>
-                    <TextView
-                        android:id="@+id/note_view_reposts_count"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/colorText"
-                        android:textAlignment="viewStart"
-                        android:layout_toEndOf="@+id/note_view_repost_icon"
-                        android:layout_marginStart="10dp"
-                        android:textSize="16sp"/>
-                </RelativeLayout>
-            </LinearLayout>
-        </RelativeLayout>
-    </android.support.v7.widget.CardView>
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/note_view_comments"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:elevation="8dp"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" >
+        <TextView
+            android:id="@+id/page_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/wall_note"
+            android:textStyle="normal|bold"
+            android:textSize="18sp"
+            android:fontFamily="sans-serif"
+            android:textColor="@color/colorText" />
+    </android.support.v7.widget.Toolbar>
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="40dp"
-        android:layout_below="@+id/note_view"/>
-
-    <android.support.v7.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_alignParentBottom="true"
-        card_view:cardBackgroundColor="@color/cardview_light_background"
-        card_view:contentPadding="0dp" >
-
-        <LinearLayout
-            android:orientation="horizontal"
+        android:fillViewport="false"
+        android:layout_above="@+id/note_leave_comment_card"
+        android:layout_below="@+id/note_view_toolbar">
+        <RelativeLayout
+            android:id="@+id/note_view_main_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
 
+            <RelativeLayout
+                android:id="@+id/note_view_relative_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentStart="true">
+                <android.support.v7.widget.CardView
+                    android:id="@+id/note_view_source_info"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="56dp"
+                    android:foreground="@drawable/selectable_effect"
+                    card_view:cardElevation="0dp"
+                    card_view:cardCornerRadius="25dp"
+                    card_view:cardBackgroundColor="@color/colorLightPrimary"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp">
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingStart="0dp"
+                        android:paddingEnd="10dp">
+                        <de.hdodenhof.circleimageview.CircleImageView
+                            android:id="@+id/note_view_source_photo"
+                            android:layout_width="49dp"
+                            android:layout_height="49dp"
+                            android:layout_alignParentTop="true"
+                            android:layout_alignParentStart="true"/>
+                        <TextView
+                            android:id="@+id/note_view_source_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="20dp"
+                            android:layout_marginEnd="10dp"
+                            android:layout_alignParentTop="true"
+                            android:layout_toEndOf="@+id/note_view_source_photo"
+                            android:maxLines="1"
+                            android:ellipsize="end"
+                            android:textSize="16sp"
+                            android:textColor="@color/colorPrimary"
+                            android:textStyle="normal|bold"/>
+                        <TextView
+                            android:id="@+id/note_view_date"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="10dp"
+                            android:layout_alignBottom="@+id/note_view_source_photo"
+                            android:layout_alignStart="@+id/note_view_source_name"
+                            android:textSize="14sp"
+                            android:textColor="@color/colorTextSecondary"/>
+                    </RelativeLayout>
+                </android.support.v7.widget.CardView>
+
+                <TextView
+                    android:id="@+id/note_view_context"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/note_view_source_info"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="10dp"
+                    android:textColor="@color/colorTextPrimary"
+                    android:textIsSelectable="true"/>
+
+                <LinearLayout
+                    android:id="@+id/note_view_social_actions"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/note_view_context"
+                    android:layout_marginTop="10dp"
+                    android:orientation="horizontal"
+                    android:background="@color/colorPrimary"
+                    android:baselineAligned="false">
+
+                    <RelativeLayout
+                        android:id="@+id/note_view_like_block"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:paddingBottom="10dp"
+                        android:paddingTop="10dp"
+                        android:foreground="?android:attr/selectableItemBackground">
+                        <ImageView
+                            android:id="@+id/note_view_like_icon"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignBottom="@+id/note_view_likes_count"
+                            android:layout_alignTop="@+id/note_view_likes_count"
+                            android:contentDescription="@string/likes_counter"/>
+                        <TextView
+                            android:id="@+id/note_view_likes_count"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/colorText"
+                            android:textAlignment="viewStart"
+                            android:layout_toEndOf="@+id/note_view_like_icon"
+                            android:layout_marginStart="10dp"
+                            android:textSize="16sp"/>
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/note_view_comment_block"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:paddingBottom="10dp"
+                        android:paddingTop="10dp"
+                        android:foreground="?android:attr/selectableItemBackground">
+                        <ImageView
+                            android:id="@+id/note_view_comment_icon"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignBottom="@+id/note_view_comments_count"
+                            android:layout_alignTop="@+id/note_view_comments_count"
+                            android:contentDescription="@string/comments_counter"/>
+                        <TextView
+                            android:id="@+id/note_view_comments_count"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/colorText"
+                            android:textAlignment="viewStart"
+                            android:layout_toEndOf="@+id/note_view_comment_icon"
+                            android:layout_marginStart="10dp"
+                            android:textSize="16sp"/>
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/note_view_repost_block"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:paddingBottom="10dp"
+                        android:paddingTop="10dp"
+                        android:foreground="?android:attr/selectableItemBackground">
+                        <ImageView
+                            android:id="@+id/note_view_repost_icon"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignBottom="@+id/note_view_reposts_count"
+                            android:layout_alignTop="@+id/note_view_reposts_count"
+                            android:contentDescription="@string/repost_counter"/>
+                        <TextView
+                            android:id="@+id/note_view_reposts_count"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/colorText"
+                            android:textAlignment="viewStart"
+                            android:layout_toEndOf="@+id/note_view_repost_icon"
+                            android:layout_marginStart="10dp"
+                            android:textSize="16sp"/>
+                    </RelativeLayout>
+                </LinearLayout>
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/note_view_load_more_comments"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/note_view_relative_layout"
+                android:paddingBottom="15dp"
+                android:paddingTop="15dp"
+                android:foreground="@drawable/selectable_effect"
+                android:visibility="gone">
+                <TextView
+                    android:text="@string/load_more_comments"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:gravity="center"/>
+            </LinearLayout>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/note_view_comments"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/note_view_load_more_comments"/>
+
+        </RelativeLayout>
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/note_leave_comment_card"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_top_border"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:descendantFocusability="beforeDescendants"
+        android:focusableInTouchMode="true">
+
+        <RelativeLayout
+            android:id="@+id/note_view_attachments_icon"
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:foreground="@drawable/selectable_effect">
             <ImageView
-                android:id="@+id/note_view_attachments_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                card_view:srcCompat="@drawable/ic_attach_file_white_24dp"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:contentDescription=""/>
-
-            <EditText
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:inputType="textMultiLine"
-                android:ems="10"
-                android:id="@+id/note_view_your_message_text"
-                android:layout_weight="1"
-                android:hint="Ваше сообщение"
-                android:textSize="16sp"
-                android:gravity="bottom|start"/>
-
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
+                android:contentDescription="@string/attach_media_to_message"
+                card_view:srcCompat="@drawable/ic_attach_file_white_24dp"/>
+        </RelativeLayout>
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="textMultiLine"
+            android:ems="10"
+            android:id="@+id/note_view_your_message_text"
+            android:layout_weight="1"
+            android:hint="@string/your_message"
+            android:textSize="16sp"
+            android:gravity="bottom|start" />
+        <RelativeLayout
+            android:id="@+id/note_view_emoji_icon"
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:foreground="@drawable/selectable_effect">
             <ImageView
-                android:id="@+id/note_view_emoji_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:contentDescription="@string/add_emoji"
                 card_view:srcCompat="@drawable/ic_tag_faces_white_24dp"
-                android:layout_weight="1"
-                android:layout_gravity="center"
-                android:contentDescription=""/>
-
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"/>
+        </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/note_view_send_icon"
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:foreground="@drawable/selectable_effect">
             <ImageView
-                android:id="@+id/note_view_send_icon"
-                card_view:srcCompat="@drawable/ic_send_blue_24dp"
-                android:layout_weight="1"
-                android:layout_gravity="center"
-                android:layout_height="24dp"
-                android:layout_width="24dp"
-                android:contentDescription=""/>
-        </LinearLayout>
-
-    </android.support.v7.widget.CardView>
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
+                android:contentDescription="@string/send_message"
+                card_view:srcCompat="@drawable/ic_send_blue_24dp"/>
+        </RelativeLayout>
+    </LinearLayout>
 
 </RelativeLayout>

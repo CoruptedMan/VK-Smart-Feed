@@ -28,8 +28,9 @@
         <activity
             android:name=".MainActivity"
             android:theme="@style/AppTheme.NoActionBarWithStatusBar"/>
-        <activity android:name=".NoteViewActivity">
-        </activity>
+        <activity
+            android:name=".NoteViewActivity"
+            android:theme="@style/AppTheme.NoActionBarWithStatusBar" />
     </application>
 
 </manifest>
