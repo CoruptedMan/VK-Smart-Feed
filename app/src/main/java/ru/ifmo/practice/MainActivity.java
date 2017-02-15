@@ -10,7 +10,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.vk.sdk.VKSdk;
@@ -38,11 +37,11 @@ public class MainActivity extends AppCompatActivity {
     private int visibleThreshold = MIN_NOTES_COUNT;
     private int firstVisibleItem;
     private int visibleItemCount;
-    private int totalItemCount;
+    private int totalItemCount = 0;
     private int previousTotal = 0;
     public static int index = -1;
     public static int top = -1;
-    private long mOffset = 0;
+    private String mStartFrom = "";
     private boolean mLoading = true;
 
     @Override
@@ -51,8 +50,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         Toolbar tb = (Toolbar) findViewById(R.id.toolbar);
-        ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress_spinner);
-        progressBar.setVisibility(View.VISIBLE);
         setSupportActionBar(tb);
         // Get the ActionBar here to configure the way it behaves.
         final ActionBar ab = getSupportActionBar();
@@ -68,7 +65,9 @@ public class MainActivity extends AppCompatActivity {
         mLinearLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(mLinearLayoutManager);
-        mAdapter = new FeedRecyclerViewAdapter(getApplicationContext(), this, addData(mOffset));
+        mAdapter = new FeedRecyclerViewAdapter(getApplicationContext(),
+                this,
+                addData());
         mRecyclerView.setAdapter(mAdapter);
 
         tb.setOnClickListener(new View.OnClickListener() {
@@ -87,9 +86,9 @@ public class MainActivity extends AppCompatActivity {
                         mAdapter.notifyDataSetChanged();
                     }
                 });
-                mOffset = 0;
                 previousTotal = 0;
-                mAdapter.addAll(addData(mOffset));
+                mStartFrom = "";
+                mAdapter.addAll(addData());
                 mRecyclerView.post(new Runnable() {
                     public void run() {
                         mAdapter.notifyDataSetChanged();
@@ -118,7 +117,9 @@ public class MainActivity extends AppCompatActivity {
                 visibleItemCount = mLinearLayoutManager.getChildCount();
                 totalItemCount = mLinearLayoutManager.getItemCount();
                 firstVisibleItem = mLinearLayoutManager.findFirstVisibleItemPosition();
-
+                Log.i("visibleItemCount", String.valueOf(visibleItemCount));
+                Log.i("totalItemCount", String.valueOf(totalItemCount));
+                Log.i("firstVisibleItem", String.valueOf(firstVisibleItem));
                 if (mLoading) {
                     if (totalItemCount > previousTotal) {
                         mLoading = false;
@@ -127,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 if (!mLoading && (totalItemCount - visibleItemCount)
                         <= (firstVisibleItem + visibleThreshold)) {
-                    ArrayList<Note> tmpList = addData(mOffset);
+                    ArrayList<Note> tmpList = addData();
                     mAdapter.addAll(tmpList);
                     recyclerView.post(new Runnable() {
                         public void run() {
@@ -140,10 +141,10 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private ArrayList<Note> addData(long offset) {
-        Log.e("addData", String.valueOf("mOffset: " + offset));
+    private ArrayList<Note> addData() {
+        Log.i("addData", String.valueOf("startFrom: " + mStartFrom));
         ArrayList<Note> results = new ArrayList<>();
-        if (offset == 0) {
+        if (mStartFrom.equals("")) {
             results.add(new Note(AppStartActivity.mAccount.getId(),
                     -1,
                     AppStartActivity.mAccount.getFirstName()
@@ -152,8 +153,10 @@ public class MainActivity extends AppCompatActivity {
                     AppStartActivity.mAccount.getPhotoUrl(),
                     null, -1, false, -1, false, -1, false));
         }
-        VKRequest request = new VKRequest("newsfeed.get", VKParameters.from("filters",
-                "post", "end_time", offset, "count", MIN_NOTES_COUNT));
+        VKRequest request = new VKRequest("newsfeed.get",
+                VKParameters.from("filters", "post",
+                        "start_from", mStartFrom,
+                        "count", MIN_NOTES_COUNT));
         request.executeSyncWithListener(new VKRequest.VKRequestListener() {
             @Override
             public void onComplete(VKResponse response) {
@@ -186,9 +189,9 @@ public class MainActivity extends AppCompatActivity {
                         .getJSONObject(index)
                         .get("post_id")
                         .toString()));
-                Log.e("addData", String.valueOf("id: " + id));
-                String sourceName = "null";
-                String photoUrl = "null";
+                Log.i("addData", String.valueOf("id: " + id));
+                String sourceName = "";
+                String photoUrl = "";
                 int groupCount = mResponse.getJSONArray("groups").length();
                 for (int i = 0; i < groupCount; i++) {
                     int groupId = Integer.parseInt(mResponse
@@ -254,7 +257,7 @@ public class MainActivity extends AppCompatActivity {
                                                     .getJSONObject(index)
                                                     .get("date")
                                                     .toString());
-                Log.e("addData", String.valueOf("date: " + date));
+                Log.i("addData", String.valueOf("date: " + date));
                 int i = 0;
                 ArrayList<String> attachmentsPhotos = new ArrayList<>();
                 if (mResponse
@@ -340,15 +343,10 @@ public class MainActivity extends AppCompatActivity {
                                     userReposted);
                 results.add(note);
             }
-            mOffset = results.get(results.size() - 1).getDate();
         } catch (JSONException pE) {
             pE.printStackTrace();
         }
         return results;
-    }
-
-    private void showLocationDialog() {
-        
     }
 
     @Override

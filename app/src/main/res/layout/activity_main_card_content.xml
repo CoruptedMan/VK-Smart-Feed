@@ -10,8 +10,8 @@
         android:id="@+id/note"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        card_view:cardElevation="3dp"
+        android:layout_marginBottom="10dp"
+        card_view:cardElevation="2dp"
         card_view:cardCornerRadius="0dp"
         card_view:cardBackgroundColor="@color/cardview_light_background" >
 
@@ -57,7 +57,8 @@
                             android:ellipsize="end"
                             android:textSize="16sp"
                             android:textColor="@color/colorPrimary"
-                            android:textStyle="normal|bold"/>
+                            android:textStyle="normal|bold"
+                            android:layout_marginTop="5dp"/>
                         <TextView
                             android:id="@+id/note_date"
                             android:layout_width="wrap_content"
@@ -66,7 +67,8 @@
                             android:layout_alignBottom="@+id/source_photo"
                             android:layout_alignStart="@+id/source_name"
                             android:textSize="14sp"
-                            android:textColor="@color/colorTextSecondary"/>
+                            android:textColor="@color/colorTextSecondary"
+                            android:layout_marginBottom="5dp"/>
                         <TextView
                             android:id="@+id/add_note"
                             android:layout_width="wrap_content"

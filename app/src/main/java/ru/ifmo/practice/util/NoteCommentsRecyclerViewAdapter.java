@@ -85,16 +85,6 @@ public class NoteCommentsRecyclerViewAdapter
         return mDataSet.size();
     }
 
-    public void clear() {
-        mDataSet.clear();
-    }
-
-    public void addAll(ArrayList<Comment> list) {
-        for (int i = 0; i < list.size(); i++) {
-            mDataSet.add(list.get(i));
-        }
-    }
-
     final static class DataObjectHolder extends RecyclerView.ViewHolder {
         private JSONObject mResponse;
         private TextView authorNameText;
@@ -130,50 +120,50 @@ public class NoteCommentsRecyclerViewAdapter
             likeBlock.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Comment tmpComment = mDataSet.get(getAdapterPosition());
-                    VKRequest request;
-                    int likes = tmpComment.getLikesCount();
-                    request = new VKRequest("likes." + (tmpComment.isUserLikes()
-                            ? "delete" : "add"), VKParameters.from("type", "comment",
-                            "owner_id", -mSourceId,
-                            "item_id", tmpComment.getId()));
-                    request.executeSyncWithListener(new VKRequest.VKRequestListener() {
-                        @Override
-                        public void onComplete(VKResponse response) {
-                            try {
-                                mResponse = response.json.getJSONObject("response");
-                            } catch (JSONException pE) {
-                                pE.printStackTrace();
-                            }
+                Comment tmpComment = mDataSet.get(getAdapterPosition());
+                VKRequest request;
+                int likes = tmpComment.getLikesCount();
+                request = new VKRequest("likes." + (tmpComment.isUserLikes()
+                        ? "delete" : "add"), VKParameters.from("type", "comment",
+                        "owner_id", -mSourceId,
+                        "item_id", tmpComment.getId()));
+                request.executeSyncWithListener(new VKRequest.VKRequestListener() {
+                    @Override
+                    public void onComplete(VKResponse response) {
+                        try {
+                            mResponse = response.json.getJSONObject("response");
+                        } catch (JSONException pE) {
+                            pE.printStackTrace();
                         }
-                        @Override
-                        public void onError(VKError error) {
-                            Toast.makeText(context, error.toString(), Toast.LENGTH_LONG).show();
-                        }
-                        @Override
-                        public void attemptFailed(VKRequest request,
-                                                  int attemptNumber,
-                                                  int totalAttempts) {
-                            Toast.makeText(context, "Attempt Failed!", Toast.LENGTH_LONG).show();
-                        }
-                    });
-                    try {
-                        likes = Integer.parseInt(mResponse.get("likes").toString());
-                    } catch (JSONException pE) {
-                        pE.printStackTrace();
                     }
-                    tmpComment.setLikesCount(likes);
-                    likesCountText.setText(tmpComment.getLikesCount() > 0
-                            ? String.valueOf(likes)
-                            : "");
-                    tmpComment.setUserLikes(
-                            !tmpComment.isUserLikes());
-                    likeIcon.setImageDrawable(context.getDrawable(
-                            tmpComment.isUserLikes()
-                                    ? R.drawable.ic_favorite_pressed_24dp
-                                    : tmpComment.getLikesCount() > 0
-                                        ? R.drawable.ic_favorite_dark_gray_24dp
-                                        : R.drawable.ic_favorite_gray_24dp));
+                    @Override
+                    public void onError(VKError error) {
+                        Toast.makeText(context, error.toString(), Toast.LENGTH_LONG).show();
+                    }
+                    @Override
+                    public void attemptFailed(VKRequest request,
+                                              int attemptNumber,
+                                              int totalAttempts) {
+                        Toast.makeText(context, "Attempt Failed!", Toast.LENGTH_LONG).show();
+                    }
+                });
+                try {
+                    likes = Integer.parseInt(mResponse.get("likes").toString());
+                } catch (JSONException pE) {
+                    pE.printStackTrace();
+                }
+                tmpComment.setLikesCount(likes);
+                likesCountText.setText(tmpComment.getLikesCount() > 0
+                        ? String.valueOf(likes)
+                        : "");
+                tmpComment.setUserLikes(
+                        !tmpComment.isUserLikes());
+                likeIcon.setImageDrawable(context.getDrawable(
+                        tmpComment.isUserLikes()
+                                ? R.drawable.ic_favorite_pressed_24dp
+                                : tmpComment.getLikesCount() > 0
+                                    ? R.drawable.ic_favorite_dark_gray_24dp
+                                    : R.drawable.ic_favorite_gray_24dp));
                 }
             });
 

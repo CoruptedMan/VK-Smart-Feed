@@ -1,5 +1,6 @@
 package ru.ifmo.practice;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.res.ResourcesCompat;
@@ -37,6 +38,7 @@ import ru.ifmo.practice.util.NoteCommentsRecyclerViewAdapter;
 public class NoteViewActivity extends AppCompatActivity {
 
     public static Note mNote;
+    private Context mContext;
     private LinearLayoutManager mLinearLayoutManager;
     private NoteCommentsRecyclerViewAdapter mAdapter;
     private JSONObject mResponse;
@@ -44,18 +46,17 @@ public class NoteViewActivity extends AppCompatActivity {
     private TextView contextText;
     private TextView dateText;
     private TextView likesCountText;
-    private TextView commentsCountText;
     private TextView repostsCountText;
+    private TextView loadMoreCommentsText;
     private ImageView likeIcon;
-    private ImageView commentIcon;
     private ImageView repostIcon;
     private ImageView sourcePhoto;
     private LinearLayout loadMoreCommentsLayout;
+    private LinearLayout noteLeaveCommentLayout;
     private RelativeLayout attachBlock;
     private RelativeLayout emojiBlock;
     private RelativeLayout sendBlock;
     private RelativeLayout likeBlock;
-    private RelativeLayout commentBlock;
     private RelativeLayout repostBlock;
     private RelativeLayout mainLayout;
     private CardView sourceInfoBlock;
@@ -63,33 +64,40 @@ public class NoteViewActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.note_view_layout);
 
+        setContentView(R.layout.note_view_layout);
+        mContext = this;
         Toolbar tb = (Toolbar) findViewById(R.id.note_view_toolbar);
         setSupportActionBar(tb);
+        tb.setNavigationIcon(ResourcesCompat.getDrawable(
+                VKSmartFeedApplication.context().getResources(),
+                R.drawable.ic_keyboard_backspace_white_24dp,
+                null));
+        tb.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                System.out.println("lOL");
+                onBackPressed();
+            }
+        });
         final ActionBar ab = getSupportActionBar();
         if (ab != null) {
             //  ab.setDisplayShowHomeEnabled(true);
             //ab.setDisplayHomeAsUpEnabled(true);
             ab.setDisplayShowTitleEnabled(false);
         }
-        tb.setNavigationIcon(ResourcesCompat.getDrawable(
-                VKSmartFeedApplication.context().getResources(),
-                R.drawable.ic_reply_white_24dp,
-                null));
         sourceNameText = (TextView) findViewById(R.id.note_view_source_name);
         contextText = (TextView) findViewById(R.id.note_view_context);
         dateText = (TextView) findViewById(R.id.note_view_date);
         likesCountText = (TextView) findViewById(R.id.note_view_likes_count);
-        commentsCountText = (TextView) findViewById(R.id.note_view_comments_count);
         repostsCountText = (TextView) findViewById(R.id.note_view_reposts_count);
+        loadMoreCommentsText = (TextView) findViewById(R.id.note_view_load_more_comments_text);
         sourcePhoto = (ImageView) findViewById(R.id.note_view_source_photo);
         likeIcon = (ImageView) findViewById(R.id.note_view_like_icon);
-        commentIcon = (ImageView) findViewById(R.id.note_view_comment_icon);
         repostIcon = (ImageView) findViewById(R.id.note_view_repost_icon);
         loadMoreCommentsLayout = (LinearLayout) findViewById(R.id.note_view_load_more_comments);
+        noteLeaveCommentLayout = (LinearLayout) findViewById(R.id.note_leave_comment_layout);
         likeBlock = (RelativeLayout) findViewById(R.id.note_view_like_block);
-        commentBlock = (RelativeLayout) findViewById(R.id.note_view_comment_block);
         repostBlock = (RelativeLayout) findViewById(R.id.note_view_repost_block);
         mainLayout = (RelativeLayout) findViewById(R.id.note_view_main_layout);
         attachBlock = (RelativeLayout) findViewById(R.id.note_view_attachments_icon);
@@ -104,7 +112,7 @@ public class NoteViewActivity extends AppCompatActivity {
         rv.setLayoutManager(mLinearLayoutManager);
         mAdapter = new NoteCommentsRecyclerViewAdapter(getApplicationContext(),
                 mNote.getSourceId(),
-                addData(0));
+                addData());
         rv.setAdapter(mAdapter);
 
         loadMoreCommentsLayout.setOnClickListener(new View.OnClickListener() {
@@ -117,11 +125,48 @@ public class NoteViewActivity extends AppCompatActivity {
         });
         likeBlock.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) { }
-        });
-        commentBlock.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) { }
+            public void onClick(View v) {
+                VKRequest request;
+                int likes = mNote.getLikesCount();
+                request = new VKRequest("likes." + (mNote.getUserLikes()
+                        ? "delete" : "add"), VKParameters.from("type", "post",
+                        "owner_id", -mNote.getSourceId(),
+                        "item_id", mNote.getId()));
+                request.executeSyncWithListener(new VKRequest.VKRequestListener() {
+                    @Override
+                    public void onComplete(VKResponse response) {
+                        try {
+                            mResponse = response.json.getJSONObject("response");
+                        } catch (JSONException pE) {
+                            pE.printStackTrace();
+                        }
+                    }
+                    @Override
+                    public void onError(VKError error) {
+                        Toast.makeText(mContext, error.toString(), Toast.LENGTH_LONG).show();
+                    }
+                    @Override
+                    public void attemptFailed(VKRequest request,
+                                              int attemptNumber,
+                                              int totalAttempts) {
+                        Toast.makeText(mContext, "Attempt Failed!", Toast.LENGTH_LONG).show();
+                    }
+                });
+                try {
+                    likes = Integer.parseInt(mResponse.get("likes").toString());
+                } catch (JSONException pE) {
+                    pE.printStackTrace();
+                }
+                mNote.setLikesCount(likes);
+                likesCountText.setText(mNote.getLikesCount() > 0
+                        ? String.valueOf(likes)
+                        : "");
+                mNote.setUserLikes(!mNote.getUserLikes());
+                likeIcon.setImageDrawable(mContext.getDrawable(
+                        mNote.getUserLikes()
+                                ? R.drawable.ic_favorite_pressed_24dp
+                                : R.drawable.ic_favorite_white_24dp));
+            }
         });
         repostBlock.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -161,35 +206,36 @@ public class NoteViewActivity extends AppCompatActivity {
                 ? String.valueOf(mNote.getLikesCount())
                 : "");
 
-        commentBlock.setVisibility(mNote.getCanComment()
-                ? View.VISIBLE
-                : View.GONE);
-        commentIcon.setImageDrawable(ResourcesCompat.getDrawable(
-                VKSmartFeedApplication.context().getResources(),
-                R.drawable.ic_question_answer_white_24dp,
-                null));
-        commentsCountText.setText(mNote.getCommentsCount() != 0
-                ? String.valueOf(mNote.getCommentsCount())
-                : "");
-
         repostIcon.setImageDrawable(ResourcesCompat.getDrawable(
                 VKSmartFeedApplication.context().getResources(),
                 mNote.getUserReposted()
-                        ? R.drawable.ic_reply_pressed_24dp
-                        : R.drawable.ic_reply_white_24dp,
+                        ? R.drawable.ic_share_pressed_24dp
+                        : R.drawable.ic_share_white_24dp,
                 null));
         repostsCountText.setText(mNote.getRepostsCount() != 0
                 ? String.valueOf(mNote.getRepostsCount())
                 : "");
+
+        if (!mNote.getCanComment()) {
+            loadMoreCommentsLayout.setVisibility(View.GONE);
+            noteLeaveCommentLayout.setVisibility(View.GONE);
+        }
+
+        if (mNote.getCommentsCount() <= 10) {
+            loadMoreCommentsLayout.setVisibility(View.GONE);
+        } else {
+            loadMoreCommentsText.setText("Показать ещё " + (mNote.getCommentsCount() - 10) + " " +
+                    "комментариев");
+        }
     }
 
-    private ArrayList<Comment> addData(long offset) {
+    private ArrayList<Comment> addData() {
         ArrayList<Comment> results = new ArrayList<>();
         VKRequest request = new VKRequest("wall.getComments", VKParameters.from(
                 "owner_id", String.valueOf(-mNote.getSourceId()),
                 "post_id", String.valueOf(mNote.getId()),
                 "need_likes", 1,
-                "count", 50,
+                "count", 100,
                 "extended", 1));
         request.executeSyncWithListener(new VKRequest.VKRequestListener() {
             @Override
@@ -215,7 +261,6 @@ public class NoteViewActivity extends AppCompatActivity {
             int commentCount = Integer.parseInt(mResponse
                     .get("count")
                     .toString());
-            commentsCountText.setText(String.valueOf(commentCount));
             for (int index = 0; index < 50; index++) {
                 if (mResponse
                         .getJSONArray("items")
