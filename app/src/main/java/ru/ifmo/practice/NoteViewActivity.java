@@ -1,7 +1,6 @@
 package ru.ifmo.practice;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.ActionBar;
@@ -76,7 +75,6 @@ public class NoteViewActivity extends AppCompatActivity {
         tb.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.println("lOL");
                 onBackPressed();
             }
         });
@@ -368,12 +366,5 @@ public class NoteViewActivity extends AppCompatActivity {
             pE.printStackTrace();
         }
         return results;
-    }
-
-    @Override
-    public void onBackPressed() {
-        startActivity(new Intent(getApplicationContext(), MainActivity.class));
-        overridePendingTransition(R.anim.slide_in_right ,R.anim.slide_out_right);
-        finish();
     }
 }

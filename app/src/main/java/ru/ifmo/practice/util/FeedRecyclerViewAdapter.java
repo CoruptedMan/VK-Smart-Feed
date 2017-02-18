@@ -137,41 +137,7 @@ public class FeedRecyclerViewAdapter
                                     : R.drawable.ic_favorite_white_24dp));
                 }
             });
-            View.OnClickListener openNoteByClick = new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mActivity.startActivity(new Intent(getApplicationContext(),
-                            NoteViewActivity.class));
-                    NoteViewActivity.mNote = mDataSet.get(getAdapterPosition());
-                    mActivity.overridePendingTransition(R.anim.slide_in_right ,R.anim
-                            .slide_out_right);
-                    mActivity.finish();
-                }
-            };
-            cardLayout.setOnClickListener(openNoteByClick);
 
-            commentBlock.setOnClickListener(openNoteByClick);
-
-            repostBlock.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // ...
-                }
-            });
-
-            sourceInfoBlock.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // ...
-                }
-            });
-
-            optionsBlock.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // ...
-                }
-            });
         }
     }
 
@@ -195,7 +161,7 @@ public class FeedRecyclerViewAdapter
     }
 
     @Override
-    public void onBindViewHolder(DataObjectHolder holder, final int position) {
+    public void onBindViewHolder(final DataObjectHolder holder, final int position) {
         Note tmpNote = mDataSet.get(position);
         if (position == 0) {
             holder.contextText.setVisibility(View.GONE);
@@ -216,6 +182,41 @@ public class FeedRecyclerViewAdapter
             holder.sourceNameText.setVisibility(View.VISIBLE);
             holder.dateText.setVisibility(View.VISIBLE);
             holder.addNewNoteText.setVisibility(View.GONE);
+
+            View.OnClickListener openNoteByClick = new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(getApplicationContext(), NoteViewActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    mActivity.startActivity(intent);
+                    NoteViewActivity.mNote = mDataSet.get(holder.getAdapterPosition());
+                    mActivity.overridePendingTransition(R.anim.slide_in_right ,R.anim
+                            .slide_out_right);
+                    mActivity.finish();
+                }
+            };
+            holder.repostBlock.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // ...
+                }
+            });
+            holder.sourceInfoBlock.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // ...
+                }
+            });
+
+            holder.cardLayout.setOnClickListener(openNoteByClick);
+            holder.commentBlock.setOnClickListener(openNoteByClick);
+
+            holder.optionsBlock.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // ...
+                }
+            });
 
             holder.sourceNameText.setText(tmpNote.getSourceName());
             holder.dateText.setText(new PrettyTime(Locale.getDefault()).format(new Date(tmpNote.getDate() *

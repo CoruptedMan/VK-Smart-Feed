@@ -8,67 +8,74 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import com.vk.sdk.VKSdk;
-import com.vk.sdk.api.VKError;
 import com.vk.sdk.api.VKParameters;
 import com.vk.sdk.api.VKRequest;
-import com.vk.sdk.api.VKResponse;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 import ru.ifmo.practice.model.Note;
 import ru.ifmo.practice.util.FeedRecyclerViewAdapter;
+import ru.ifmo.practice.util.OnDownloadFeedDataResultDelegate;
+import ru.ifmo.practice.util.UpdateUserFeed;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements OnDownloadFeedDataResultDelegate {
 
-    private static final int MIN_NOTES_COUNT = 6;
-    private JSONObject mResponse;
     private FeedRecyclerViewAdapter mAdapter;
     private LinearLayoutManager mLinearLayoutManager;
     private RecyclerView mRecyclerView;
     private SwipeRefreshLayout swipeContainer;
+    private ArrayList<Note> mNotes;
+    private boolean mLoading = true;
+    private final int MIN_NOTES_COUNT = 6;
     private int visibleThreshold = MIN_NOTES_COUNT;
-    private int firstVisibleItem;
-    private int visibleItemCount;
     private int totalItemCount = 0;
     private int previousTotal = 0;
-    public static int index = -1;
-    public static int top = -1;
-    private String mStartFrom = "";
-    private boolean mLoading = true;
+    public int index = -1;
+    public int top = -1;
+    private int firstVisibleItem;
+    private int visibleItemCount;
+    public static String mStartFrom = "";
+
+    public String getStartFrom() {
+        return mStartFrom;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        System.out.println("onCreate");
+
+        mNotes = new ArrayList<>();
 
         Toolbar tb = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(tb);
-        // Get the ActionBar here to configure the way it behaves.
         final ActionBar ab = getSupportActionBar();
-        //ab.setHomeAsUpIndicator(R.drawable.ic_menu); // set a custom icon for the default home button
         if (ab != null) {
-            ab.setDisplayShowHomeEnabled(true); // show or hide the default home button
-            //ab.setDisplayHomeAsUpEnabled(true);
-            ab.setDisplayShowCustomEnabled(true); // enable overriding the default toolbar layout
-            ab.setDisplayShowTitleEnabled(false); // disable the default title element here (for centered title)
+            ab.setDisplayShowHomeEnabled(true);
+            ab.setDisplayShowCustomEnabled(true);
+            ab.setDisplayShowTitleEnabled(false);
         }
 
-        mRecyclerView = (RecyclerView) findViewById(R.id.feed_recycler_view);
-        mLinearLayoutManager = new LinearLayoutManager(this);
-        mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setLayoutManager(mLinearLayoutManager);
-        mAdapter = new FeedRecyclerViewAdapter(getApplicationContext(),
-                this,
-                addData());
-        mRecyclerView.setAdapter(mAdapter);
+        swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                previousTotal = 0;
+                mStartFrom = "";
+                try {
+                    toggleSwipeContainerRefreshingState(true);
+                    addData();
+                } catch (ExecutionException | InterruptedException pE) {
+                    pE.printStackTrace();
+                }
+            }
+        });
+        swipeContainer.setColorSchemeResources(R.color.colorPrimary, R.color.colorPrimaryDark);
 
         tb.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,28 +83,6 @@ public class MainActivity extends AppCompatActivity {
                 mLinearLayoutManager.scrollToPositionWithOffset(0, 0);
             }
         });
-        swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
-        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                mAdapter.clear();
-                mRecyclerView.post(new Runnable() {
-                    public void run() {
-                        mAdapter.notifyDataSetChanged();
-                    }
-                });
-                previousTotal = 0;
-                mStartFrom = "";
-                mAdapter.addAll(addData());
-                mRecyclerView.post(new Runnable() {
-                    public void run() {
-                        mAdapter.notifyDataSetChanged();
-                        swipeContainer.setRefreshing(false);
-                    }
-                });
-            }
-        });
-        swipeContainer.setColorSchemeResources(R.color.colorPrimary, R.color.colorPrimaryDark);
 
         findViewById(R.id.log_out).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -105,9 +90,15 @@ public class MainActivity extends AppCompatActivity {
                 VKSdk.logout();
                 startActivity(new Intent(getApplicationContext(), AppStartActivity.class));
                 overridePendingTransition(R.anim.slide_in_right ,R.anim.slide_out_right);
-                finish();
             }
         });
+
+        mRecyclerView = (RecyclerView) findViewById(R.id.feed_recycler_view);
+        mLinearLayoutManager = new LinearLayoutManager(this);
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setLayoutManager(mLinearLayoutManager);
+        mAdapter = new FeedRecyclerViewAdapter(getApplicationContext(), this, null);
+        mRecyclerView.setAdapter(mAdapter);
 
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -117,241 +108,52 @@ public class MainActivity extends AppCompatActivity {
                 visibleItemCount = mLinearLayoutManager.getChildCount();
                 totalItemCount = mLinearLayoutManager.getItemCount();
                 firstVisibleItem = mLinearLayoutManager.findFirstVisibleItemPosition();
-                Log.i("visibleItemCount", String.valueOf(visibleItemCount));
-                Log.i("totalItemCount", String.valueOf(totalItemCount));
-                Log.i("firstVisibleItem", String.valueOf(firstVisibleItem));
+
                 if (mLoading) {
                     if (totalItemCount > previousTotal) {
                         mLoading = false;
                         previousTotal = totalItemCount;
                     }
                 }
+
                 if (!mLoading && (totalItemCount - visibleItemCount)
                         <= (firstVisibleItem + visibleThreshold)) {
-                    ArrayList<Note> tmpList = addData();
-                    mAdapter.addAll(tmpList);
-                    recyclerView.post(new Runnable() {
-                        public void run() {
-                            mAdapter.notifyDataSetChanged();
-                            mLoading = true;
-                        }
-                    });
+                    try {
+                        addData();
+                        mLoading = true;
+                    } catch (ExecutionException | InterruptedException pE) {
+                        pE.printStackTrace();
+                    }
                 }
             }
         });
+
+        toggleSwipeContainerRefreshingState(true);
+        try {
+            addData();
+        } catch (ExecutionException | InterruptedException pE) {
+            pE.printStackTrace();
+        }
     }
 
-    private ArrayList<Note> addData() {
-        Log.i("addData", String.valueOf("startFrom: " + mStartFrom));
-        ArrayList<Note> results = new ArrayList<>();
-        if (mStartFrom.equals("")) {
-            results.add(new Note(AppStartActivity.mAccount.getId(),
-                    -1,
-                    AppStartActivity.mAccount.getFirstName()
-                            + " " + AppStartActivity.mAccount.getLastName(),
-                    "", "", -1,
-                    AppStartActivity.mAccount.getPhotoUrl(),
-                    null, -1, false, -1, false, -1, false));
-        }
+    private void addData() throws ExecutionException, InterruptedException {
         VKRequest request = new VKRequest("newsfeed.get",
                 VKParameters.from("filters", "post",
                         "start_from", mStartFrom,
                         "count", MIN_NOTES_COUNT));
-        request.executeSyncWithListener(new VKRequest.VKRequestListener() {
-            @Override
-            public void onComplete(VKResponse response) {
-                try {
-                    mResponse = response.json.getJSONObject("response");
-                } catch (JSONException pE) {
-                    pE.printStackTrace();
-                }
-            }
-            @Override
-            public void onError(VKError error) {
-                Toast.makeText(getParent().getApplicationContext(), error.toString(), Toast
-                        .LENGTH_LONG).show();
-            }
-            @Override
-            public void attemptFailed(VKRequest request, int attemptNumber, int totalAttempts) {
-                Toast.makeText(getParent().getApplicationContext(), "Attempt Failed!", Toast
-                        .LENGTH_LONG).show();
-            }
-        });
-        try {
-            for (int index = 0; index < MIN_NOTES_COUNT; index++) {
-                long sourceId = Math.abs(Integer.parseInt(mResponse
-                        .getJSONArray("items")
-                        .getJSONObject(index)
-                        .get("source_id")
-                        .toString()));
-                long id = Math.abs(Integer.parseInt(mResponse
-                        .getJSONArray("items")
-                        .getJSONObject(index)
-                        .get("post_id")
-                        .toString()));
-                Log.i("addData", String.valueOf("id: " + id));
-                String sourceName = "";
-                String photoUrl = "";
-                int groupCount = mResponse.getJSONArray("groups").length();
-                for (int i = 0; i < groupCount; i++) {
-                    int groupId = Integer.parseInt(mResponse
-                            .getJSONArray("groups")
-                            .getJSONObject(i)
-                            .get("id")
-                            .toString());
-                    String groupName = mResponse
-                            .getJSONArray("groups")
-                            .getJSONObject(i)
-                            .get("name")
-                            .toString();
-                    if (groupId == sourceId) {
-                        sourceName = groupName;
-                        photoUrl = mResponse
-                                .getJSONArray("groups")
-                                .getJSONObject(i)
-                                .get("photo_100")
-                                .toString();
-                    }
-                }
 
-                int userCount = mResponse.getJSONArray("profiles").length();
-                for (int i = 0; i < userCount; i++) {
-                    int userId = Integer.parseInt(mResponse
-                            .getJSONArray("profiles")
-                            .getJSONObject(i)
-                            .get("id")
-                            .toString());
-                    String userFirstName = mResponse
-                            .getJSONArray("profiles")
-                            .getJSONObject(i)
-                            .get("first_name")
-                            .toString();
-                    String userLastName = mResponse
-                            .getJSONArray("profiles")
-                            .getJSONObject(i)
-                            .get("last_name")
-                            .toString();
-                    if (userId == sourceId) {
-                        sourceName = userFirstName + " " + userLastName;
-                        photoUrl = mResponse
-                                .getJSONArray("profiles")
-                                .getJSONObject(i)
-                                .get("photo_100")
-                                .toString();
-                    }
-                }
+        new UpdateUserFeed(this).execute(request);
+    }
 
-                String context = mResponse
-                                    .getJSONArray("items")
-                                    .getJSONObject(index)
-                                    .get("text")
-                                    .toString();
-                String contextPreview;
-                if (context.length() > 200) {
-                    contextPreview = context.substring(0, 200) + "...";
-                } else {
-                    contextPreview = "";
-                }
-                long date = Integer.parseInt(mResponse
-                                                    .getJSONArray("items")
-                                                    .getJSONObject(index)
-                                                    .get("date")
-                                                    .toString());
-                Log.i("addData", String.valueOf("date: " + date));
-                int i = 0;
-                ArrayList<String> attachmentsPhotos = new ArrayList<>();
-                if (mResponse
-                        .getJSONArray("items")
-                        .getJSONObject(index)
-                        .optJSONArray("attachments") != null) {
-                    while (!mResponse
-                            .getJSONArray("items")
-                            .getJSONObject(index)
-                            .getJSONArray("attachments")
-                            .isNull(i)) {
-                        if (mResponse
-                                .getJSONArray("items")
-                                .getJSONObject(index)
-                                .getJSONArray("attachments")
-                                .getJSONObject(i)
-                                .get("type")
-                                .toString()
-                                .equals("photo")) {
-                            attachmentsPhotos.add(mResponse
-                                            .getJSONArray("items")
-                                            .getJSONObject(index)
-                                            .getJSONArray("attachments")
-                                            .getJSONObject(i)
-                                            .getJSONObject("photo")
-                                            .get("photo_604")
-                                            .toString());
-                        }
-                        i++;
-                    }
-                }
-
-                int likes = Integer.parseInt(mResponse
-                        .getJSONArray("items")
-                        .getJSONObject(index)
-                        .getJSONObject("likes")
-                        .get("count")
-                        .toString());
-                int comments = Integer.parseInt(mResponse
-                        .getJSONArray("items")
-                        .getJSONObject(index)
-                        .getJSONObject("comments")
-                        .get("count")
-                        .toString());
-                int reposts = Integer.parseInt(mResponse
-                        .getJSONArray("items")
-                        .getJSONObject(index)
-                        .getJSONObject("reposts")
-                        .get("count")
-                        .toString());
-                boolean userLikes = Integer.parseInt(mResponse
-                        .getJSONArray("items")
-                        .getJSONObject(index)
-                        .getJSONObject("likes")
-                        .get("user_likes")
-                        .toString()) == 1;
-                boolean canComment = Integer.parseInt(mResponse
-                        .getJSONArray("items")
-                        .getJSONObject(index)
-                        .getJSONObject("comments")
-                        .get("can_post")
-                        .toString()) == 1;
-                boolean userReposted = Integer.parseInt(mResponse
-                        .getJSONArray("items")
-                        .getJSONObject(index)
-                        .getJSONObject("reposts")
-                        .get("user_reposted")
-                        .toString()) == 1;
-
-                Note note = new Note(id,
-                                    sourceId,
-                                    sourceName,
-                                    context,
-                                    contextPreview,
-                                    date,
-                                    photoUrl,
-                                    attachmentsPhotos,
-                                    likes,
-                                    userLikes,
-                                    comments,
-                                    canComment,
-                                    reposts,
-                                    userReposted);
-                results.add(note);
-            }
-        } catch (JSONException pE) {
-            pE.printStackTrace();
-        }
-        return results;
+    public void toggleSwipeContainerRefreshingState(boolean state) {
+        if (swipeContainer != null)
+            swipeContainer.setRefreshing(state);
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        System.out.println("onPause");
 
         index = mLinearLayoutManager.findFirstVisibleItemPosition();
         View v = mRecyclerView.getChildAt(0);
@@ -363,10 +165,33 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
+        System.out.println("onResume");
 
         if(index != -1) {
             mLinearLayoutManager.scrollToPositionWithOffset(index, top);
         }
     }
 
+    @Override
+    public void taskCompletionResult(ArrayList<Note> result, String pStartFrom) {
+        mNotes = result;
+        if (mStartFrom.equals("")) {
+            mAdapter.clear();
+            mAdapter.addAll(mNotes);
+            mRecyclerView.post(new Runnable() {
+                public void run() {
+                    mAdapter.notifyDataSetChanged();
+                    toggleSwipeContainerRefreshingState(false);
+                }
+            });
+        } else {
+            mAdapter.addAll(mNotes);
+            mRecyclerView.post(new Runnable() {
+                public void run() {
+                    mAdapter.notifyDataSetChanged();
+                }
+            });
+        }
+        mStartFrom = pStartFrom;
+    }
 }
