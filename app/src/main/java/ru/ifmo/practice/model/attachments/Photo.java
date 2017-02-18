@@ -1,4 +1,4 @@
-package ru.ifmo.practice.model;
+package ru.ifmo.practice.model.attachments;
 
 public class Photo {
 
@@ -18,49 +18,17 @@ public class Photo {
     private String descriptionText;
     private String date;
     private String accessKey;
-    private String thumbnailUrl;
-    private String[] urls;
+    private String url;
 
-    public Photo(long pId,
-                 long pAlbumId,
-                 long pOwnerId,
-                 long pUserId,
-                 long pPostId,
-                 int pWidth,
-                 int pHeight,
-                 int pLikesCount,
-                 boolean pUserLikes,
-                 int pCommentsCount,
-                 boolean pCanComment,
-                 int pRepostsCount,
-                 boolean pCanRepost,
-                 String pDescriptionText,
-                 String pDate,
-                 String pAccessKey,
-                 String pThumbnailUrl,
-                 String[] pUrls) {
+    public Photo(long pId, long pOwnerId, long pAlbumId, String pUrl, String pDate, int pWidth, int
+            pHeight) {
         id = pId;
-        albumId = pAlbumId;
         ownerId = pOwnerId;
-        userId = pUserId;
-        postId = pPostId;
+        albumId = pAlbumId;
+        url = pUrl;
+        date = pDate;
         width = pWidth;
         height = pHeight;
-        likesCount = pLikesCount;
-        userLikes = pUserLikes;
-        commentsCount = pCommentsCount;
-        canComment = pCanComment;
-        repostsCount = pRepostsCount;
-        canRepost = pCanRepost;
-        descriptionText = pDescriptionText;
-        date = pDate;
-        accessKey = pAccessKey;
-        thumbnailUrl = pThumbnailUrl;
-        urls = pUrls;
-    }
-
-    public Photo(String pThumbnailUrl) {
-        thumbnailUrl = pThumbnailUrl;
     }
 
     public long getId() {
@@ -135,14 +103,6 @@ public class Photo {
         accessKey = pAccessKey;
     }
 
-    public String[] getUrls() {
-        return urls;
-    }
-
-    public void setUrls(String[] pUrls) {
-        urls = pUrls;
-    }
-
     public int getLikesCount() {
         return likesCount;
     }
@@ -199,7 +159,11 @@ public class Photo {
         userId = pUserId;
     }
 
-    public String getThumbnailUrl() {
-        return thumbnailUrl;
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String pUrl) {
+        url = pUrl;
     }
 }

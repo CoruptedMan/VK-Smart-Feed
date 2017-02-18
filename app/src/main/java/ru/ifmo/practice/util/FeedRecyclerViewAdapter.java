@@ -3,6 +3,7 @@ package ru.ifmo.practice.util;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -27,6 +28,7 @@ import org.ocpsoft.prettytime.PrettyTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
+import java.util.concurrent.ExecutionException;
 
 import ru.ifmo.practice.NoteViewActivity;
 import ru.ifmo.practice.R;
@@ -52,17 +54,22 @@ public class FeedRecyclerViewAdapter
         private TextView likesCountText;
         private TextView commentsCountText;
         private TextView repostsCountText;
+        private TextView attachedLinkTitleText;
+        private TextView attachedLinkCaptionText;
         private ImageView likeIcon;
         private ImageView commentIcon;
         private ImageView repostIcon;
         private ImageView optionsPhoto;
         private ImageView sourcePhoto;
+        private ImageView attachedLinkPhoto;
         private RelativeLayout likeBlock;
         private RelativeLayout commentBlock;
         private RelativeLayout repostBlock;
         private RelativeLayout cardLayout;
+        private RelativeLayout attachmentBlock;
         private CardView sourceInfoBlock;
         private CardView optionsBlock;
+        private CardView attachedLinkBlock;
         private LinearLayout socialAcionsLayout;
 
         DataObjectHolder(View itemView) {
@@ -77,17 +84,22 @@ public class FeedRecyclerViewAdapter
             likesCountText = (TextView) itemView.findViewById(R.id.likes_count);
             commentsCountText = (TextView) itemView.findViewById(R.id.comments_count);
             repostsCountText = (TextView) itemView.findViewById(R.id.reposts_count);
+            attachedLinkTitleText = (TextView) itemView.findViewById(R.id.attachment_link_title);
+            attachedLinkCaptionText = (TextView) itemView.findViewById(R.id.attachment_link_caption);
             sourcePhoto = (ImageView) itemView.findViewById(R.id.source_photo);
             likeIcon = (ImageView) itemView.findViewById(R.id.like_icon);
             commentIcon = (ImageView) itemView.findViewById(R.id.comment_icon);
             repostIcon = (ImageView) itemView.findViewById(R.id.repost_icon);
             optionsPhoto = (ImageView) itemView.findViewById(R.id.options);
+            attachedLinkPhoto = (ImageView) itemView.findViewById(R.id.attachment_link_photo);
             likeBlock = (RelativeLayout) itemView.findViewById(R.id.like_block);
             commentBlock = (RelativeLayout) itemView.findViewById(R.id.comment_block);
             repostBlock = (RelativeLayout) itemView.findViewById(R.id.repost_block);
             cardLayout = (RelativeLayout) itemView.findViewById(R.id.note_relative_layout);
+            attachmentBlock = (RelativeLayout) itemView.findViewById(R.id.attachment_block);
             sourceInfoBlock = (CardView) itemView.findViewById(R.id.source_info);
             optionsBlock = (CardView) itemView.findViewById(R.id.options_block);
+            attachedLinkBlock = (CardView) itemView.findViewById(R.id.attachment_link);
             socialAcionsLayout = (LinearLayout) itemView.findViewById(R.id.social_actions);
 
             likeBlock.setOnClickListener(new View.OnClickListener() {
@@ -162,7 +174,7 @@ public class FeedRecyclerViewAdapter
 
     @Override
     public void onBindViewHolder(final DataObjectHolder holder, final int position) {
-        Note tmpNote = mDataSet.get(position);
+        final Note tmpNote = mDataSet.get(position);
         if (position == 0) {
             holder.contextText.setVisibility(View.GONE);
             holder.seeMoreText.setVisibility(View.GONE);
@@ -175,7 +187,13 @@ public class FeedRecyclerViewAdapter
                     VKSmartFeedApplication.context().getResources(),
                     R.drawable.ic_camera_alt_white_24dp,
                     null));
-            new DownloadImageTask(holder.sourcePhoto).execute(tmpNote.getSourcePhotoUrl());
+            try {
+                new DownloadImageTask(holder.sourcePhoto).execute(tmpNote.getSourcePhotoUrl()).get();
+            } catch (InterruptedException | ExecutionException pE) {
+                pE.printStackTrace();
+            }
+
+            holder.attachmentBlock.setVisibility(View.GONE);
         }
         else {
             holder.socialAcionsLayout.setVisibility(View.VISIBLE);
@@ -192,7 +210,6 @@ public class FeedRecyclerViewAdapter
                     NoteViewActivity.mNote = mDataSet.get(holder.getAdapterPosition());
                     mActivity.overridePendingTransition(R.anim.slide_in_right ,R.anim
                             .slide_out_right);
-                    mActivity.finish();
                 }
             };
             holder.repostBlock.setOnClickListener(new View.OnClickListener() {
@@ -207,10 +224,8 @@ public class FeedRecyclerViewAdapter
                     // ...
                 }
             });
-
             holder.cardLayout.setOnClickListener(openNoteByClick);
             holder.commentBlock.setOnClickListener(openNoteByClick);
-
             holder.optionsBlock.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -221,7 +236,15 @@ public class FeedRecyclerViewAdapter
             holder.sourceNameText.setText(tmpNote.getSourceName());
             holder.dateText.setText(new PrettyTime(Locale.getDefault()).format(new Date(tmpNote.getDate() *
                     1000)));
-            new DownloadImageTask(holder.sourcePhoto).execute(tmpNote.getSourcePhotoUrl());
+
+            //TODO: remove .get because of internetless cases. It can probably endlessly freeze
+            // application. But need to continue loading until every this picture would be
+            // loaded.
+            try {
+                new DownloadImageTask(holder.sourcePhoto).execute(tmpNote.getSourcePhotoUrl()).get();
+            } catch (InterruptedException | ExecutionException pE) {
+                pE.printStackTrace();
+            }
 
             holder.optionsPhoto.setImageDrawable(ResourcesCompat.getDrawable(
                     VKSmartFeedApplication.context().getResources(),
@@ -238,6 +261,29 @@ public class FeedRecyclerViewAdapter
                     ? tmpNote.getContextPreview()
                     : tmpNote.getContext());
 
+            if (tmpNote.getAttachedLink() != null) {
+                holder.attachedLinkBlock.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(tmpNote
+                                .getAttachedLink().getUrl()));
+                        browserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        mContext.startActivity(browserIntent);
+                    }
+                });
+                holder.attachmentBlock.setVisibility(View.VISIBLE);
+                holder.attachedLinkTitleText.setText(tmpNote.getAttachedLink().getTitle());
+                holder.attachedLinkCaptionText.setText(tmpNote.getAttachedLink().getCaption());
+                try {
+                    new DownloadImageTask(holder.attachedLinkPhoto).execute(
+                            tmpNote.getAttachedLink().getPhotoUrl()).get();
+                } catch (InterruptedException | ExecutionException pE) {
+                    pE.printStackTrace();
+                }
+            }
+            else {
+                holder.attachmentBlock.setVisibility(View.GONE);
+            }
             holder.likeIcon.setImageDrawable(ResourcesCompat.getDrawable(
                     VKSmartFeedApplication.context().getResources(),
                     tmpNote.getUserLikes()

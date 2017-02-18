@@ -43,6 +43,7 @@ dependencies {
     compile 'me.relex:circleindicator:1.2.2@aar'
     compile 'de.hdodenhof:circleimageview:2.1.0'
     compile 'org.ocpsoft.prettytime:prettytime:3.2.0.Final'
+    compile 'com.github.ksoichiro:android-observablescrollview:1.6.0'
 
     testCompile 'junit:junit:4.12'
 }

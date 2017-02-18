@@ -1,6 +1,8 @@
 package ru.ifmo.practice;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.ActionBar;
@@ -28,6 +30,7 @@ import org.ocpsoft.prettytime.PrettyTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
+import java.util.concurrent.ExecutionException;
 
 import ru.ifmo.practice.model.Comment;
 import ru.ifmo.practice.model.Note;
@@ -47,9 +50,12 @@ public class NoteViewActivity extends AppCompatActivity {
     private TextView likesCountText;
     private TextView repostsCountText;
     private TextView loadMoreCommentsText;
+    private TextView attachedLinkTitleText;
+    private TextView attachedLinkCaptionText;
     private ImageView likeIcon;
     private ImageView repostIcon;
     private ImageView sourcePhoto;
+    private ImageView attachedLinkPhoto;
     private LinearLayout loadMoreCommentsLayout;
     private LinearLayout noteLeaveCommentLayout;
     private RelativeLayout attachBlock;
@@ -58,7 +64,9 @@ public class NoteViewActivity extends AppCompatActivity {
     private RelativeLayout likeBlock;
     private RelativeLayout repostBlock;
     private RelativeLayout mainLayout;
+    private RelativeLayout attachmentBlock;
     private CardView sourceInfoBlock;
+    private CardView attachedLinkBlock;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,8 +88,6 @@ public class NoteViewActivity extends AppCompatActivity {
         });
         final ActionBar ab = getSupportActionBar();
         if (ab != null) {
-            //  ab.setDisplayShowHomeEnabled(true);
-            //ab.setDisplayHomeAsUpEnabled(true);
             ab.setDisplayShowTitleEnabled(false);
         }
         sourceNameText = (TextView) findViewById(R.id.note_view_source_name);
@@ -90,9 +96,12 @@ public class NoteViewActivity extends AppCompatActivity {
         likesCountText = (TextView) findViewById(R.id.note_view_likes_count);
         repostsCountText = (TextView) findViewById(R.id.note_view_reposts_count);
         loadMoreCommentsText = (TextView) findViewById(R.id.note_view_load_more_comments_text);
+        attachedLinkTitleText = (TextView) findViewById(R.id.note_view_attachment_link_title);
+        attachedLinkCaptionText = (TextView) findViewById(R.id.note_view_attachment_link_caption);
         sourcePhoto = (ImageView) findViewById(R.id.note_view_source_photo);
         likeIcon = (ImageView) findViewById(R.id.note_view_like_icon);
         repostIcon = (ImageView) findViewById(R.id.note_view_repost_icon);
+        attachedLinkPhoto = (ImageView) findViewById(R.id.note_view_attachment_link_photo);
         loadMoreCommentsLayout = (LinearLayout) findViewById(R.id.note_view_load_more_comments);
         noteLeaveCommentLayout = (LinearLayout) findViewById(R.id.note_leave_comment_layout);
         likeBlock = (RelativeLayout) findViewById(R.id.note_view_like_block);
@@ -101,7 +110,9 @@ public class NoteViewActivity extends AppCompatActivity {
         attachBlock = (RelativeLayout) findViewById(R.id.note_view_attachments_icon);
         emojiBlock = (RelativeLayout) findViewById(R.id.note_view_emoji_icon);
         sendBlock = (RelativeLayout) findViewById(R.id.note_view_send_icon);
+        attachmentBlock = (RelativeLayout) findViewById(R.id.note_view_attachment_block);
         sourceInfoBlock = (CardView) findViewById(R.id.note_view_source_info);
+        attachedLinkBlock = (CardView) findViewById(R.id.note_view_attachment_link);
         RecyclerView rv = (RecyclerView) findViewById(R.id.note_view_comments);
         mLinearLayoutManager = new LinearLayoutManager(this);
         rv.setHasFixedSize(true);
@@ -186,12 +197,40 @@ public class NoteViewActivity extends AppCompatActivity {
         sourceNameText.setText(mNote.getSourceName());
         dateText.setText(new PrettyTime(Locale.getDefault()).format(new Date(mNote.getDate() *
                 1000)));
-        new DownloadImageTask(sourcePhoto).execute(mNote.getSourcePhotoUrl());
+        try {
+            new DownloadImageTask(sourcePhoto).execute(mNote.getSourcePhotoUrl()).get();
+        } catch (InterruptedException | ExecutionException pE) {
+            pE.printStackTrace();
+        }
 
         contextText.setVisibility(mNote.getContext().equals("")
                 ? View.GONE
                 : View.VISIBLE);
         contextText.setText(mNote.getContext());
+
+        if (mNote.getAttachedLink() != null) {
+            attachedLinkBlock.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(mNote
+                            .getAttachedLink().getUrl()));
+                    browserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    mContext.startActivity(browserIntent);
+                }
+            });
+            attachmentBlock.setVisibility(View.VISIBLE);
+            attachedLinkTitleText.setText(mNote.getAttachedLink().getTitle());
+            attachedLinkCaptionText.setText(mNote.getAttachedLink().getCaption());
+            try {
+                new DownloadImageTask(attachedLinkPhoto).execute(
+                        mNote.getAttachedLink().getPhotoUrl()).get();
+            } catch (InterruptedException | ExecutionException pE) {
+                pE.printStackTrace();
+            }
+        }
+        else {
+            attachmentBlock.setVisibility(View.GONE);
+        }
 
         likeIcon.setImageDrawable(ResourcesCompat.getDrawable(
                 VKSmartFeedApplication.context().getResources(),
@@ -259,6 +298,7 @@ public class NoteViewActivity extends AppCompatActivity {
             int commentCount = Integer.parseInt(mResponse
                     .get("count")
                     .toString());
+            mNote.setCommentsCount(commentCount);
             for (int index = 0; index < 50; index++) {
                 if (mResponse
                         .getJSONArray("items")
@@ -367,4 +407,9 @@ public class NoteViewActivity extends AppCompatActivity {
         }
         return results;
     }
+/*
+    @Override
+    public void onBackPressed() {
+        finish();
+    }*/
 }

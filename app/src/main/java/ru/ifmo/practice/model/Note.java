@@ -2,6 +2,8 @@ package ru.ifmo.practice.model;
 
 import java.util.ArrayList;
 
+import ru.ifmo.practice.model.attachments.Link;
+
 public class Note {
     private long id;
     private long sourceId;
@@ -17,6 +19,7 @@ public class Note {
     private boolean canComment;
     private int repostsCount;
     private boolean userReposted;
+    private Link attachedLink;
 
     public Note(long pId,
                 long pSourceId,
@@ -92,6 +95,10 @@ public class Note {
         return commentsCount;
     }
 
+    public void setCommentsCount(int pCommentsCount) {
+        commentsCount = pCommentsCount;
+    }
+
     public int getRepostsCount() {
         return repostsCount;
     }
@@ -114,6 +121,14 @@ public class Note {
 
     public String getContextPreview() {
         return contextPreview;
+    }
+
+    public Link getAttachedLink() {
+        return attachedLink;
+    }
+
+    public void setAttachedLink(Link pAttachedLink) {
+        attachedLink = pAttachedLink;
     }
 
     @Override

@@ -100,11 +100,77 @@
                     android:textColor="@color/colorTextPrimary"
                     android:textIsSelectable="true"/>
 
+                <RelativeLayout
+                    android:id="@+id/note_view_attachment_block"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/note_view_context"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentEnd="true">
+                    <android.support.v7.widget.CardView
+                        android:id="@+id/note_view_attachment_link"
+                        android:layout_width="match_parent"
+                        card_view:cardBackgroundColor="@color/cardview_light_background"
+                        card_view:cardElevation="1dp"
+                        card_view:cardCornerRadius="2dp"
+                        card_view:contentPadding="0dp"
+                        android:layout_height="80dp"
+                        android:foreground="@drawable/selectable_effect"
+                        android:layout_marginBottom="5dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginEnd="20dp">
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <ImageView
+                                android:id="@+id/note_view_attachment_link_photo"
+                                android:layout_height="80dp"
+                                android:layout_width="80dp"/>
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_toEndOf="@+id/note_view_attachment_link_photo"
+                                android:background="@drawable/bg_left_border">
+
+                                <TextView
+                                    android:id="@+id/note_view_attachment_link_title"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:textStyle="normal|bold"
+                                    android:textColor="@color/colorTextPrimary"
+                                    android:layout_marginStart="15dp"
+                                    android:layout_marginTop="5dp"
+                                    android:maxLines="3"
+                                    android:textSize="14sp"/>
+
+                                <TextView
+                                    android:id="@+id/note_view_attachment_link_caption"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentBottom="true"
+                                    android:layout_alignParentStart="true"
+                                    android:textColor="@color/colorTextSecondary"
+                                    android:textSize="12sp"
+                                    android:layout_marginStart="15dp"
+                                    android:layout_marginBottom="5dp"
+                                    android:maxLines="1"/>
+                            </RelativeLayout>
+                        </RelativeLayout>
+                    </android.support.v7.widget.CardView>
+                </RelativeLayout>
+
                 <LinearLayout
                     android:id="@+id/note_view_social_actions"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/note_view_context"
+                    android:layout_below="@+id/note_view_attachment_block"
                     android:layout_marginTop="10dp"
                     android:orientation="horizontal"
                     android:background="@color/colorPrimary"

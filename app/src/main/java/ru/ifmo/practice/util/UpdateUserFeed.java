@@ -10,11 +10,14 @@ import com.vk.sdk.api.VKResponse;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 import ru.ifmo.practice.AppStartActivity;
 import ru.ifmo.practice.MainActivity;
 import ru.ifmo.practice.model.Note;
+import ru.ifmo.practice.model.attachments.Link;
 
 import static com.vk.sdk.VKUIHelper.getApplicationContext;
 
@@ -76,9 +79,8 @@ public class UpdateUserFeed extends AsyncTask<VKRequest, Void, ArrayList<Note>> 
                         .getJSONObject(index)
                         .get("post_id")
                         .toString()));
-                //Log.i("addData", String.valueOf("id: " + id));
                 String sourceName = "";
-                String photoUrl = "";
+                String avatarUrl = "";
                 int groupCount = mResponse.getJSONArray("groups").length();
                 for (int i = 0; i < groupCount; i++) {
                     int groupId = Integer.parseInt(mResponse
@@ -93,7 +95,7 @@ public class UpdateUserFeed extends AsyncTask<VKRequest, Void, ArrayList<Note>> 
                             .toString();
                     if (groupId == sourceId) {
                         sourceName = groupName;
-                        photoUrl = mResponse
+                        avatarUrl = mResponse
                                 .getJSONArray("groups")
                                 .getJSONObject(i)
                                 .get("photo_100")
@@ -120,7 +122,7 @@ public class UpdateUserFeed extends AsyncTask<VKRequest, Void, ArrayList<Note>> 
                             .toString();
                     if (userId == sourceId) {
                         sourceName = userFirstName + " " + userLastName;
-                        photoUrl = mResponse
+                        avatarUrl = mResponse
                                 .getJSONArray("profiles")
                                 .getJSONObject(i)
                                 .get("photo_100")
@@ -144,18 +146,19 @@ public class UpdateUserFeed extends AsyncTask<VKRequest, Void, ArrayList<Note>> 
                         .getJSONObject(index)
                         .get("date")
                         .toString());
-                //Log.i("addData", String.valueOf("date: " + date));
+
                 int i = 0;
                 ArrayList<String> attachmentsPhotos = new ArrayList<>();
+                Link link = null;
                 if (mResponse
                         .getJSONArray("items")
                         .getJSONObject(index)
                         .optJSONArray("attachments") != null) {
-                    while (!mResponse
+                    while (mResponse
                             .getJSONArray("items")
                             .getJSONObject(index)
                             .getJSONArray("attachments")
-                            .isNull(i)) {
+                            .optJSONObject(i) != null) {
                         if (mResponse
                                 .getJSONArray("items")
                                 .getJSONObject(index)
@@ -163,15 +166,42 @@ public class UpdateUserFeed extends AsyncTask<VKRequest, Void, ArrayList<Note>> 
                                 .getJSONObject(i)
                                 .get("type")
                                 .toString()
-                                .equals("photo")) {
-                            attachmentsPhotos.add(mResponse
+                                .equals("link")) {
+                            String linkUrl = mResponse
                                     .getJSONArray("items")
                                     .getJSONObject(index)
                                     .getJSONArray("attachments")
                                     .getJSONObject(i)
-                                    .getJSONObject("photo")
-                                    .get("photo_604")
-                                    .toString());
+                                    .getJSONObject("link")
+                                    .get("url").toString();
+                            String linkTitle = mResponse
+                                    .getJSONArray("items")
+                                    .getJSONObject(index)
+                                    .getJSONArray("attachments")
+                                    .getJSONObject(i)
+                                    .getJSONObject("link")
+                                    .get("title").toString();
+                            String linkCaption = getDomainName(linkUrl);
+                            String linkDescription = mResponse
+                                    .getJSONArray("items")
+                                    .getJSONObject(index)
+                                    .getJSONArray("attachments")
+                                    .getJSONObject(i)
+                                    .getJSONObject("link")
+                                    .get("description").toString();
+                            String linkPhotoUrl = mResponse
+                                    .getJSONArray("items")
+                                    .getJSONObject(index)
+                                    .getJSONArray("attachments")
+                                    .getJSONObject(i)
+                                    .getJSONObject("link")
+                                    .get("image_src").toString();
+
+                            link = new Link(linkUrl,
+                                    linkTitle,
+                                    linkDescription,
+                                    linkCaption,
+                                    linkPhotoUrl);
                         }
                         i++;
                     }
@@ -220,7 +250,7 @@ public class UpdateUserFeed extends AsyncTask<VKRequest, Void, ArrayList<Note>> 
                         context,
                         contextPreview,
                         date,
-                        photoUrl,
+                        avatarUrl,
                         attachmentsPhotos,
                         likes,
                         userLikes,
@@ -228,9 +258,14 @@ public class UpdateUserFeed extends AsyncTask<VKRequest, Void, ArrayList<Note>> 
                         canComment,
                         reposts,
                         userReposted);
+                if (link != null) {
+                    note.setAttachedLink(link);
+                }
                 results.add(note);
             }
         } catch (JSONException pE) {
+            pE.printStackTrace();
+        } catch (URISyntaxException pE) {
             pE.printStackTrace();
         }
         return results;
@@ -239,5 +274,11 @@ public class UpdateUserFeed extends AsyncTask<VKRequest, Void, ArrayList<Note>> 
     @Override
     protected void onPostExecute(ArrayList<Note> result) {
         mActivity.taskCompletionResult(result, mStartFrom);
+    }
+
+    private String getDomainName(String url) throws URISyntaxException {
+        URI uri = new URI(url);
+        String domain = uri.getHost();
+        return domain.startsWith("www.") ? domain.substring(4) : domain;
     }
 }

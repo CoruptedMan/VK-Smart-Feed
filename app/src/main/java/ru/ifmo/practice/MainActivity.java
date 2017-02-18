@@ -14,6 +14,8 @@ import com.vk.sdk.VKSdk;
 import com.vk.sdk.api.VKParameters;
 import com.vk.sdk.api.VKRequest;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
@@ -48,7 +50,6 @@ public class MainActivity extends AppCompatActivity implements OnDownloadFeedDat
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        System.out.println("onCreate");
 
         mNotes = new ArrayList<>();
 
@@ -140,7 +141,8 @@ public class MainActivity extends AppCompatActivity implements OnDownloadFeedDat
         VKRequest request = new VKRequest("newsfeed.get",
                 VKParameters.from("filters", "post",
                         "start_from", mStartFrom,
-                        "count", MIN_NOTES_COUNT));
+                        "count", MIN_NOTES_COUNT,
+                        "version", "5.62"));
 
         new UpdateUserFeed(this).execute(request);
     }
@@ -153,7 +155,6 @@ public class MainActivity extends AppCompatActivity implements OnDownloadFeedDat
     @Override
     public void onPause() {
         super.onPause();
-        System.out.println("onPause");
 
         index = mLinearLayoutManager.findFirstVisibleItemPosition();
         View v = mRecyclerView.getChildAt(0);
@@ -165,7 +166,6 @@ public class MainActivity extends AppCompatActivity implements OnDownloadFeedDat
     @Override
     public void onResume() {
         super.onResume();
-        System.out.println("onResume");
 
         if(index != -1) {
             mLinearLayoutManager.scrollToPositionWithOffset(index, top);
