@@ -30,6 +30,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
+import ru.ifmo.practice.GroupFeedViewActivity;
 import ru.ifmo.practice.NoteViewActivity;
 import ru.ifmo.practice.R;
 import ru.ifmo.practice.VKSmartFeedApplication;
@@ -44,6 +45,10 @@ public class FeedRecyclerViewAdapter
     private static Activity mActivity;
     private final Context mContext;
 
+    public ArrayList<Note> getDataSet() {
+        return mDataSet;
+    }
+
     final static class DataObjectHolder extends RecyclerView.ViewHolder {
         private JSONObject mResponse;
         private TextView sourceNameText;
@@ -56,20 +61,27 @@ public class FeedRecyclerViewAdapter
         private TextView repostsCountText;
         private TextView attachedLinkTitleText;
         private TextView attachedLinkCaptionText;
+        private TextView attachmentPhotoCountText;
+        private TextView signerNameText;
         private ImageView likeIcon;
         private ImageView commentIcon;
         private ImageView repostIcon;
         private ImageView optionsPhoto;
         private ImageView sourcePhoto;
+        private ImageView attachedPhoto;
         private ImageView attachedLinkPhoto;
+        private ImageView attachmentPhotoCountIcon;
+        private ImageView signerIcon;
         private RelativeLayout likeBlock;
         private RelativeLayout commentBlock;
         private RelativeLayout repostBlock;
         private RelativeLayout cardLayout;
         private RelativeLayout attachmentBlock;
+        private RelativeLayout signerBlock;
         private CardView sourceInfoBlock;
         private CardView optionsBlock;
         private CardView attachedLinkBlock;
+        private CardView attachmentPhotoCountBlock;
         private LinearLayout socialAcionsLayout;
 
         DataObjectHolder(View itemView) {
@@ -86,20 +98,27 @@ public class FeedRecyclerViewAdapter
             repostsCountText = (TextView) itemView.findViewById(R.id.reposts_count);
             attachedLinkTitleText = (TextView) itemView.findViewById(R.id.attachment_link_title);
             attachedLinkCaptionText = (TextView) itemView.findViewById(R.id.attachment_link_caption);
+            attachmentPhotoCountText = (TextView) itemView.findViewById(R.id.attachment_photo_count);
+            signerNameText = (TextView) itemView.findViewById(R.id.signer_name);
             sourcePhoto = (ImageView) itemView.findViewById(R.id.source_photo);
             likeIcon = (ImageView) itemView.findViewById(R.id.like_icon);
             commentIcon = (ImageView) itemView.findViewById(R.id.comment_icon);
             repostIcon = (ImageView) itemView.findViewById(R.id.repost_icon);
             optionsPhoto = (ImageView) itemView.findViewById(R.id.options);
+            attachedPhoto = (ImageView) itemView.findViewById(R.id.attachment_photo);
             attachedLinkPhoto = (ImageView) itemView.findViewById(R.id.attachment_link_photo);
+            attachmentPhotoCountIcon = (ImageView) itemView.findViewById(R.id.attachment_photo_count_icon);
+            signerIcon = (ImageView) itemView.findViewById(R.id.signer_icon);
             likeBlock = (RelativeLayout) itemView.findViewById(R.id.like_block);
             commentBlock = (RelativeLayout) itemView.findViewById(R.id.comment_block);
             repostBlock = (RelativeLayout) itemView.findViewById(R.id.repost_block);
             cardLayout = (RelativeLayout) itemView.findViewById(R.id.note_relative_layout);
             attachmentBlock = (RelativeLayout) itemView.findViewById(R.id.attachment_block);
+            signerBlock = (RelativeLayout) itemView.findViewById(R.id.signer_block);
             sourceInfoBlock = (CardView) itemView.findViewById(R.id.source_info);
             optionsBlock = (CardView) itemView.findViewById(R.id.options_block);
             attachedLinkBlock = (CardView) itemView.findViewById(R.id.attachment_link);
+            attachmentPhotoCountBlock = (CardView) itemView.findViewById(R.id.attachment_photo_count_block);
             socialAcionsLayout = (LinearLayout) itemView.findViewById(R.id.social_actions);
 
             likeBlock.setOnClickListener(new View.OnClickListener() {
@@ -185,7 +204,7 @@ public class FeedRecyclerViewAdapter
 
             holder.optionsPhoto.setImageDrawable(ResourcesCompat.getDrawable(
                     VKSmartFeedApplication.context().getResources(),
-                    R.drawable.ic_camera_alt_white_24dp,
+                    R.drawable.ic_camera_alt_gray_24dp,
                     null));
             try {
                 new DownloadImageTask(holder.sourcePhoto).execute(tmpNote.getSourcePhotoUrl()).get();
@@ -194,6 +213,7 @@ public class FeedRecyclerViewAdapter
             }
 
             holder.attachmentBlock.setVisibility(View.GONE);
+            holder.signerBlock.setVisibility(View.GONE);
         }
         else {
             holder.socialAcionsLayout.setVisibility(View.VISIBLE);
@@ -208,8 +228,8 @@ public class FeedRecyclerViewAdapter
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     mActivity.startActivity(intent);
                     NoteViewActivity.mNote = mDataSet.get(holder.getAdapterPosition());
-                    mActivity.overridePendingTransition(R.anim.slide_in_right ,R.anim
-                            .slide_out_right);
+                    mActivity.overridePendingTransition(R.anim.slide_in_right,
+                            R.anim.slide_out_right);
                 }
             };
             holder.repostBlock.setOnClickListener(new View.OnClickListener() {
@@ -221,7 +241,11 @@ public class FeedRecyclerViewAdapter
             holder.sourceInfoBlock.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // ...
+                    Intent intent = new Intent(getApplicationContext(), GroupFeedViewActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    mActivity.startActivity(intent);
+                    mActivity.overridePendingTransition(R.anim.slide_in_right,
+                            R.anim.slide_out_right);
                 }
             });
             holder.cardLayout.setOnClickListener(openNoteByClick);
@@ -237,7 +261,7 @@ public class FeedRecyclerViewAdapter
             holder.dateText.setText(new PrettyTime(Locale.getDefault()).format(new Date(tmpNote.getDate() *
                     1000)));
 
-            //TODO: remove .get because of internetless cases. It can probably endlessly freeze
+            // TODO: remove .get because of internetless cases. It can probably endlessly freeze
             // application. But need to continue loading until every this picture would be
             // loaded.
             try {
@@ -248,7 +272,7 @@ public class FeedRecyclerViewAdapter
 
             holder.optionsPhoto.setImageDrawable(ResourcesCompat.getDrawable(
                     VKSmartFeedApplication.context().getResources(),
-                    R.drawable.ic_more_vert_white_24dp,
+                    R.drawable.ic_more_vert_gray_24dp,
                     null));
 
             holder.contextText.setVisibility(tmpNote.getContext().equals("")
@@ -261,7 +285,39 @@ public class FeedRecyclerViewAdapter
                     ? tmpNote.getContextPreview()
                     : tmpNote.getContext());
 
+            if (tmpNote.getAttachmentsPhotos().size() > 0) {
+                holder.attachedPhoto.setVisibility(View.VISIBLE);
+                try {
+                    new DownloadImageTask(holder.attachedPhoto).execute(tmpNote
+                            .getAttachmentsPhotos().get(0).getUrl()).get();
+                } catch (InterruptedException | ExecutionException pE) {
+                    pE.printStackTrace();
+                }
+            }
+            else {
+                holder.attachedPhoto.setVisibility(View.GONE);
+            }
+            if (tmpNote.getAttachmentsPhotos().size() > 1) {
+                holder.attachmentPhotoCountBlock.setVisibility(View.VISIBLE);
+                holder.attachmentPhotoCountIcon.setImageDrawable(
+                        ResourcesCompat.getDrawable(
+                                VKSmartFeedApplication.context().getResources(),
+                                R.drawable.ic_camera_alt_blue_24dp,
+                                null));
+                holder.attachmentPhotoCountText.setText(String.valueOf(
+                        tmpNote.getAttachmentsPhotos().size()));
+            }
+            else {
+                holder.attachmentPhotoCountBlock.setVisibility(View.GONE);
+            }
+
+            holder.attachmentBlock.setVisibility(
+                    tmpNote.getAttachedLink() == null && tmpNote.getAttachmentsPhotos().size() == 0
+                    ? View.GONE
+                    : View.VISIBLE);
+
             if (tmpNote.getAttachedLink() != null) {
+                holder.attachedLinkBlock.setVisibility(View.VISIBLE);
                 holder.attachedLinkBlock.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -271,19 +327,38 @@ public class FeedRecyclerViewAdapter
                         mContext.startActivity(browserIntent);
                     }
                 });
-                holder.attachmentBlock.setVisibility(View.VISIBLE);
                 holder.attachedLinkTitleText.setText(tmpNote.getAttachedLink().getTitle());
                 holder.attachedLinkCaptionText.setText(tmpNote.getAttachedLink().getCaption());
                 try {
                     new DownloadImageTask(holder.attachedLinkPhoto).execute(
-                            tmpNote.getAttachedLink().getPhotoUrl()).get();
+                        tmpNote.getAttachedLink().getPhotoUrl()).get();
                 } catch (InterruptedException | ExecutionException pE) {
                     pE.printStackTrace();
                 }
             }
             else {
-                holder.attachmentBlock.setVisibility(View.GONE);
+                holder.attachedLinkBlock.setVisibility(View.GONE);
             }
+
+            if (tmpNote.getSigner() != null) {
+                holder.signerBlock.setVisibility(View.VISIBLE);
+                holder.signerIcon.setImageDrawable(ResourcesCompat.getDrawable(
+                        VKSmartFeedApplication.context().getResources(),
+                        R.drawable.ic_account_circle_blue_24dp,
+                        null));
+                holder.signerNameText.setText(tmpNote.getSigner().getFirstName() + " " +
+                        tmpNote.getSigner().getLastName());
+                holder.signerBlock.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // ...
+                    }
+                });
+            }
+            else {
+                holder.signerBlock.setVisibility(View.GONE);
+            }
+
             holder.likeIcon.setImageDrawable(ResourcesCompat.getDrawable(
                     VKSmartFeedApplication.context().getResources(),
                     tmpNote.getUserLikes()

@@ -32,6 +32,9 @@
         <activity
             android:name=".NoteViewActivity"
             android:theme="@style/AppTheme.NoActionBarWithStatusBar" />
+        <activity
+            android:name=".GroupFeedViewActivity"
+            android:theme="@style/AppTheme" />
     </application>
 
 </manifest>

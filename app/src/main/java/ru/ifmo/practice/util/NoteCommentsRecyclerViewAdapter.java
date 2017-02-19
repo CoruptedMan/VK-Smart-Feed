@@ -75,7 +75,7 @@ public class NoteCommentsRecyclerViewAdapter
                 tmpComment.isUserLikes()
                         ? R.drawable.ic_favorite_pressed_24dp
                         : tmpComment.getLikesCount() > 0
-                            ? R.drawable.ic_favorite_dark_gray_24dp
+                            ? R.drawable.ic_favorite_darkgray_24dp
                             : R.drawable.ic_favorite_gray_24dp,
                 null));
     }
@@ -162,7 +162,7 @@ public class NoteCommentsRecyclerViewAdapter
                         tmpComment.isUserLikes()
                                 ? R.drawable.ic_favorite_pressed_24dp
                                 : tmpComment.getLikesCount() > 0
-                                    ? R.drawable.ic_favorite_dark_gray_24dp
+                                    ? R.drawable.ic_favorite_darkgray_24dp
                                     : R.drawable.ic_favorite_gray_24dp));
                 }
             });

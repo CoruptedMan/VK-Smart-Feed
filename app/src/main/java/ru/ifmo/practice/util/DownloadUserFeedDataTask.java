@@ -16,22 +16,24 @@ import java.util.ArrayList;
 
 import ru.ifmo.practice.AppStartActivity;
 import ru.ifmo.practice.MainActivity;
+import ru.ifmo.practice.model.Account;
 import ru.ifmo.practice.model.Note;
+import ru.ifmo.practice.model.attachments.Audio;
 import ru.ifmo.practice.model.attachments.Link;
+import ru.ifmo.practice.model.attachments.Photo;
+import ru.ifmo.practice.model.attachments.Video;
 
 import static com.vk.sdk.VKUIHelper.getApplicationContext;
 
-public class UpdateUserFeed extends AsyncTask<VKRequest, Void, ArrayList<Note>> {
+public class DownloadUserFeedDataTask extends AsyncTask<VKRequest, Void, ArrayList<Note>> {
     private JSONObject mResponse;
     private MainActivity mActivity;
-    //private OnDownloadFeedDataResultDelegate mDelegate;
     private String mStartFrom;
     private final int MIN_NOTES_COUNT = 6;
 
-    public UpdateUserFeed(MainActivity pActivity/*, OnDownloadFeedDataResultDelegate pDelegate*/) {
+    public DownloadUserFeedDataTask(MainActivity pActivity) {
         mActivity = pActivity;
         mStartFrom = mActivity.getStartFrom();
-        //mDelegate = pActivity;
     }
 
     @Override
@@ -79,6 +81,17 @@ public class UpdateUserFeed extends AsyncTask<VKRequest, Void, ArrayList<Note>> 
                         .getJSONObject(index)
                         .get("post_id")
                         .toString()));
+                long signerId = -100;
+                if (mResponse
+                        .getJSONArray("items")
+                        .getJSONObject(index)
+                        .has("signer_id")) {
+                    signerId = Integer.parseInt(mResponse
+                            .getJSONArray("items")
+                            .getJSONObject(index)
+                            .get("signer_id")
+                            .toString());
+                }
                 String sourceName = "";
                 String avatarUrl = "";
                 int groupCount = mResponse.getJSONArray("groups").length();
@@ -102,7 +115,7 @@ public class UpdateUserFeed extends AsyncTask<VKRequest, Void, ArrayList<Note>> 
                                 .toString();
                     }
                 }
-
+                Account signer = null;
                 int userCount = mResponse.getJSONArray("profiles").length();
                 for (int i = 0; i < userCount; i++) {
                     int userId = Integer.parseInt(mResponse
@@ -120,13 +133,20 @@ public class UpdateUserFeed extends AsyncTask<VKRequest, Void, ArrayList<Note>> 
                             .getJSONObject(i)
                             .get("last_name")
                             .toString();
+                    String userPhotoUrl = mResponse
+                            .getJSONArray("profiles")
+                            .getJSONObject(i)
+                            .get("photo_100")
+                            .toString();
                     if (userId == sourceId) {
                         sourceName = userFirstName + " " + userLastName;
-                        avatarUrl = mResponse
-                                .getJSONArray("profiles")
-                                .getJSONObject(i)
-                                .get("photo_100")
-                                .toString();
+                        avatarUrl = userPhotoUrl;
+                    }
+                    if (userId == signerId) {
+                        signer = new Account(userId,
+                                userFirstName,
+                                userLastName,
+                                userPhotoUrl);
                     }
                 }
 
@@ -148,7 +168,9 @@ public class UpdateUserFeed extends AsyncTask<VKRequest, Void, ArrayList<Note>> 
                         .toString());
 
                 int i = 0;
-                ArrayList<String> attachmentsPhotos = new ArrayList<>();
+                ArrayList<Photo> attachmentsPhotos = new ArrayList<>();
+                ArrayList<Audio> attachmentsAudios = new ArrayList<>();
+                ArrayList<Video> attachmentsVideos = new ArrayList<>();
                 Link link = null;
                 if (mResponse
                         .getJSONArray("items")
@@ -160,6 +182,117 @@ public class UpdateUserFeed extends AsyncTask<VKRequest, Void, ArrayList<Note>> 
                             .getJSONArray("attachments")
                             .optJSONObject(i) != null) {
                         if (mResponse
+                                .getJSONArray("items")
+                                .getJSONObject(index)
+                                .getJSONArray("attachments")
+                                .getJSONObject(i)
+                                .get("type")
+                                .toString()
+                                .equals("photo")) {
+                            long photoId = Integer.parseInt(mResponse
+                                    .getJSONArray("items")
+                                    .getJSONObject(index)
+                                    .getJSONArray("attachments")
+                                    .getJSONObject(i)
+                                    .getJSONObject("photo")
+                                    .get("id").toString());
+                            long photoOwnerId = Integer.parseInt(mResponse
+                                    .getJSONArray("items")
+                                    .getJSONObject(index)
+                                    .getJSONArray("attachments")
+                                    .getJSONObject(i)
+                                    .getJSONObject("photo")
+                                    .get("owner_id").toString());
+                            long photoAlbumId = Integer.parseInt(mResponse
+                                    .getJSONArray("items")
+                                    .getJSONObject(index)
+                                    .getJSONArray("attachments")
+                                    .getJSONObject(i)
+                                    .getJSONObject("photo")
+                                    .get("album_id").toString());
+                            String photoDate = mResponse
+                                    .getJSONArray("items")
+                                    .getJSONObject(index)
+                                    .getJSONArray("attachments")
+                                    .getJSONObject(i)
+                                    .getJSONObject("photo")
+                                    .get("date").toString();
+                            String photoText = mResponse
+                                    .getJSONArray("items")
+                                    .getJSONObject(index)
+                                    .getJSONArray("attachments")
+                                    .getJSONObject(i)
+                                    .getJSONObject("photo")
+                                    .get("text").toString();
+                            int photoWidth = Integer.parseInt(mResponse
+                                    .getJSONArray("items")
+                                    .getJSONObject(index)
+                                    .getJSONArray("attachments")
+                                    .getJSONObject(i)
+                                    .getJSONObject("photo")
+                                    .get("width").toString());
+                            int photoHeight = Integer.parseInt(mResponse
+                                    .getJSONArray("items")
+                                    .getJSONObject(index)
+                                    .getJSONArray("attachments")
+                                    .getJSONObject(i)
+                                    .getJSONObject("photo")
+                                    .get("height").toString());
+                            String photoUrl = "";
+                            if (photoWidth > 807) {
+                                photoUrl = mResponse
+                                        .getJSONArray("items")
+                                        .getJSONObject(index)
+                                        .getJSONArray("attachments")
+                                        .getJSONObject(i)
+                                        .getJSONObject("photo")
+                                        .get("photo_1280").toString();
+                            }
+                            else if (photoWidth > 604) {
+                                photoUrl = mResponse
+                                        .getJSONArray("items")
+                                        .getJSONObject(index)
+                                        .getJSONArray("attachments")
+                                        .getJSONObject(i)
+                                        .getJSONObject("photo")
+                                        .get("photo_807").toString();
+                            }
+                            else if (photoWidth > 130) {
+                                photoUrl = mResponse
+                                        .getJSONArray("items")
+                                        .getJSONObject(index)
+                                        .getJSONArray("attachments")
+                                        .getJSONObject(i)
+                                        .getJSONObject("photo")
+                                        .get("photo_604").toString();
+                            }
+                            else if (photoWidth > 75) {
+                                photoUrl = mResponse
+                                        .getJSONArray("items")
+                                        .getJSONObject(index)
+                                        .getJSONArray("attachments")
+                                        .getJSONObject(i)
+                                        .getJSONObject("photo")
+                                        .get("photo_130").toString();
+                            }
+                            else {
+                                photoUrl = mResponse
+                                        .getJSONArray("items")
+                                        .getJSONObject(index)
+                                        .getJSONArray("attachments")
+                                        .getJSONObject(i)
+                                        .getJSONObject("photo")
+                                        .get("photo_75").toString();
+                            }
+                            attachmentsPhotos.add(new Photo(photoId,
+                                    photoOwnerId,
+                                    photoAlbumId,
+                                    photoUrl,
+                                    photoDate,
+                                    photoWidth,
+                                    photoHeight));
+                        }
+                        else if (mResponse
                                 .getJSONArray("items")
                                 .getJSONObject(index)
                                 .getJSONArray("attachments")
@@ -261,11 +394,12 @@ public class UpdateUserFeed extends AsyncTask<VKRequest, Void, ArrayList<Note>> 
                 if (link != null) {
                     note.setAttachedLink(link);
                 }
+                if (signer != null) {
+                    note.setSigner(signer);
+                }
                 results.add(note);
             }
-        } catch (JSONException pE) {
-            pE.printStackTrace();
-        } catch (URISyntaxException pE) {
+        } catch (JSONException | URISyntaxException pE) {
             pE.printStackTrace();
         }
         return results;

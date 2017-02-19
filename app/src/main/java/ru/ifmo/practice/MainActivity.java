@@ -2,6 +2,7 @@ package ru.ifmo.practice;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -9,25 +10,30 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.Toast;
 
 import com.vk.sdk.VKSdk;
+import com.vk.sdk.api.VKError;
 import com.vk.sdk.api.VKParameters;
 import com.vk.sdk.api.VKRequest;
+import com.vk.sdk.api.VKResponse;
 
-import java.net.URI;
-import java.net.URISyntaxException;
+import org.json.JSONException;
+
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
 import ru.ifmo.practice.model.Note;
+import ru.ifmo.practice.util.DownloadUserFeedDataTask;
 import ru.ifmo.practice.util.FeedRecyclerViewAdapter;
 import ru.ifmo.practice.util.OnDownloadFeedDataResultDelegate;
-import ru.ifmo.practice.util.UpdateUserFeed;
 
 public class MainActivity extends AppCompatActivity implements OnDownloadFeedDataResultDelegate {
 
+    private MainActivity mActivity;
     private FeedRecyclerViewAdapter mAdapter;
     private LinearLayoutManager mLinearLayoutManager;
+    private FloatingActionButton refreshButton;
     private RecyclerView mRecyclerView;
     private SwipeRefreshLayout swipeContainer;
     private ArrayList<Note> mNotes;
@@ -41,6 +47,7 @@ public class MainActivity extends AppCompatActivity implements OnDownloadFeedDat
     private int firstVisibleItem;
     private int visibleItemCount;
     public static String mStartFrom = "";
+    private boolean isOldDataLoaded = true;
 
     public String getStartFrom() {
         return mStartFrom;
@@ -51,8 +58,8 @@ public class MainActivity extends AppCompatActivity implements OnDownloadFeedDat
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mActivity = this;
         mNotes = new ArrayList<>();
-
         Toolbar tb = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(tb);
         final ActionBar ab = getSupportActionBar();
@@ -62,28 +69,31 @@ public class MainActivity extends AppCompatActivity implements OnDownloadFeedDat
             ab.setDisplayShowTitleEnabled(false);
         }
 
-        swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
-        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                previousTotal = 0;
-                mStartFrom = "";
-                try {
-                    toggleSwipeContainerRefreshingState(true);
-                    addData();
-                } catch (ExecutionException | InterruptedException pE) {
-                    pE.printStackTrace();
-                }
-            }
-        });
-        swipeContainer.setColorSchemeResources(R.color.colorPrimary, R.color.colorPrimaryDark);
-
         tb.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mLinearLayoutManager.scrollToPositionWithOffset(0, 0);
             }
         });
+
+        swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refreshFeed();
+            }
+        });
+        swipeContainer.setColorSchemeResources(R.color.colorPrimary, R.color.colorPrimaryDark);
+
+        refreshButton = (FloatingActionButton) findViewById(R.id.refresh);
+        refreshButton.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View v) {
+                 refreshFeed();
+                 refreshButton.animate().alpha(0.0f);
+                 refreshButton.setVisibility(View.INVISIBLE);
+             }
+         });
 
         findViewById(R.id.log_out).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -135,6 +145,65 @@ public class MainActivity extends AppCompatActivity implements OnDownloadFeedDat
         } catch (ExecutionException | InterruptedException pE) {
             pE.printStackTrace();
         }
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    try {
+                        synchronized (this) {
+                            wait(5000);
+                        }
+                        final Long[] resultDate = {mAdapter.getDataSet().get(1).getDate()};
+                        new VKRequest("newsfeed.get",
+                                VKParameters.from("filters", "post", "count", 1, "version", "5.62"))
+                                .executeSyncWithListener(new VKRequest.VKRequestListener() {
+                                    @Override
+                                    public void onComplete(VKResponse response) {
+                                        try {
+                                            resultDate[0] = Long.parseLong(response
+                                                    .json
+                                                    .getJSONObject("response")
+                                                    .getJSONArray("items")
+                                                    .getJSONObject(0)
+                                                    .get("date").toString());
+                                        } catch (JSONException pE) {
+                                            pE.printStackTrace();
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onError(VKError error) {
+                                        Toast.makeText(getApplicationContext(), error.toString(), Toast
+                                                .LENGTH_LONG).show();
+                                    }
+
+                                    @Override
+                                    public void attemptFailed(VKRequest request, int attemptNumber, int totalAttempts) {
+                                        Toast.makeText(getApplicationContext(), "Attempt Failed!", Toast
+                                                .LENGTH_LONG).show();
+                                    }
+                                });
+                        if (mAdapter.getDataSet().get(1).getDate() != resultDate[0]) {
+                            if (isOldDataLoaded) {
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        refreshButton.setVisibility(View.VISIBLE);
+                                        refreshButton.setAlpha(0.0f);
+                                        refreshButton.animate()
+                                                .alpha(1.0f);
+                                    }
+                                });
+                            }
+                            isOldDataLoaded = false;
+                        }
+                    } catch (InterruptedException pE) {
+                        pE.printStackTrace();
+                    }
+                }
+            }
+        }).start();
     }
 
     private void addData() throws ExecutionException, InterruptedException {
@@ -144,12 +213,25 @@ public class MainActivity extends AppCompatActivity implements OnDownloadFeedDat
                         "count", MIN_NOTES_COUNT,
                         "version", "5.62"));
 
-        new UpdateUserFeed(this).execute(request);
+        new DownloadUserFeedDataTask(this).execute(request);
     }
 
-    public void toggleSwipeContainerRefreshingState(boolean state) {
+    private void toggleSwipeContainerRefreshingState(boolean state) {
         if (swipeContainer != null)
             swipeContainer.setRefreshing(state);
+    }
+
+    public void refreshFeed() {
+        mLinearLayoutManager.scrollToPositionWithOffset(0, 0);
+        previousTotal = 0;
+        mStartFrom = "";
+        try {
+            toggleSwipeContainerRefreshingState(true);
+            addData();
+        } catch (ExecutionException | InterruptedException pE) {
+            pE.printStackTrace();
+        }
+        isOldDataLoaded = true;
     }
 
     @Override

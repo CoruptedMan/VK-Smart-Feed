@@ -1,8 +1,6 @@
 package ru.ifmo.practice.model.attachments;
 
-import ru.ifmo.practice.model.Attachment;
-
-public class Link extends Attachment{
+public class Link {
     private String url;
     private String title;
     private String description;

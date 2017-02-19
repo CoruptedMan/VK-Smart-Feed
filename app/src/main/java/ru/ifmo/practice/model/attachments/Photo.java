@@ -20,8 +20,13 @@ public class Photo {
     private String accessKey;
     private String url;
 
-    public Photo(long pId, long pOwnerId, long pAlbumId, String pUrl, String pDate, int pWidth, int
-            pHeight) {
+    public Photo(long pId,
+                 long pOwnerId,
+                 long pAlbumId,
+                 String pUrl,
+                 String pDate,
+                 int pWidth,
+                 int pHeight) {
         id = pId;
         ownerId = pOwnerId;
         albumId = pAlbumId;
