@@ -1,6 +1,60 @@
-<?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+    <TextView
+        android:layout_width="match_parent"
+        android:textStyle="normal|bold"
+        android:text="Поделиться записью"
+        android:textSize="18sp"
+        android:textColor="@color/colorTextPrimary"
+        android:layout_height="wrap_content"
+        android:paddingBottom="15dp"
+        android:paddingTop="15dp"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:id="@+id/repost_dialog_title" />
 
-</RelativeLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:text="На моей стене"
+        android:textSize="16sp"
+        android:textColor="@color/colorTextPrimary"
+        android:gravity="center_vertical"
+        android:layout_height="wrap_content"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="15dp"
+        android:paddingTop="15dp"
+        android:foreground="@drawable/selectable_effect"
+        android:id="@+id/repost_dialog_my_wall" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:text="В сообществе"
+        android:textSize="16sp"
+        android:textColor="@color/colorTextPrimary"
+        android:gravity="center_vertical"
+        android:layout_height="wrap_content"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="15dp"
+        android:paddingTop="15dp"
+        android:foreground="@drawable/selectable_effect"
+        android:id="@+id/repost_dialog_group" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textMultiLine"
+        android:ems="10"
+        android:id="@+id/repost_dialog_message"
+        android:hint="Добавить сообщение"
+        android:textSize="16sp"
+        android:textColor="@color/colorTextPrimary"
+        android:minLines="2"
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="20dp"
+        android:gravity="top|center_vertical" />
+</LinearLayout>

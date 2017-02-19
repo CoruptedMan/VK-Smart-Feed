@@ -35,6 +35,7 @@ import ru.ifmo.practice.NoteViewActivity;
 import ru.ifmo.practice.R;
 import ru.ifmo.practice.VKSmartFeedApplication;
 import ru.ifmo.practice.model.Note;
+import ru.ifmo.practice.model.dialog.RepostNoteDialogFragment;
 
 import static com.vk.sdk.VKUIHelper.getApplicationContext;
 
@@ -66,7 +67,7 @@ public class FeedRecyclerViewAdapter
         private ImageView likeIcon;
         private ImageView commentIcon;
         private ImageView repostIcon;
-        private ImageView optionsPhoto;
+        private ImageView optionsIcon;
         private ImageView sourcePhoto;
         private ImageView attachedPhoto;
         private ImageView attachedLinkPhoto;
@@ -104,7 +105,7 @@ public class FeedRecyclerViewAdapter
             likeIcon = (ImageView) itemView.findViewById(R.id.like_icon);
             commentIcon = (ImageView) itemView.findViewById(R.id.comment_icon);
             repostIcon = (ImageView) itemView.findViewById(R.id.repost_icon);
-            optionsPhoto = (ImageView) itemView.findViewById(R.id.options);
+            optionsIcon = (ImageView) itemView.findViewById(R.id.options);
             attachedPhoto = (ImageView) itemView.findViewById(R.id.attachment_photo);
             attachedLinkPhoto = (ImageView) itemView.findViewById(R.id.attachment_link_photo);
             attachmentPhotoCountIcon = (ImageView) itemView.findViewById(R.id.attachment_photo_count_icon);
@@ -202,7 +203,7 @@ public class FeedRecyclerViewAdapter
             holder.dateText.setVisibility(View.GONE);
             holder.addNewNoteText.setVisibility(View.VISIBLE);
 
-            holder.optionsPhoto.setImageDrawable(ResourcesCompat.getDrawable(
+            holder.optionsIcon.setImageDrawable(ResourcesCompat.getDrawable(
                     VKSmartFeedApplication.context().getResources(),
                     R.drawable.ic_camera_alt_gray_24dp,
                     null));
@@ -235,7 +236,8 @@ public class FeedRecyclerViewAdapter
             holder.repostBlock.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // ...
+                    RepostNoteDialogFragment dialog = new RepostNoteDialogFragment();
+                    dialog.show(mActivity.getFragmentManager(), "kek");
                 }
             });
             holder.sourceInfoBlock.setOnClickListener(new View.OnClickListener() {
@@ -270,7 +272,7 @@ public class FeedRecyclerViewAdapter
                 pE.printStackTrace();
             }
 
-            holder.optionsPhoto.setImageDrawable(ResourcesCompat.getDrawable(
+            holder.optionsIcon.setImageDrawable(ResourcesCompat.getDrawable(
                     VKSmartFeedApplication.context().getResources(),
                     R.drawable.ic_more_vert_gray_24dp,
                     null));
