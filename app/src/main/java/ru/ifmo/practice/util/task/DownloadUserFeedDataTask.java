@@ -1,4 +1,4 @@
-package ru.ifmo.practice.util;
+package ru.ifmo.practice.util.task;
 
 import android.os.AsyncTask;
 import android.widget.Toast;
@@ -13,9 +13,9 @@ import org.json.JSONObject;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
-import ru.ifmo.practice.AppStartActivity;
-import ru.ifmo.practice.MainActivity;
+import ru.ifmo.practice.FeedActivity;
 import ru.ifmo.practice.model.Account;
 import ru.ifmo.practice.model.Note;
 import ru.ifmo.practice.model.attachments.Audio;
@@ -24,14 +24,14 @@ import ru.ifmo.practice.model.attachments.Photo;
 import ru.ifmo.practice.model.attachments.Video;
 
 import static com.vk.sdk.VKUIHelper.getApplicationContext;
+import static ru.ifmo.practice.util.AppConsts.MIN_NOTES_COUNT;
 
 public class DownloadUserFeedDataTask extends AsyncTask<VKRequest, Void, ArrayList<Note>> {
     private JSONObject mResponse;
-    private MainActivity mActivity;
+    private FeedActivity mActivity;
     private String mStartFrom;
-    private final int MIN_NOTES_COUNT = 6;
 
-    public DownloadUserFeedDataTask(MainActivity pActivity) {
+    public DownloadUserFeedDataTask(FeedActivity pActivity) {
         mActivity = pActivity;
         mStartFrom = mActivity.getStartFrom();
     }
@@ -39,15 +39,6 @@ public class DownloadUserFeedDataTask extends AsyncTask<VKRequest, Void, ArrayLi
     @Override
     protected ArrayList<Note> doInBackground(VKRequest... params) {
         ArrayList<Note> results = new ArrayList<>();
-        if (mStartFrom.equals("")) {
-            results.add(new Note(AppStartActivity.mAccount.getId(),
-                    -1,
-                    AppStartActivity.mAccount.getFirstName()
-                            + " " + AppStartActivity.mAccount.getLastName(),
-                    "", "", -1,
-                    AppStartActivity.mAccount.getPhotoUrl(),
-                    null, -1, false, -1, false, -1, false));
-        }
         params[0].executeSyncWithListener(new VKRequest.VKRequestListener() {
             @Override
             public void onComplete(VKResponse response) {
@@ -71,6 +62,10 @@ public class DownloadUserFeedDataTask extends AsyncTask<VKRequest, Void, ArrayLi
         });
         try {
             for (int index = 0; index < MIN_NOTES_COUNT; index++) {
+                System.out.println(mResponse
+                        .getJSONArray("items")
+                        .getJSONObject(index)
+                        .toString(2));
                 long sourceId = Math.abs(Integer.parseInt(mResponse
                         .getJSONArray("items")
                         .getJSONObject(index)
@@ -93,7 +88,7 @@ public class DownloadUserFeedDataTask extends AsyncTask<VKRequest, Void, ArrayLi
                             .toString());
                 }
                 String sourceName = "";
-                String avatarUrl = "";
+                Photo sourcePhoto = new Photo();
                 int groupCount = mResponse.getJSONArray("groups").length();
                 for (int i = 0; i < groupCount; i++) {
                     int groupId = Integer.parseInt(mResponse
@@ -106,6 +101,7 @@ public class DownloadUserFeedDataTask extends AsyncTask<VKRequest, Void, ArrayLi
                             .getJSONObject(i)
                             .get("name")
                             .toString();
+                    String avatarUrl;
                     if (groupId == sourceId) {
                         sourceName = groupName;
                         avatarUrl = mResponse
@@ -113,6 +109,11 @@ public class DownloadUserFeedDataTask extends AsyncTask<VKRequest, Void, ArrayLi
                                 .getJSONObject(i)
                                 .get("photo_100")
                                 .toString();
+                        try {
+                            sourcePhoto.setPhotoUrl(avatarUrl);
+                        } catch (ExecutionException | InterruptedException pE) {
+                            pE.printStackTrace();
+                        }
                     }
                 }
                 Account signer = null;
@@ -133,20 +134,25 @@ public class DownloadUserFeedDataTask extends AsyncTask<VKRequest, Void, ArrayLi
                             .getJSONObject(i)
                             .get("last_name")
                             .toString();
-                    String userPhotoUrl = mResponse
-                            .getJSONArray("profiles")
-                            .getJSONObject(i)
-                            .get("photo_100")
-                            .toString();
+                    String avatarUrl = "";
                     if (userId == sourceId) {
                         sourceName = userFirstName + " " + userLastName;
-                        avatarUrl = userPhotoUrl;
+                        avatarUrl = mResponse
+                                .getJSONArray("profiles")
+                                .getJSONObject(i)
+                                .get("photo_100")
+                                .toString();
+                        try {
+                            sourcePhoto.setPhotoUrl(avatarUrl);
+                        } catch (ExecutionException | InterruptedException pE) {
+                            pE.printStackTrace();
+                        }
                     }
                     if (userId == signerId) {
                         signer = new Account(userId,
                                 userFirstName,
                                 userLastName,
-                                userPhotoUrl);
+                                avatarUrl);
                     }
                 }
 
@@ -238,7 +244,7 @@ public class DownloadUserFeedDataTask extends AsyncTask<VKRequest, Void, ArrayLi
                                     .getJSONObject(i)
                                     .getJSONObject("photo")
                                     .get("height").toString());
-                            String photoUrl = "";
+                            String photoUrl;
                             if (photoWidth > 807) {
                                 photoUrl = mResponse
                                         .getJSONArray("items")
@@ -289,6 +295,7 @@ public class DownloadUserFeedDataTask extends AsyncTask<VKRequest, Void, ArrayLi
                                     photoAlbumId,
                                     photoUrl,
                                     photoDate,
+                                    photoText,
                                     photoWidth,
                                     photoHeight));
                         }
@@ -322,22 +329,237 @@ public class DownloadUserFeedDataTask extends AsyncTask<VKRequest, Void, ArrayLi
                                     .getJSONObject(i)
                                     .getJSONObject("link")
                                     .get("description").toString();
-                            String linkPhotoUrl = mResponse
+                            String linkPhotoUrl = "";
+                            boolean linkIsExternal = false;
+                            if (mResponse
                                     .getJSONArray("items")
                                     .getJSONObject(index)
                                     .getJSONArray("attachments")
                                     .getJSONObject(i)
                                     .getJSONObject("link")
-                                    .get("image_src").toString();
-
+                                    .get("target").toString().equals("external")) {
+                                linkIsExternal = true;
+                            }
+                            int linkPhotoType = 0;
+                            if (!mResponse
+                                    .getJSONArray("items")
+                                    .getJSONObject(index)
+                                    .getJSONArray("attachments")
+                                    .getJSONObject(i)
+                                    .getJSONObject("link")
+                                    .has("preview_page")) {
+                                if (mResponse
+                                        .getJSONArray("items")
+                                        .getJSONObject(index)
+                                        .getJSONArray("attachments")
+                                        .getJSONObject(i)
+                                        .getJSONObject("link")
+                                        .has("image_big")) {
+                                    linkPhotoUrl = mResponse
+                                            .getJSONArray("items")
+                                            .getJSONObject(index)
+                                            .getJSONArray("attachments")
+                                            .getJSONObject(i)
+                                            .getJSONObject("link")
+                                            .get("image_big").toString();
+                                    linkPhotoType = 2;
+                                } else if (mResponse
+                                        .getJSONArray("items")
+                                        .getJSONObject(index)
+                                        .getJSONArray("attachments")
+                                        .getJSONObject(i)
+                                        .getJSONObject("link")
+                                        .has("image_src")) {
+                                    linkPhotoUrl = mResponse
+                                            .getJSONArray("items")
+                                            .getJSONObject(index)
+                                            .getJSONArray("attachments")
+                                            .getJSONObject(i)
+                                            .getJSONObject("link")
+                                            .get("image_src").toString();
+                                    linkPhotoType = 1;
+                                }
+                            }
                             link = new Link(linkUrl,
                                     linkTitle,
                                     linkDescription,
                                     linkCaption,
-                                    linkPhotoUrl);
+                                    new Photo(),
+                                    linkIsExternal,
+                                    linkPhotoType);
+                            try {
+                                link.getPhoto().setPhotoUrl(linkPhotoUrl);
+                            } catch (ExecutionException | InterruptedException pE) {
+                                pE.printStackTrace();
+                            }
+                        } else if (mResponse
+                                .getJSONArray("items")
+                                .getJSONObject(index)
+                                .getJSONArray("attachments")
+                                .getJSONObject(i)
+                                .get("type")
+                                .toString()
+                                .equals("video")) {
+                            long videoId = Long.parseLong(mResponse
+                                    .getJSONArray("items")
+                                    .getJSONObject(index)
+                                    .getJSONArray("attachments")
+                                    .getJSONObject(i)
+                                    .getJSONObject("video")
+                                    .get("id").toString());
+                            long videoOwnerId = Long.parseLong(mResponse
+                                    .getJSONArray("items")
+                                    .getJSONObject(index)
+                                    .getJSONArray("attachments")
+                                    .getJSONObject(i)
+                                    .getJSONObject("video")
+                                    .get("owner_id").toString());
+                            String videoTitle = mResponse
+                                    .getJSONArray("items")
+                                    .getJSONObject(index)
+                                    .getJSONArray("attachments")
+                                    .getJSONObject(i)
+                                    .getJSONObject("video")
+                                    .get("title").toString();
+                            int videoDuration = Integer.parseInt(mResponse
+                                    .getJSONArray("items")
+                                    .getJSONObject(index)
+                                    .getJSONArray("attachments")
+                                    .getJSONObject(i)
+                                    .getJSONObject("video")
+                                    .get("duration").toString());
+                            int videoCommentsCount = Integer.parseInt(mResponse
+                                    .getJSONArray("items")
+                                    .getJSONObject(index)
+                                    .getJSONArray("attachments")
+                                    .getJSONObject(i)
+                                    .getJSONObject("video")
+                                    .get("comments").toString());
+                            int videoViewsCount = Integer.parseInt(mResponse
+                                    .getJSONArray("items")
+                                    .getJSONObject(index)
+                                    .getJSONArray("attachments")
+                                    .getJSONObject(i)
+                                    .getJSONObject("video")
+                                    .get("views").toString());
+                            String videoDescription = mResponse
+                                    .getJSONArray("items")
+                                    .getJSONObject(index)
+                                    .getJSONArray("attachments")
+                                    .getJSONObject(i)
+                                    .getJSONObject("video")
+                                    .get("description").toString();
+                            String videoPhotoUrl = mResponse
+                                    .getJSONArray("items")
+                                    .getJSONObject(index)
+                                    .getJSONArray("attachments")
+                                    .getJSONObject(i)
+                                    .getJSONObject("video")
+                                    .get("photo_320").toString();
+                            String videoAccessKey = mResponse
+                                    .getJSONArray("items")
+                                    .getJSONObject(index)
+                                    .getJSONArray("attachments")
+                                    .getJSONObject(i)
+                                    .getJSONObject("video")
+                                    .get("access_key").toString();
+                            long videoDate = Long.parseLong(mResponse
+                                    .getJSONArray("items")
+                                    .getJSONObject(index)
+                                    .getJSONArray("attachments")
+                                    .getJSONObject(i)
+                                    .getJSONObject("video")
+                                    .get("date").toString());
+                            String videoPlatform = "vk";
+                            if (mResponse
+                                    .getJSONArray("items")
+                                    .getJSONObject(index)
+                                    .getJSONArray("attachments")
+                                    .getJSONObject(i)
+                                    .getJSONObject("video")
+                                    .has("platform")) {
+                                videoPlatform = mResponse
+                                        .getJSONArray("items")
+                                        .getJSONObject(index)
+                                        .getJSONArray("attachments")
+                                        .getJSONObject(i)
+                                        .getJSONObject("video")
+                                        .get("platform")
+                                        .toString();
+                            }
+                            Video video = new Video(videoId,
+                                    videoOwnerId,
+                                    videoDate,
+                                    videoDuration,
+                                    videoCommentsCount,
+                                    videoViewsCount,
+                                    videoTitle,
+                                    videoDescription,
+                                    videoPlatform,
+                                    videoAccessKey,
+                                    new Photo());
+                            try {
+                                video.getPhoto().setPhotoUrl(videoPhotoUrl);
+                            } catch (ExecutionException | InterruptedException pE) {
+                                pE.printStackTrace();
+                            }
+                            attachmentsVideos.add(video);
+                        } else if (mResponse
+                                .getJSONArray("items")
+                                .getJSONObject(index)
+                                .getJSONArray("attachments")
+                                .getJSONObject(i)
+                                .get("type")
+                                .toString()
+                                .equals("audio")) {
+                            long audioId = Long.parseLong(mResponse
+                                    .getJSONArray("items")
+                                    .getJSONObject(index)
+                                    .getJSONArray("attachments")
+                                    .getJSONObject(i)
+                                    .getJSONObject("audio")
+                                    .get("id").toString());
+                            String audioArtist = mResponse
+                                    .getJSONArray("items")
+                                    .getJSONObject(index)
+                                    .getJSONArray("attachments")
+                                    .getJSONObject(i)
+                                    .getJSONObject("audio")
+                                    .get("artist").toString();
+                            String audioTitle = mResponse
+                                    .getJSONArray("items")
+                                    .getJSONObject(index)
+                                    .getJSONArray("attachments")
+                                    .getJSONObject(i)
+                                    .getJSONObject("audio")
+                                    .get("title").toString();
+                            int audioDuration = Integer.parseInt(mResponse
+                                    .getJSONArray("items")
+                                    .getJSONObject(index)
+                                    .getJSONArray("attachments")
+                                    .getJSONObject(i)
+                                    .getJSONObject("audio")
+                                    .get("duration").toString());
+                            String audioUrl = mResponse
+                                    .getJSONArray("items")
+                                    .getJSONObject(index)
+                                    .getJSONArray("attachments")
+                                    .getJSONObject(i)
+                                    .getJSONObject("audio")
+                                    .get("url").toString();
+                            Audio audio = new Audio(audioId,
+                                    audioArtist,
+                                    audioTitle,
+                                    audioDuration,
+                                    audioUrl);
+                            attachmentsAudios.add(audio);
                         }
                         i++;
                     }
+                }
+
+                if (attachmentsPhotos.size() > 0 && link != null) {
+                    link.setPhotoType(0);
                 }
 
                 int likes = Integer.parseInt(mResponse
@@ -383,8 +605,10 @@ public class DownloadUserFeedDataTask extends AsyncTask<VKRequest, Void, ArrayLi
                         context,
                         contextPreview,
                         date,
-                        avatarUrl,
+                        sourcePhoto,
                         attachmentsPhotos,
+                        attachmentsVideos,
+                        attachmentsAudios,
                         likes,
                         userLikes,
                         comments,

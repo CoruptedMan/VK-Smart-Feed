@@ -6,23 +6,43 @@ public class Video {
     private long date;
     private int duration;
     private int commentsCount;
+    private int viewsCount;
     private String title;
     private String description;
-    private String photoUrl;
     private String platform;
-    private boolean canAdd;
+    private String accessKey;
+    private Photo photo;
 
-    public Video(long pId, long pOwnerId, long pDate, int pDuration, int pCommentsCount, String pTitle, String pDescription, String pPhotoUrl, String pPlatform, boolean pCanAdd) {
+    public Video(long pId,
+                 long pOwnerId,
+                 long pDate,
+                 int pDuration,
+                 int pCommentsCount,
+                 int pViewsCount,
+                 String pTitle,
+                 String pDescription,
+                 String pPlatform,
+                 String pAccessKey,
+                 Photo pPhoto) {
         id = pId;
         ownerId = pOwnerId;
         date = pDate;
         duration = pDuration;
         commentsCount = pCommentsCount;
+        viewsCount = pViewsCount;
         title = pTitle;
         description = pDescription;
-        photoUrl = pPhotoUrl;
         platform = pPlatform;
-        canAdd = pCanAdd;
+        accessKey = pAccessKey;
+        photo = pPhoto;
+    }
+
+    public long getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(long pOwnerId) {
+        ownerId = pOwnerId;
     }
 
     public long getId() {
@@ -33,12 +53,12 @@ public class Video {
         id = pId;
     }
 
-    public long getOwnerId() {
-        return ownerId;
+    public int getViewsCount() {
+        return viewsCount;
     }
 
-    public void setOwnerId(long pOwnerId) {
-        ownerId = pOwnerId;
+    public void setViewsCount(int pViewsCount) {
+        viewsCount = pViewsCount;
     }
 
     public long getDate() {
@@ -81,12 +101,12 @@ public class Video {
         description = pDescription;
     }
 
-    public String getPhotoUrl() {
-        return photoUrl;
+    public Photo getPhoto() {
+        return photo;
     }
 
-    public void setPhotoUrl(String pPhotoUrl) {
-        photoUrl = pPhotoUrl;
+    public void setPhoto(Photo pPhoto) {
+        photo = pPhoto;
     }
 
     public String getPlatform() {
@@ -97,11 +117,11 @@ public class Video {
         platform = pPlatform;
     }
 
-    public boolean isCanAdd() {
-        return canAdd;
+    public String getAccessKey() {
+        return accessKey;
     }
 
-    public void setCanAdd(boolean pCanAdd) {
-        canAdd = pCanAdd;
+    public void setAccessKey(String pAccessKey) {
+        accessKey = pAccessKey;
     }
 }

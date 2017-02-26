@@ -1,5 +1,11 @@
 package ru.ifmo.practice.model.attachments;
 
+import android.graphics.Bitmap;
+
+import java.util.concurrent.ExecutionException;
+
+import ru.ifmo.practice.util.task.DownloadImageTask;
+
 public class Photo {
 
     private long id;
@@ -18,22 +24,29 @@ public class Photo {
     private String descriptionText;
     private String date;
     private String accessKey;
-    private String url;
+    private String photoUrl;
+    private String text;
+    private Bitmap imageBitmap;
 
     public Photo(long pId,
                  long pOwnerId,
                  long pAlbumId,
-                 String pUrl,
+                 String pPhotoUrl,
                  String pDate,
+                 String pText,
                  int pWidth,
                  int pHeight) {
         id = pId;
         ownerId = pOwnerId;
         albumId = pAlbumId;
-        url = pUrl;
+        photoUrl = pPhotoUrl;
         date = pDate;
+        text = pText;
         width = pWidth;
         height = pHeight;
+    }
+
+    public Photo() {
     }
 
     public long getId() {
@@ -44,131 +57,24 @@ public class Photo {
         id = pId;
     }
 
-    public long getAlbumId() {
-        return albumId;
+    public Bitmap getImageBitmap() {
+        return imageBitmap;
     }
 
-    public void setAlbumId(long pAlbumId) {
-        albumId = pAlbumId;
+    public void setPhotoUrl(String pPhotoUrl) throws ExecutionException, InterruptedException {
+        photoUrl = pPhotoUrl;
     }
 
-    public long getOwnerId() {
-        return ownerId;
+    public void setImageBitmap(Bitmap pImageBitmap) {
+        imageBitmap = pImageBitmap;
     }
 
-    public void setOwnerId(long pOwnerId) {
-        ownerId = pOwnerId;
+    public String getPhotoUrl() {
+        return photoUrl;
     }
 
-    public long getPostId() {
-        return postId;
+    public void loadBitmap() throws ExecutionException, InterruptedException {
+        this.imageBitmap = new DownloadImageTask().execute(this.photoUrl).get();
     }
 
-    public void setPostId(long pPostId) {
-        postId = pPostId;
-    }
-
-    public int getWidth() {
-        return width;
-    }
-
-    public void setWidth(int pWidth) {
-        width = pWidth;
-    }
-
-    public int getHeight() {
-        return height;
-    }
-
-    public void setHeight(int pHeight) {
-        height = pHeight;
-    }
-
-    public String getDescriptionText() {
-        return descriptionText;
-    }
-
-    public void setDescriptionText(String pDescriptionText) {
-        descriptionText = pDescriptionText;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String pDate) {
-        date = pDate;
-    }
-
-    public String getAccessKey() {
-        return accessKey;
-    }
-
-    public void setAccessKey(String pAccessKey) {
-        accessKey = pAccessKey;
-    }
-
-    public int getLikesCount() {
-        return likesCount;
-    }
-
-    public void setLikesCount(int pLikesCount) {
-        likesCount = pLikesCount;
-    }
-
-    public boolean isUserLikes() {
-        return userLikes;
-    }
-
-    public void setUserLikes(boolean pUserLikes) {
-        userLikes = pUserLikes;
-    }
-
-    public int getCommentsCount() {
-        return commentsCount;
-    }
-
-    public void setCommentsCount(int pCommentsCount) {
-        commentsCount = pCommentsCount;
-    }
-
-    public boolean isCanComment() {
-        return canComment;
-    }
-
-    public void setCanComment(boolean pCanComment) {
-        canComment = pCanComment;
-    }
-
-    public int getRepostsCount() {
-        return repostsCount;
-    }
-
-    public void setRepostsCount(int pRepostsCount) {
-        repostsCount = pRepostsCount;
-    }
-
-    public boolean isCanRepost() {
-        return canRepost;
-    }
-
-    public void setCanRepost(boolean pCanRepost) {
-        canRepost = pCanRepost;
-    }
-
-    public long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(long pUserId) {
-        userId = pUserId;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String pUrl) {
-        url = pUrl;
-    }
 }

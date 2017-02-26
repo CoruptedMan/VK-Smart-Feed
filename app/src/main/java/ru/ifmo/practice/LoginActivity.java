@@ -6,7 +6,6 @@ import android.app.FragmentManager;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.v13.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
@@ -27,35 +26,30 @@ import org.json.JSONException;
 import me.relex.circleindicator.CircleIndicator;
 import ru.ifmo.practice.model.Account;
 
-public class AppStartActivity extends Activity {
+public class LoginActivity extends Activity {
 
-    TextView logoText;
-    CoordinatorLayout coordinatorLayout;
-    ViewPager mViewPager;
-    CircleIndicator mCircleIndicator;
     public static Account mAccount;
 
     @Override
     protected void onCreate(Bundle pSavedInstanceState) {
         super.onCreate(pSavedInstanceState);
-        setContentView(R.layout.activity_app_start);
-        logoText = (TextView) findViewById(R.id.logoType);
-        coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
-        mViewPager = (ViewPager) findViewById(R.id.container);
-        mCircleIndicator = (CircleIndicator) findViewById(R.id.indicator);
+        setContentView(R.layout.activity_login);
+        TextView lLogoText = (TextView) findViewById(R.id.logoType);
+        ViewPager lViewPager = (ViewPager) findViewById(R.id.container);
+        CircleIndicator lCircleIndicator = (CircleIndicator) findViewById(R.id.attachment_photo_indicator);
         Typeface bukhari = Typeface.createFromAsset(getAssets(), "fonts/Bukhari.otf");
-        logoText.setTypeface(bukhari);
+        lLogoText.setTypeface(bukhari);
 
         findViewById(R.id.btn_change_scene).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                VKSdk.login(AppStartActivity.this, "friends", "wall");
+                VKSdk.login(LoginActivity.this, "friends", "wall", "video");
             }
         });
 
         SectionsPagerAdapter lSectionsPagerAdapter = new SectionsPagerAdapter(getFragmentManager());
-        mViewPager.setAdapter(lSectionsPagerAdapter);
-        mCircleIndicator.setViewPager(mViewPager);
+        lViewPager.setAdapter(lSectionsPagerAdapter);
+        lCircleIndicator.setViewPager(lViewPager);
         if (VKAccessToken.currentToken() != null && !VKAccessToken.currentToken().isExpired()) {
             VKRequest request = new VKRequest("users.get", VKParameters.from("fields",
                     "photo_100"));
@@ -103,7 +97,7 @@ public class AppStartActivity extends Activity {
                     super.onError(error);
                 }
             });
-            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+            startActivity(new Intent(getApplicationContext(), FeedActivity.class));
             overridePendingTransition(R.anim.slide_in_right ,R.anim.slide_out_right);
             finish();
         }
@@ -162,7 +156,7 @@ public class AppStartActivity extends Activity {
                     }
                 });
 
-                startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                startActivity(new Intent(getApplicationContext(), FeedActivity.class));
                 overridePendingTransition(R.anim.slide_in_right ,R.anim.slide_out_right);
                 finish();
             }
@@ -173,6 +167,46 @@ public class AppStartActivity extends Activity {
             }
         })) {
             super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    public class SectionsPagerAdapter extends FragmentStatePagerAdapter {
+
+        SectionsPagerAdapter(FragmentManager pFragmentManager) {
+            super(pFragmentManager);
+        }
+
+        @Override
+        public Fragment getItem(int pPosition) {
+            switch (pPosition) {
+                case 0:
+                    return PlaceholderFragment.newInstance(
+                            getResources().getString(R.string.page_title1),
+                            getResources().getString(R.string.page_description1),
+                            pPosition + 1);
+                case 1:
+                    return PlaceholderFragment.newInstance(
+                            getResources().getString(R.string.page_title2),
+                            getResources().getString(R.string.page_description2),
+                            pPosition + 1);
+                case 2:
+                    return PlaceholderFragment.newInstance(
+                            getResources().getString(R.string.page_title3),
+                            getResources().getString(R.string.page_description3),
+                            pPosition + 1);
+                case 3:
+                    return PlaceholderFragment.newInstance(
+                            getResources().getString(R.string.page_title4),
+                            getResources().getString(R.string.page_description4),
+                            pPosition + 1);
+                default:
+                    return null;
+            }
+        }
+
+        @Override
+        public int getCount() {
+            return 4;
         }
     }
 
@@ -216,46 +250,6 @@ public class AppStartActivity extends Activity {
             mContentTextView.setTypeface(robotoThin);
 
             return lRootView;
-        }
-    }
-
-    public class SectionsPagerAdapter extends FragmentStatePagerAdapter {
-
-        SectionsPagerAdapter(FragmentManager pFragmentManager) {
-            super(pFragmentManager);
-        }
-
-        @Override
-        public Fragment getItem(int pPosition) {
-            switch (pPosition) {
-                case 0:
-                    return PlaceholderFragment.newInstance(
-                            getResources().getString(R.string.page_title1),
-                            getResources().getString(R.string.page_description1),
-                            pPosition + 1);
-                case 1:
-                    return PlaceholderFragment.newInstance(
-                            getResources().getString(R.string.page_title2),
-                            getResources().getString(R.string.page_description2),
-                            pPosition + 1);
-                case 2:
-                    return PlaceholderFragment.newInstance(
-                            getResources().getString(R.string.page_title3),
-                            getResources().getString(R.string.page_description3),
-                            pPosition + 1);
-                case 3:
-                    return PlaceholderFragment.newInstance(
-                            getResources().getString(R.string.page_title4),
-                            getResources().getString(R.string.page_description4),
-                            pPosition + 1);
-                default:
-                    return null;
-            }
-        }
-
-        @Override
-        public int getCount() {
-            return 4;
         }
     }
 }

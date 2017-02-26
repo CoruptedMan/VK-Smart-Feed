@@ -23,4 +23,8 @@
     <string name="send_message">отправить сообщение</string>
     <string name="log_out">Выйти</string>
     <string name="attach_media_to_message">Прикрепить медиа-файл</string>
+    <string name="share_note">Поделиться записью</string>
+    <string name="on_my_wall">На моей стене</string>
+    <string name="in_group">В сообществе</string>
+    <string name="add_message">Добавить сообщение</string>
 </resources>

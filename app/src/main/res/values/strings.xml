@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">VK Smart Feed</string>
+    <string name="app_name">VK SmartFeed</string>
     <string name="continue_with">Continue with</string>
     <string name="content_format" translatable="false">%1$s</string>
 
@@ -16,7 +16,7 @@
     <string name="page_description3">You won\'t even observe it</string>
     <string name="page_description4">Choose your destiny</string>
 
-    <!-- Strings related to MainActivity -->
+    <!-- Strings related to FeedActivity -->
     <string name="feed">Feed</string>
     <string name="add_note">Write new note</string>
     <string name="see_more">See more…</string>

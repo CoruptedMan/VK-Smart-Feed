@@ -5,14 +5,24 @@ public class Link {
     private String title;
     private String description;
     private String caption;
-    private String photoUrl;
+    private Photo photo;
+    private boolean isExternal;
+    private int photoType;
 
-    public Link(String pUrl, String pTitle, String pDescription, String pCaption, String pPhotoUrl) {
+    public Link(String pUrl,
+                String pTitle,
+                String pDescription,
+                String pCaption,
+                Photo pPhoto,
+                boolean pIsExternal,
+                int pPhotoType) {
         url = pUrl;
         title = pTitle;
         description = pDescription;
         caption = pCaption;
-        photoUrl = pPhotoUrl;
+        photo = pPhoto;
+        isExternal = pIsExternal;
+        photoType = pPhotoType;
     }
 
     public String getUrl() {
@@ -47,11 +57,27 @@ public class Link {
         caption = pCaption;
     }
 
-    public String getPhotoUrl() {
-        return photoUrl;
+    public Photo getPhoto() {
+        return photo;
     }
 
-    public void setPhotoUrl(String pPhotoUrl) {
-        photoUrl = pPhotoUrl;
+    public void setPhoto(Photo pPhoto) {
+        photo = pPhoto;
+    }
+
+    public boolean isExternal() {
+        return isExternal;
+    }
+
+    public void setExternal(boolean pExternal) {
+        isExternal = pExternal;
+    }
+
+    public int getPhotoType() {
+        return photoType;
+    }
+
+    public void setPhotoType(int pPhotoType) {
+        photoType = pPhotoType;
     }
 }

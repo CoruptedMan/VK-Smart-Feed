@@ -1,4 +1,4 @@
-package ru.ifmo.practice.util;
+package ru.ifmo.practice.adapter;
 
 import android.content.Context;
 import android.support.v4.content.res.ResourcesCompat;
@@ -62,7 +62,7 @@ public class NoteCommentsRecyclerViewAdapter
         holder.authorNameText.setText(tmpComment.getAuthorName());
         holder.dateText.setText(new PrettyTime(Locale.getDefault()).format(new Date(tmpComment.getDate() *
                 1000)));
-        new DownloadImageTask(holder.authorPhoto).execute(tmpComment.getAuthorPhotoUrl());
+        holder.authorPhoto.setImageBitmap(tmpComment.getAuthorPhoto().getImageBitmap());
 
         holder.contextText.setText(tmpComment.getContext());
 

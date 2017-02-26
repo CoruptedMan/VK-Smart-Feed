@@ -1,20 +1,15 @@
-package ru.ifmo.practice.util;
+package ru.ifmo.practice.util.task;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.ImageView;
 
 import java.io.InputStream;
 
 public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-    private ImageView bmImage;
 
-    public DownloadImageTask(ImageView bmImage) {
-        this.bmImage = bmImage;
-    }
-
+    @Override
     protected Bitmap doInBackground(String... urls) {
         String urlDisplay = urls[0];
         Bitmap mIcon = null;
@@ -26,9 +21,5 @@ public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
             e.printStackTrace();
         }
         return mIcon;
-    }
-
-    protected void onPostExecute(Bitmap result) {
-        bmImage.setImageBitmap(result);
     }
 }

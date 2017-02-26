@@ -5,16 +5,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".AppStartActivity"
+    tools:context=".LoginActivity"
     android:background="#E3F2FD">
 
     <TextView
         android:id="@+id/logoType"
-        android:text="SmartFeed"
+        android:text="@string/app_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:textColor="@color/colorPrimaryDark"
+        android:textColor="@color/color_primary_dark"
         android:textSize="30sp"
         android:focusableInTouchMode="false"
         android:layout_centerHorizontal="true"
@@ -22,7 +22,7 @@
 
     <RelativeLayout
         android:id="@+id/relativeForContainer"
-        tools:context=".AppStartActivity"
+        tools:context=".LoginActivity"
         android:layout_below="@+id/logoType"
         android:layout_width="match_parent"
         android:layout_height="300dp">
@@ -31,10 +31,10 @@
             android:id="@+id/container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@+id/indicator"/>
+            android:layout_above="@+id/attachment_photo_indicator"/>
 
         <me.relex.circleindicator.CircleIndicator
-            android:id="@+id/indicator"
+            android:id="@+id/attachment_photo_indicator"
             app:ci_drawable="@drawable/circle_indicator_repaint"
             android:layout_width="match_parent"
             android:layout_height="48dp"

@@ -9,7 +9,7 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:context=".AppStartActivity$PlaceholderFragment">
+        tools:context=".LoginActivity$PlaceholderFragment">
 
         <TextView
             android:id="@+id/titleText"
@@ -18,7 +18,7 @@
             android:textSize="40sp"
             android:layout_gravity="center"
             android:textAlignment="center"
-            android:textColor="@color/colorPrimaryDark" />
+            android:textColor="@color/color_primary_dark" />
 
         <TextView
             android:id="@+id/contentText"
@@ -28,7 +28,7 @@
             android:textSize="25sp"
             android:layout_gravity="center"
             android:textAlignment="center"
-            android:textColor="@color/colorPrimaryDark" />
+            android:textColor="@color/color_primary_dark" />
     </FrameLayout>
 
 </ScrollView>

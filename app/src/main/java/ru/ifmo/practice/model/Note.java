@@ -2,26 +2,30 @@ package ru.ifmo.practice.model;
 
 import java.util.ArrayList;
 
+import ru.ifmo.practice.model.attachments.Audio;
 import ru.ifmo.practice.model.attachments.Link;
 import ru.ifmo.practice.model.attachments.Photo;
+import ru.ifmo.practice.model.attachments.Video;
 
 public class Note {
-    private long id;
-    private long sourceId;
-    private String sourceName;
-    private String context;
-    private String contextPreview;
-    private long date;
-    private String sourcePhotoUrl;
-    private ArrayList<Photo> attachmentsPhotos;
-    private int likesCount;
-    private boolean userLikes;
-    private int commentsCount;
-    private boolean canComment;
-    private int repostsCount;
-    private boolean userReposted;
-    private Link attachedLink;
-    private Account signer;
+    private int                 likesCount;
+    private int                 commentsCount;
+    private int                 repostsCount;
+    private long                id;
+    private long                sourceId;
+    private long                date;
+    private Link                attachedLink;
+    private Photo               sourcePhoto;
+    private String              sourceName;
+    private String              context;
+    private String              contextPreview;
+    private Account             signer;
+    private boolean             userLikes;
+    private boolean             canComment;
+    private boolean             userReposted;
+    private ArrayList<Photo>    attachmentsPhotos;
+    private ArrayList<Video>    attachmentsVideos;
+    private ArrayList<Audio>    attachmentsAudios;
 
     public Note(long pId,
                 long pSourceId,
@@ -29,8 +33,10 @@ public class Note {
                 String pContext,
                 String pContextPreview,
                 long pDate,
-                String pSourcePhotoUrl,
+                Photo pSourcePhoto,
                 ArrayList<Photo> pAttachmentsPhotos,
+                ArrayList<Video> pAttachmentsVideos,
+                ArrayList<Audio> pAttachmentsAudios,
                 int pLikesCount,
                 boolean pUserLikes,
                 int pCommentsCount,
@@ -43,8 +49,9 @@ public class Note {
         context = pContext;
         contextPreview = pContextPreview;
         date = pDate;
-        sourcePhotoUrl = pSourcePhotoUrl;
+        sourcePhoto = pSourcePhoto;
         attachmentsPhotos = pAttachmentsPhotos;
+        attachmentsVideos = pAttachmentsVideos;
         likesCount = pLikesCount;
         userLikes = pUserLikes;
         commentsCount = pCommentsCount;
@@ -81,8 +88,8 @@ public class Note {
         return date;
     }
 
-    public String getSourcePhotoUrl() {
-        return sourcePhotoUrl;
+    public Photo getSourcePhoto() {
+        return sourcePhoto;
     }
 
     public int getLikesCount() {
@@ -137,8 +144,8 @@ public class Note {
         return attachmentsPhotos;
     }
 
-    public void setAttachmentsPhotos(ArrayList<Photo> pAttachmentsPhotos) {
-        attachmentsPhotos = pAttachmentsPhotos;
+    public ArrayList<Video> getAttachmentsVideos() {
+        return attachmentsVideos;
     }
 
     public Account getSigner() {
@@ -147,6 +154,10 @@ public class Note {
 
     public void setSigner(Account pSigner) {
         signer = pSigner;
+    }
+
+    public ArrayList<Audio> getAttachmentsAudios() {
+        return attachmentsAudios;
     }
 
     @Override

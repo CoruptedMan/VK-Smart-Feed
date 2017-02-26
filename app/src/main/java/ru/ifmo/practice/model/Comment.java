@@ -1,23 +1,25 @@
 package ru.ifmo.practice.model;
 
+import ru.ifmo.practice.model.attachments.Photo;
+
 public class Comment {
     private long id;
     private long authorId;
     private long date;
     private String authorName;
     private String context;
-    private String authorPhotoUrl;
+    private Photo authorPhoto;
     private int likesCount;
     private boolean userLikes;
 
     public Comment(long pId, long pAuthorId, long pDate, String pAuthorName, String pContext,
-                   String pAuthorPhotoUrl, int pLikesCount, boolean pUserLikes) {
+                   Photo pAuthorPhoto, int pLikesCount, boolean pUserLikes) {
         id = pId;
         authorId = pAuthorId;
         date = pDate;
         authorName = pAuthorName;
         context = pContext;
-        authorPhotoUrl = pAuthorPhotoUrl;
+        authorPhoto = pAuthorPhoto;
         likesCount = pLikesCount;
         userLikes = pUserLikes;
     }
@@ -42,8 +44,8 @@ public class Comment {
         return authorName;
     }
 
-    public String getAuthorPhotoUrl() {
-        return authorPhotoUrl;
+    public Photo getAuthorPhoto() {
+        return authorPhoto;
     }
 
     public int getLikesCount() {

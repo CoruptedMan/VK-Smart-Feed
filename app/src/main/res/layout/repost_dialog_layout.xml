@@ -1,14 +1,13 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
     <TextView
         android:layout_width="match_parent"
         android:textStyle="normal|bold"
-        android:text="Поделиться записью"
+        android:text="@string/share_note"
         android:textSize="18sp"
-        android:textColor="@color/colorTextPrimary"
+        android:textColor="@color/color_text_primary"
         android:layout_height="wrap_content"
         android:paddingBottom="15dp"
         android:paddingTop="15dp"
@@ -18,9 +17,9 @@
 
     <TextView
         android:layout_width="match_parent"
-        android:text="На моей стене"
+        android:text="@string/on_my_wall"
         android:textSize="16sp"
-        android:textColor="@color/colorTextPrimary"
+        android:textColor="@color/color_text_primary"
         android:gravity="center_vertical"
         android:layout_height="wrap_content"
         android:paddingStart="20dp"
@@ -32,9 +31,9 @@
 
     <TextView
         android:layout_width="match_parent"
-        android:text="В сообществе"
+        android:text="@string/in_group"
         android:textSize="16sp"
-        android:textColor="@color/colorTextPrimary"
+        android:textColor="@color/color_text_primary"
         android:gravity="center_vertical"
         android:layout_height="wrap_content"
         android:paddingStart="20dp"
@@ -50,9 +49,9 @@
         android:inputType="textMultiLine"
         android:ems="10"
         android:id="@+id/repost_dialog_message"
-        android:hint="Добавить сообщение"
+        android:hint="@string/add_message"
         android:textSize="16sp"
-        android:textColor="@color/colorTextPrimary"
+        android:textColor="@color/color_text_primary"
         android:minLines="2"
         android:layout_marginEnd="20dp"
         android:layout_marginStart="20dp"

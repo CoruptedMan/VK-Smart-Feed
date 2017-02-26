@@ -34,8 +34,8 @@ import java.util.concurrent.ExecutionException;
 
 import ru.ifmo.practice.model.Comment;
 import ru.ifmo.practice.model.Note;
-import ru.ifmo.practice.util.DownloadImageTask;
-import ru.ifmo.practice.util.NoteCommentsRecyclerViewAdapter;
+import ru.ifmo.practice.model.attachments.Photo;
+import ru.ifmo.practice.adapter.NoteCommentsRecyclerViewAdapter;
 
 public class NoteViewActivity extends AppCompatActivity {
 
@@ -197,12 +197,7 @@ public class NoteViewActivity extends AppCompatActivity {
         sourceNameText.setText(mNote.getSourceName());
         dateText.setText(new PrettyTime(Locale.getDefault()).format(new Date(mNote.getDate() *
                 1000)));
-        try {
-            new DownloadImageTask(sourcePhoto).execute(mNote.getSourcePhotoUrl()).get();
-        } catch (InterruptedException | ExecutionException pE) {
-            pE.printStackTrace();
-        }
-
+        sourcePhoto.setImageBitmap(mNote.getSourcePhoto().getImageBitmap());
         contextText.setVisibility(mNote.getContext().equals("")
                 ? View.GONE
                 : View.VISIBLE);
@@ -221,12 +216,7 @@ public class NoteViewActivity extends AppCompatActivity {
             attachmentBlock.setVisibility(View.VISIBLE);
             attachedLinkTitleText.setText(mNote.getAttachedLink().getTitle());
             attachedLinkCaptionText.setText(mNote.getAttachedLink().getCaption());
-            try {
-                new DownloadImageTask(attachedLinkPhoto).execute(
-                        mNote.getAttachedLink().getPhotoUrl()).get();
-            } catch (InterruptedException | ExecutionException pE) {
-                pE.printStackTrace();
-            }
+            attachedLinkPhoto.setImageBitmap(mNote.getAttachedLink().getPhoto().getImageBitmap());
         }
         else {
             attachmentBlock.setVisibility(View.GONE);
@@ -339,6 +329,7 @@ public class NoteViewActivity extends AppCompatActivity {
                         }
                     }
 
+                    Photo authorPhoto = new Photo();
                     int userCount = mResponse.getJSONArray("profiles").length();
                     for (int i = 0; i < userCount; i++) {
                         int userId = Integer.parseInt(mResponse
@@ -363,6 +354,11 @@ public class NoteViewActivity extends AppCompatActivity {
                                     .getJSONObject(i)
                                     .get("photo_100")
                                     .toString();
+                            try {
+                                authorPhoto.setPhotoUrl(photoUrl);
+                            } catch (ExecutionException | InterruptedException pE) {
+                                pE.printStackTrace();
+                            }
                         }
                     }
 
@@ -394,7 +390,7 @@ public class NoteViewActivity extends AppCompatActivity {
                             date,
                             authorName,
                             context,
-                            photoUrl,
+                            authorPhoto,
                             likes,
                             userLikes);
                     results.add(comment);
