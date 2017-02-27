@@ -10,13 +10,14 @@ import com.vk.sdk.VKAccessTokenTracker;
 import com.vk.sdk.VKSdk;
 
 public class VKSmartFeedApplication extends Application {
-    private static VKSmartFeedApplication mApp = null;
+    private static VKSmartFeedApplication   mApp;
+    private static ConnectivityManager      mConnectivityManager;
 
     VKAccessTokenTracker vkAccessTokenTracker = new VKAccessTokenTracker() {
         @Override
         public void onVKAccessTokenChanged(VKAccessToken oldToken, VKAccessToken newToken) {
             if (newToken == null) {
-
+                System.out.println("ploho");
             }
         }
     };
@@ -24,19 +25,17 @@ public class VKSmartFeedApplication extends Application {
     public void onCreate() {
         super.onCreate();
         mApp = this;
+        mConnectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         vkAccessTokenTracker.startTracking();
         VKSdk.initialize(this);
     }
 
-    public static Context context()
-    {
+    public static Context getContext() {
         return mApp.getApplicationContext();
     }
 
-    public boolean isOnline() {
-        ConnectivityManager cm =
-                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+    public static boolean isOnline() {
+        NetworkInfo netInfo = mConnectivityManager.getActiveNetworkInfo();
         return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 }

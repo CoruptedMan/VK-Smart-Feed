@@ -92,6 +92,8 @@ public class FeedRecyclerViewAdapter
         private TextView        attachmentVideoViewsText;
         private TextView        signerNameText;
         private TextView        contextText;
+        private TextView        attachmentPageTitle;
+        private TextView        attachmentPageCaption;
         private ImageView       likeIcon;
         private ImageView       commentIcon;
         private ImageView       repostIcon;
@@ -104,6 +106,7 @@ public class FeedRecyclerViewAdapter
         private ImageView       attachedLinkPreviewPhoto;
         private ImageView       attachmentPhotoCountIcon;
         private ImageView       attachmentVideoCountIcon;
+        private ImageView       attachmentPagePhoto;
         private ImageView       signerIcon;
         private RelativeLayout  likeBlock;
         private RelativeLayout  commentBlock;
@@ -113,6 +116,7 @@ public class FeedRecyclerViewAdapter
         private RelativeLayout  attachedLinkGroupBlock;
         private RelativeLayout  attachedLinkPreviewBlock;
         private RelativeLayout  attachedVideoBlock;
+        private RelativeLayout  attachedPageBlock;
         private CardView        sourceInfoBlock;
         private CardView        optionsBlock;
         private CardView        attachedLinkBigBlock;
@@ -121,7 +125,6 @@ public class FeedRecyclerViewAdapter
         private CardView        attachmentVideoCountBlock;
         private CardView        attachmentVideoPlatformBlock;
         private LinearLayout    socialAcionsLayout;
-        private LinearLayout    attachmentAudioBlock;
 
         DataObjectHolder(View itemView) {
             super(itemView);
@@ -148,6 +151,8 @@ public class FeedRecyclerViewAdapter
             attachmentVideoTitleText = (TextView) itemView.findViewById(R.id.attachment_video_title);
             attachmentVideoViewsText = (TextView) itemView.findViewById(R.id.attachment_video_views_count);
             signerNameText = (TextView) itemView.findViewById(R.id.signer_name);
+            attachmentPageTitle = (TextView) itemView.findViewById(R.id.attachment_page_title);
+            attachmentPageCaption = (TextView) itemView.findViewById(R.id.attachment_page_caption);
             sourcePhoto = (ImageView) itemView.findViewById(R.id.source_photo);
             likeIcon = (ImageView) itemView.findViewById(R.id.like_icon);
             commentIcon = (ImageView) itemView.findViewById(R.id.comment_icon);
@@ -161,6 +166,7 @@ public class FeedRecyclerViewAdapter
             attachmentPhotoCountIcon = (ImageView) itemView.findViewById(R.id.attachment_photo_count_icon);
             attachmentVideoCountIcon = (ImageView) itemView.findViewById(R.id.attachment_video_count_icon);
             signerIcon = (ImageView) itemView.findViewById(R.id.signer_icon);
+            attachmentPagePhoto = (ImageView) itemView.findViewById(R.id.attachment_page_photo);
             likeBlock = (RelativeLayout) itemView.findViewById(R.id.like_block);
             commentBlock = (RelativeLayout) itemView.findViewById(R.id.comment_block);
             repostBlock = (RelativeLayout) itemView.findViewById(R.id.repost_block);
@@ -168,6 +174,7 @@ public class FeedRecyclerViewAdapter
             signerBlock = (RelativeLayout) itemView.findViewById(R.id.signer_block);
             attachedLinkGroupBlock = (RelativeLayout) itemView.findViewById(R.id.attachment_link_group);
             attachedVideoBlock = (RelativeLayout) itemView.findViewById(R.id.attachment_video_block);
+            attachedPageBlock = (RelativeLayout) itemView.findViewById(R.id.attachment_page_block);
             sourceInfoBlock = (CardView) itemView.findViewById(R.id.source_info);
             optionsBlock = (CardView) itemView.findViewById(R.id.options_block);
             attachedLinkBigBlock = (CardView) itemView.findViewById(R.id.attachment_link_big);
@@ -177,10 +184,9 @@ public class FeedRecyclerViewAdapter
             attachmentVideoPlatformBlock = (CardView) itemView.findViewById(R.id.attachment_video_platform_block);
             attachmentPhotoCountBlock = (CardView) itemView.findViewById(R.id.attachment_photo_count_block);
             socialAcionsLayout = (LinearLayout) itemView.findViewById(R.id.social_actions);
-            attachmentAudioBlock = (LinearLayout) itemView.findViewById(R.id.attachment_audio_block);
 
             new PatternEditableBuilder().
-                    addPattern(Pattern.compile("\\#(\\w+)"), Color.CYAN,
+                    addPattern(Pattern.compile("#"), Color.RED,
                             new PatternEditableBuilder.SpannableClickedListener() {
                                 @Override
                                 public void onSpanClicked(String text) {
@@ -301,7 +307,7 @@ public class FeedRecyclerViewAdapter
                 Toast.makeText(mContext, "Note successfully reposted to your wall!", Toast
                         .LENGTH_LONG).show();
                 repostIcon.setImageDrawable(ResourcesCompat.getDrawable(
-                        VKSmartFeedApplication.context().getResources(),
+                        VKSmartFeedApplication.getContext().getResources(),
                         R.drawable.ic_share_pressed_24dp,
                         null));
                 repostsCountText.setText(String.valueOf(repostCount));
@@ -335,12 +341,12 @@ public class FeedRecyclerViewAdapter
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         RecyclerView.ViewHolder viewHolder;
         if (viewType == VIEW_NOTE) {
-            View view = LayoutInflater.from(VKSmartFeedApplication.context())
+            View view = LayoutInflater.from(VKSmartFeedApplication.getContext())
                     .inflate(R.layout.activity_main_card_note_content, parent, false);
 
             viewHolder = new DataObjectHolder(view);
         } else {
-            View view = LayoutInflater.from(VKSmartFeedApplication.context())
+            View view = LayoutInflater.from(VKSmartFeedApplication.getContext())
                     .inflate(R.layout.activity_main_card_progress_bar_content, parent, false);
 
             viewHolder = new ProgressViewHolder (view);
@@ -374,7 +380,7 @@ public class FeedRecyclerViewAdapter
             //        .getImageBitmap());
 
             ((DataObjectHolder) holder).optionsIcon.setImageDrawable(ResourcesCompat.getDrawable(
-                    VKSmartFeedApplication.context().getResources(),
+                    VKSmartFeedApplication.getContext().getResources(),
                     R.drawable.ic_more_vert_gray_24dp,
                     null));
 
@@ -466,7 +472,7 @@ public class FeedRecyclerViewAdapter
                 ((DataObjectHolder) holder).attachmentVideoCountBlock.setVisibility(View.VISIBLE);
                 ((DataObjectHolder) holder).attachmentVideoCountIcon.setImageDrawable(
                         ResourcesCompat.getDrawable(
-                                VKSmartFeedApplication.context().getResources(),
+                                VKSmartFeedApplication.getContext().getResources(),
                                 R.drawable.ic_videocam_blue_24dp,
                                 null));
                 ((DataObjectHolder) holder).attachmentVideoCountText.setText(String.valueOf(
@@ -491,7 +497,7 @@ public class FeedRecyclerViewAdapter
                 ((DataObjectHolder) holder).attachmentPhotoCountBlock.setVisibility(View.VISIBLE);
                 ((DataObjectHolder) holder).attachmentPhotoCountIcon.setImageDrawable(
                         ResourcesCompat.getDrawable(
-                                VKSmartFeedApplication.context().getResources(),
+                                VKSmartFeedApplication.getContext().getResources(),
                                 R.drawable.ic_camera_alt_blue_24dp,
                                 null));
                 ((DataObjectHolder) holder).attachmentPhotoCountText.setText(String.valueOf(
@@ -578,10 +584,35 @@ public class FeedRecyclerViewAdapter
                 ((DataObjectHolder) holder).attachedLinkGroupBlock.setVisibility(View.GONE);
             }
 
+            if (tmpNote.getAttachedPage() != null) {
+                ((DataObjectHolder) holder).attachedPageBlock.setVisibility(View.VISIBLE);
+                ((DataObjectHolder) holder).attachmentPageTitle.setText(tmpNote.getAttachedPage()
+                        .getTitle());
+                ((DataObjectHolder) holder).attachmentPageCaption.setText("Вики-страница");
+                ((DataObjectHolder) holder).attachmentPagePhoto.setImageDrawable(
+                        ResourcesCompat.getDrawable(
+                                mContext.getResources(),
+                                R.drawable.ic_pageview_gray_36dp,
+                                null
+                        ));
+                ((DataObjectHolder) holder).attachedPageBlock.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(tmpNote
+                                .getAttachedPage().getViewUrl()));
+                        browserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        mContext.startActivity(browserIntent);
+                    }
+                });
+            }
+            else {
+                ((DataObjectHolder) holder).attachedPageBlock.setVisibility(View.GONE);
+            }
+
             if (tmpNote.getSigner() != null) {
                 ((DataObjectHolder) holder).signerBlock.setVisibility(View.VISIBLE);
                 ((DataObjectHolder) holder).signerIcon.setImageDrawable(ResourcesCompat.getDrawable(
-                        VKSmartFeedApplication.context().getResources(),
+                        VKSmartFeedApplication.getContext().getResources(),
                         R.drawable.ic_account_circle_blue_24dp,
                         null));
                 ((DataObjectHolder) holder).signerNameText.setText(tmpNote.getSigner().getFirstName() + " " +
@@ -598,7 +629,7 @@ public class FeedRecyclerViewAdapter
             }
 
             ((DataObjectHolder) holder).likeIcon.setImageDrawable(ResourcesCompat.getDrawable(
-                    VKSmartFeedApplication.context().getResources(),
+                    VKSmartFeedApplication.getContext().getResources(),
                     tmpNote.getUserLikes()
                             ? R.drawable.ic_favorite_pressed_24dp
                             : R.drawable.ic_favorite_white_24dp,
@@ -612,7 +643,7 @@ public class FeedRecyclerViewAdapter
                     ? View.VISIBLE
                     : View.GONE);
             ((DataObjectHolder) holder).commentIcon.setImageDrawable(ResourcesCompat.getDrawable(
-                    VKSmartFeedApplication.context().getResources(),
+                    VKSmartFeedApplication.getContext().getResources(),
                     R.drawable.ic_question_answer_white_24dp,
                     null));
             ((DataObjectHolder) holder).commentsCountText.setText(tmpNote.getCommentsCount() != 0
@@ -620,7 +651,7 @@ public class FeedRecyclerViewAdapter
                     : "");
 
             ((DataObjectHolder) holder).repostIcon.setImageDrawable(ResourcesCompat.getDrawable(
-                    VKSmartFeedApplication.context().getResources(),
+                    VKSmartFeedApplication.getContext().getResources(),
                     tmpNote.getUserReposted()
                             ? R.drawable.ic_share_pressed_24dp
                             : R.drawable.ic_share_white_24dp,
@@ -636,11 +667,11 @@ public class FeedRecyclerViewAdapter
 
     private String convertSecondsToReadableTime(int secs) {
         String hours = secs / 3600 > 0
-                ? String.format(Locale.getDefault(), "%02d:", secs / 3600)
+                ? String.format(Locale.getDefault(), "%d:", secs / 3600)
                 : "";
         String minutes = (secs % 3600) / 60 > 0
-                ? String.format(Locale.getDefault(), "%02d:", (secs % 3600) / 60)
-                : "00:";
+                ? String.format(Locale.getDefault(), "%d:", (secs % 3600) / 60)
+                : "0:";
         String seconds = String.format(Locale.getDefault(), "%02d", secs % 60);
 
         return hours + minutes + seconds;

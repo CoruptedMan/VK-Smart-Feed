@@ -77,7 +77,7 @@ public class NoteViewActivity extends AppCompatActivity {
         Toolbar tb = (Toolbar) findViewById(R.id.note_view_toolbar);
         setSupportActionBar(tb);
         tb.setNavigationIcon(ResourcesCompat.getDrawable(
-                VKSmartFeedApplication.context().getResources(),
+                VKSmartFeedApplication.getContext().getResources(),
                 R.drawable.ic_keyboard_backspace_white_24dp,
                 null));
         tb.setNavigationOnClickListener(new View.OnClickListener() {
@@ -223,7 +223,7 @@ public class NoteViewActivity extends AppCompatActivity {
         }
 
         likeIcon.setImageDrawable(ResourcesCompat.getDrawable(
-                VKSmartFeedApplication.context().getResources(),
+                VKSmartFeedApplication.getContext().getResources(),
                 mNote.getUserLikes()
                         ? R.drawable.ic_favorite_pressed_24dp
                         : R.drawable.ic_favorite_white_24dp,
@@ -234,7 +234,7 @@ public class NoteViewActivity extends AppCompatActivity {
                 : "");
 
         repostIcon.setImageDrawable(ResourcesCompat.getDrawable(
-                VKSmartFeedApplication.context().getResources(),
+                VKSmartFeedApplication.getContext().getResources(),
                 mNote.getUserReposted()
                         ? R.drawable.ic_share_pressed_24dp
                         : R.drawable.ic_share_white_24dp,

@@ -89,6 +89,10 @@ public class FeedActivity extends AppCompatActivity implements OnDownloadFeedDat
             @Override
             public void onRefresh() {
                 refreshFeed();
+                if (!isDataRelevant) {
+                    refreshButton.animate().alpha(0.0f);
+                    refreshButton.setVisibility(View.INVISIBLE);
+                }
             }
         });
         swipeContainer.setColorSchemeResources(R.color.color_primary, R.color.color_primary_dark);
@@ -137,19 +141,26 @@ public class FeedActivity extends AppCompatActivity implements OnDownloadFeedDat
                 if (!loading && (totalItemCount - visibleItemCount)
                         <= (firstVisibleItem + visibleThreshold)) {
                     try {
-                        addData();
-                        loading = true;
+                        if (VKSmartFeedApplication.isOnline()) {
+                            addData();
+                            loading = true;
+                        } else {
+                            //TODO
+                        }
                     } catch (ExecutionException | InterruptedException pE) {
                         pE.printStackTrace();
                     }
                 }
             }
         });
-
-        try {
-            addData();
-        } catch (ExecutionException | InterruptedException pE) {
-            pE.printStackTrace();
+        if (VKSmartFeedApplication.isOnline()) {
+            try {
+                addData();
+            } catch (ExecutionException | InterruptedException pE) {
+                pE.printStackTrace();
+            }
+        } else {
+            //TODO
         }
 
         new Thread(new Runnable() {
@@ -159,51 +170,64 @@ public class FeedActivity extends AppCompatActivity implements OnDownloadFeedDat
                     try {
                         synchronized (this) {
                             wait(5000);
-                            final Long[] resultDate = { mAdapter.getDataSet().get(0).getDate() };
-                            new VKRequest("newsfeed.get", VKParameters.from(
-                                    "filters", "post",
-                                    "count", 1,
-                                    "version", "5.62"))
-                                    .executeSyncWithListener(new VKRequest.VKRequestListener() {
-                                        @Override
-                                        public void onComplete(VKResponse response) {
-                                            try {
-                                                resultDate[0] = Long.parseLong(response
-                                                        .json
-                                                        .getJSONObject("response")
-                                                        .getJSONArray("items")
-                                                        .getJSONObject(0)
-                                                        .get("date").toString());
-                                            } catch (JSONException pE) {
-                                                pE.printStackTrace();
+                            if (!VKSmartFeedApplication.isOnline()) {
+                                continue;
+                            }
+                            if (mAdapter.getDataSet().size() > 0) {
+                                final Long[] resultDate = {mAdapter.getDataSet().get(0).getDate()};
+                                new VKRequest("newsfeed.get", VKParameters.from(
+                                        "filters", "post",
+                                        "count", 1,
+                                        "version", "5.62"))
+                                        .executeSyncWithListener(new VKRequest.VKRequestListener() {
+                                            @Override
+                                            public void onComplete(VKResponse response) {
+                                                try {
+                                                    resultDate[0] = Long.parseLong(response
+                                                            .json
+                                                            .getJSONObject("response")
+                                                            .getJSONArray("items")
+                                                            .getJSONObject(0)
+                                                            .get("date").toString());
+                                                } catch (JSONException pE) {
+                                                    pE.printStackTrace();
+                                                }
                                             }
-                                        }
 
-                                        @Override
-                                        public void onError(VKError error) {
-                                            Toast.makeText(getApplicationContext(), error.toString(), Toast
-                                                    .LENGTH_LONG).show();
-                                        }
+                                            @Override
+                                            public void onError(VKError error) {
+                                                Toast.makeText(getApplicationContext(), error.toString(), Toast
+                                                        .LENGTH_LONG).show();
+                                            }
 
-                                        @Override
-                                        public void attemptFailed(VKRequest request, int attemptNumber, int totalAttempts) {
-                                            Toast.makeText(getApplicationContext(), "Attempt Failed!", Toast
-                                                    .LENGTH_LONG).show();
-                                        }
-                                    });
-                            if (mAdapter.getDataSet().get(0).getDate() != resultDate[0]) {
-                                if (isDataRelevant) {
-                                    runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            refreshButton.setVisibility(View.VISIBLE);
-                                            refreshButton.setAlpha(0.0f);
-                                            refreshButton.animate()
-                                                    .alpha(1.0f);
-                                        }
-                                    });
+                                            @Override
+                                            public void attemptFailed(VKRequest request, int attemptNumber, int totalAttempts) {
+                                                Toast.makeText(getApplicationContext(), "Attempt Failed!", Toast
+                                                        .LENGTH_LONG).show();
+                                            }
+                                        });
+                                if (mAdapter.getDataSet().get(0).getDate() != resultDate[0]) {
+                                    if (isDataRelevant) {
+                                        runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                refreshButton.setVisibility(View.VISIBLE);
+                                                refreshButton.setAlpha(0.0f);
+                                                refreshButton.animate()
+                                                        .alpha(1.0f);
+                                            }
+                                        });
+                                    }
+                                    isDataRelevant = false;
                                 }
-                                isDataRelevant = false;
+                            } else {
+                                if (VKSmartFeedApplication.isOnline()) {
+                                    try {
+                                        addData();
+                                    } catch (ExecutionException | InterruptedException pE) {
+                                        pE.printStackTrace();
+                                    }
+                                }
                             }
                         }
                     } catch (InterruptedException pE) {
@@ -233,9 +257,13 @@ public class FeedActivity extends AppCompatActivity implements OnDownloadFeedDat
         mLinearLayoutManager.scrollToPositionWithOffset(0, 0);
         previousTotal = 0;
         mStartFrom = "";
+        toggleSwipeContainerRefreshingState(true);
         try {
-            toggleSwipeContainerRefreshingState(true);
-            addData();
+            if (VKSmartFeedApplication.isOnline()) {
+                addData();
+            } else {
+                //TODO
+            }
         } catch (ExecutionException | InterruptedException pE) {
             pE.printStackTrace();
         }
@@ -264,24 +292,6 @@ public class FeedActivity extends AppCompatActivity implements OnDownloadFeedDat
 
     @Override
     public void taskCompletionResult(ArrayList<Note> result, String pStartFrom) {
-        /*for (int i = 0; i < result.size(); i++) {
-            try {
-                result.get(i).getSourcePhoto().loadBitmap();
-                for (int j = 0; j < result.get(i).getAttachmentsVideos().size(); j++) {
-                    result.get(i).getAttachmentsVideos().get(j).getPhoto().loadBitmap();
-                }
-                for (int j = 0; j < result.get(i).getAttachmentsPhotos().size(); j++) {
-                    result.get(i).getAttachmentsPhotos().get(j).loadBitmap();
-                }
-                if (result.get(i).getAttachedLink() != null) {
-                    if (result.get(i).getAttachedLink().getPhotoType() > 0) {
-                        result.get(i).getAttachedLink().getPhoto().loadBitmap();
-                    }
-                }
-            } catch (ExecutionException | InterruptedException pE) {
-                pE.printStackTrace();
-            }
-        }*/
         mNotes = result;
         if (mStartFrom.equals("")) {
             mAdapter.clear();

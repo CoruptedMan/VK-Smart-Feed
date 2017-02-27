@@ -20,6 +20,7 @@ import ru.ifmo.practice.model.Account;
 import ru.ifmo.practice.model.Note;
 import ru.ifmo.practice.model.attachments.Audio;
 import ru.ifmo.practice.model.attachments.Link;
+import ru.ifmo.practice.model.attachments.Page;
 import ru.ifmo.practice.model.attachments.Photo;
 import ru.ifmo.practice.model.attachments.Video;
 
@@ -178,6 +179,7 @@ public class DownloadUserFeedDataTask extends AsyncTask<VKRequest, Void, ArrayLi
                 ArrayList<Audio> attachmentsAudios = new ArrayList<>();
                 ArrayList<Video> attachmentsVideos = new ArrayList<>();
                 Link link = null;
+                Page page = null;
                 if (mResponse
                         .getJSONArray("items")
                         .getJSONObject(index)
@@ -553,6 +555,36 @@ public class DownloadUserFeedDataTask extends AsyncTask<VKRequest, Void, ArrayLi
                                     audioDuration,
                                     audioUrl);
                             attachmentsAudios.add(audio);
+                        } else if (mResponse
+                                .getJSONArray("items")
+                                .getJSONObject(index)
+                                .getJSONArray("attachments")
+                                .getJSONObject(i)
+                                .get("type")
+                                .toString()
+                                .equals("page")) {
+                            long pageId = Long.parseLong(mResponse
+                                    .getJSONArray("items")
+                                    .getJSONObject(index)
+                                    .getJSONArray("attachments")
+                                    .getJSONObject(i)
+                                    .getJSONObject("page")
+                                    .get("id").toString());
+                            String pageTitle = mResponse
+                                    .getJSONArray("items")
+                                    .getJSONObject(index)
+                                    .getJSONArray("attachments")
+                                    .getJSONObject(i)
+                                    .getJSONObject("page")
+                                    .get("title").toString();
+                            String pageViewUrl = mResponse
+                                    .getJSONArray("items")
+                                    .getJSONObject(index)
+                                    .getJSONArray("attachments")
+                                    .getJSONObject(i)
+                                    .getJSONObject("page")
+                                    .get("view_url").toString();
+                            page = new Page(pageId, pageTitle, pageViewUrl);
                         }
                         i++;
                     }
@@ -617,6 +649,9 @@ public class DownloadUserFeedDataTask extends AsyncTask<VKRequest, Void, ArrayLi
                         userReposted);
                 if (link != null) {
                     note.setAttachedLink(link);
+                }
+                if (page != null) {
+                    note.setAttachedPage(page);
                 }
                 if (signer != null) {
                     note.setSigner(signer);

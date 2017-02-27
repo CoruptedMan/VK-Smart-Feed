@@ -4,8 +4,6 @@ import android.graphics.Bitmap;
 
 import java.util.concurrent.ExecutionException;
 
-import ru.ifmo.practice.util.task.DownloadImageTask;
-
 public class Photo {
 
     private long id;
@@ -72,9 +70,4 @@ public class Photo {
     public String getPhotoUrl() {
         return photoUrl;
     }
-
-    public void loadBitmap() throws ExecutionException, InterruptedException {
-        this.imageBitmap = new DownloadImageTask().execute(this.photoUrl).get();
-    }
-
 }

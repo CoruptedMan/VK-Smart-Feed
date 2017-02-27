@@ -71,7 +71,7 @@ public class NoteCommentsRecyclerViewAdapter
                 : "");
 
         holder.likeIcon.setImageDrawable(ResourcesCompat.getDrawable(
-                VKSmartFeedApplication.context().getResources(),
+                VKSmartFeedApplication.getContext().getResources(),
                 tmpComment.isUserLikes()
                         ? R.drawable.ic_favorite_pressed_24dp
                         : tmpComment.getLikesCount() > 0

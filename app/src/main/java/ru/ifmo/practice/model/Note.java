@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import ru.ifmo.practice.model.attachments.Audio;
 import ru.ifmo.practice.model.attachments.Link;
+import ru.ifmo.practice.model.attachments.Page;
 import ru.ifmo.practice.model.attachments.Photo;
 import ru.ifmo.practice.model.attachments.Video;
 
@@ -15,6 +16,7 @@ public class Note {
     private long                sourceId;
     private long                date;
     private Link                attachedLink;
+    private Page                attachedPage;
     private Photo               sourcePhoto;
     private String              sourceName;
     private String              context;
@@ -156,8 +158,12 @@ public class Note {
         signer = pSigner;
     }
 
-    public ArrayList<Audio> getAttachmentsAudios() {
-        return attachmentsAudios;
+    public Page getAttachedPage() {
+        return attachedPage;
+    }
+
+    public void setAttachedPage(Page pAttachedPage) {
+        attachedPage = pAttachedPage;
     }
 
     @Override
