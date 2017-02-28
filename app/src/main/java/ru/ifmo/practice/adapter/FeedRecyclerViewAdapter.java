@@ -9,6 +9,11 @@ import android.os.Bundle;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.TextPaint;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -417,9 +422,26 @@ public class FeedRecyclerViewAdapter
                     ((DataObjectHolder) holder).seeMoreText.setVisibility(View.GONE);
                 }
             });
-            ((DataObjectHolder) holder).contextText.setText(((DataObjectHolder) holder).seeMoreText.getVisibility() == View.VISIBLE
+            /*((DataObjectHolder) holder).contextText.setText(((DataObjectHolder) holder).seeMoreText.getVisibility() == View.VISIBLE
                     ? tmpNote.getContextPreview()
-                    : tmpNote.getContext());
+                    : tmpNote.getContext());*/
+            SpannableString ss = new SpannableString("Android is a Software stack");
+            ClickableSpan clickableSpan = new ClickableSpan() {
+                @Override
+                public void onClick(View textView) {
+                    System.out.println("Clicked on span!");
+                }
+                @Override
+                public void updateDrawState(TextPaint ds) {
+                    super.updateDrawState(ds);
+                    ds.setUnderlineText(false);
+                    ds.setColor(Color.RED);
+                }
+            };
+            ss.setSpan(clickableSpan, 22, 27, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            ((DataObjectHolder) holder).contextText.setText(ss);
+            ((DataObjectHolder) holder).contextText.setMovementMethod(LinkMovementMethod.getInstance());
+            ((DataObjectHolder) holder).contextText.setHighlightColor(Color.RED);
 
             if (tmpNote.getAttachmentsVideos().size() > 0) {
                 ((DataObjectHolder) holder).attachedVideoBlock.setVisibility(View.VISIBLE);

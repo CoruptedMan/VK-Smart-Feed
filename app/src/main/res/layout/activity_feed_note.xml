@@ -116,11 +116,12 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/source_info"
                 android:layout_marginTop="5dp"
+                android:layout_marginBottom="10dp"
                 android:layout_marginStart="20dp"
                 android:layout_marginEnd="10dp"
-                android:textColor="@color/color_text_primary"
                 android:lineSpacingExtra="4sp"
-                android:layout_marginBottom="10dp" />
+                android:clickable="true"
+                android:textColor="@color/color_text_primary"/>
 
             <Button
                 android:id="@+id/see_more"
@@ -231,7 +232,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/attachment_photo_block"
-                    android:visibility="gone">
+                    android:visibility="gone"
+                    android:layout_marginTop="3dp">
 
                     <RelativeLayout
                         android:id="@+id/attachment_video_main"

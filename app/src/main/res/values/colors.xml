@@ -10,4 +10,5 @@
     <color name="color_divider">#DDDDDD</color>
     <color name="color_accent">#009688</color>
     <color name="color_black_transparent">#88212121</color>
+    <color name="color_black_transparent_light">#aa212121</color>
 </resources>

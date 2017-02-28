@@ -2,7 +2,9 @@ package ru.ifmo.practice;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -14,7 +16,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import com.vk.sdk.VKSdk;
 import com.vk.sdk.api.VKError;
@@ -36,7 +38,8 @@ import static ru.ifmo.practice.util.AppConsts.MIN_NOTES_COUNT;
 
 public class FeedActivity extends AppCompatActivity implements OnDownloadFeedDataResultDelegate {
 
-    private         FloatingActionButton    refreshButton;
+    private         CoordinatorLayout       coordinatorLayout;
+    //private         FloatingActionButton    refreshButton;
     private         ProgressBar             progressBar;
     private         SwipeRefreshLayout      swipeContainer;
     private         RelativeLayout          noInternetPlaceholder;
@@ -45,6 +48,8 @@ public class FeedActivity extends AppCompatActivity implements OnDownloadFeedDat
     private         LinearLayoutManager     mLinearLayoutManager;
     private         FeedRecyclerViewAdapter mAdapter;
     private         ArrayList<Note>         mNotes;
+    private         Snackbar                mSnackbarRefresh;
+    private         Snackbar                mSnackbarNoInternetError;
     private         int                     visibleThreshold = MIN_NOTES_COUNT;
     private         int                     totalItemCount = 0;
     private         int                     previousTotal = 0;
@@ -64,9 +69,38 @@ public class FeedActivity extends AppCompatActivity implements OnDownloadFeedDat
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feed);
+        coordinatorLayout = (CoordinatorLayout) findViewById(R.id.activity_main);
+        noInternetPlaceholder = (RelativeLayout) findViewById(R.id.no_internet_placeholder);
+        noInternetPlaceholderButton = (Button) findViewById(R.id.no_internet_placeholder_button);
+        progressBar = (ProgressBar) findViewById(R.id.progress_bar);
+        swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
+        mRecyclerView = (RecyclerView) findViewById(R.id.feed_recycler_view);
 
-        mNotes = new ArrayList<>();
+        mSnackbarRefresh = Snackbar.make(coordinatorLayout, "Есть новые записи.", Snackbar.LENGTH_INDEFINITE)
+                .setAction("Показать", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mSnackbarRefresh.dismiss();
+                        refreshFeed();
+                    }
+                });
+        mSnackbarRefresh.setActionTextColor(ContextCompat.getColor(getApplicationContext(),
+                R.color.color_accent));
+        View snackbarView = mSnackbarRefresh.getView();
+        snackbarView.setBackgroundColor(ContextCompat.getColor(getApplicationContext(),
+                R.color.color_black_transparent_light));
+        TextView textView = (TextView) snackbarView.findViewById(android.support.design.R.id.snackbar_text);
+        textView.setTextColor(ContextCompat.getColor(getApplicationContext(),
+                R.color.color_text));
 
+        mSnackbarNoInternetError = Snackbar.make(coordinatorLayout, getResources().getString(R
+                .string.no_internet), Snackbar.LENGTH_LONG);
+        mSnackbarNoInternetError.addCallback(new Snackbar.Callback() {
+            @Override
+            public void onDismissed(Snackbar snackbar, int event) {
+                mSnackbarRefresh.show();
+            }
+        });
         Toolbar tb = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(tb);
         final ActionBar ab = getSupportActionBar();
@@ -81,14 +115,11 @@ public class FeedActivity extends AppCompatActivity implements OnDownloadFeedDat
                 mLinearLayoutManager.scrollToPositionWithOffset(0, 0);
                 if (!isDataRelevant) {
                     refreshFeed();
-                    refreshButton.animate().alpha(0.0f);
-                    refreshButton.setVisibility(View.INVISIBLE);
+                    mSnackbarRefresh.dismiss();
                 }
             }
         });
 
-        noInternetPlaceholder = (RelativeLayout) findViewById(R.id.no_internet_placeholder);
-        noInternetPlaceholderButton = (Button) findViewById(R.id.no_internet_placeholder_button);
         noInternetPlaceholderButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -102,30 +133,17 @@ public class FeedActivity extends AppCompatActivity implements OnDownloadFeedDat
                 }
             }
         });
-        progressBar = (ProgressBar) findViewById(R.id.progress_bar);
 
-        swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 refreshFeed();
                 if (isDataRelevant) {
-                    refreshButton.animate().alpha(0.0f);
-                    refreshButton.setVisibility(View.INVISIBLE);
+                    mSnackbarRefresh.dismiss();
                 }
             }
         });
         swipeContainer.setColorSchemeResources(R.color.color_primary, R.color.color_primary_dark);
-
-        refreshButton = (FloatingActionButton) findViewById(R.id.refresh);
-        refreshButton.setOnClickListener(new View.OnClickListener() {
-             @Override
-             public void onClick(View v) {
-                 refreshFeed();
-                 refreshButton.animate().alpha(0.0f);
-                 refreshButton.setVisibility(View.INVISIBLE);
-             }
-         });
 
         findViewById(R.id.log_out).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -136,7 +154,7 @@ public class FeedActivity extends AppCompatActivity implements OnDownloadFeedDat
             }
         });
 
-        mRecyclerView = (RecyclerView) findViewById(R.id.feed_recycler_view);
+        mNotes = new ArrayList<>();
         mLinearLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(mLinearLayoutManager);
@@ -221,10 +239,7 @@ public class FeedActivity extends AppCompatActivity implements OnDownloadFeedDat
                                         runOnUiThread(new Runnable() {
                                             @Override
                                             public void run() {
-                                                refreshButton.setVisibility(View.VISIBLE);
-                                                refreshButton.setAlpha(0.0f);
-                                                refreshButton.animate()
-                                                        .alpha(1.0f);
+                                                mSnackbarRefresh.show();
                                             }
                                         });
                                     }
@@ -270,10 +285,7 @@ public class FeedActivity extends AppCompatActivity implements OnDownloadFeedDat
             if (VKSmartFeedApplication.isOnline()) {
                 addData();
             } else {
-                Toast.makeText(getApplicationContext(), getResources()
-                        .getString(R.string
-                        .no_internet),
-                        Toast.LENGTH_LONG).show();
+                mSnackbarNoInternetError.show();
                 toggleSwipeContainerRefreshingState(false);
             }
         } catch (ExecutionException | InterruptedException pE) {
