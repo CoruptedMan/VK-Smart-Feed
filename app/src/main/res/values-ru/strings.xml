@@ -27,4 +27,10 @@
     <string name="on_my_wall">На моей стене</string>
     <string name="in_group">В сообществе</string>
     <string name="add_message">Добавить сообщение</string>
+    <string name="refresh_page">Обновить страницу</string>
+    <string name="connection_lost_description">Отсутствует интернет соединение. Подключитесь к сети и попробуйте</string>
+    <string name="no_internet">Отсутствует подключение к интернету</string>
+    <string name="note_repost_wall_success">Запись была добавлена к вам на стену</string>
+    <string name="link">Ссылка</string>
+    <string name="wiki_page">Вики-страница</string>
 </resources>

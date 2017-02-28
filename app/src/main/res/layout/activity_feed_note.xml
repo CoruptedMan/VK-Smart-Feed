@@ -374,10 +374,43 @@
                 </RelativeLayout>
 
                 <RelativeLayout
+                    android:id="@+id/attachment_audio_block"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/attachment_video_block"
+                    android:visibility="gone">
+
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        card_view:srcCompat="@drawable/ic_music_note_blue_36dp"
+                        android:id="@+id/attachment_audio_icon"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentStart="true"
+                        android:layout_marginBottom="5dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginStart="20dp" />
+
+                    <TextView
+                        android:text="Прослушивание аудиозаписей недоступно в неофициальных приложениях."
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/attachment_audio_unavailable"
+                        android:textColor="@color/color_text_secondary"
+                        android:textSize="14sp"
+                        android:layout_centerVertical="true"
+                        android:layout_toEndOf="@+id/attachment_audio_icon"
+                        android:layout_marginEnd="10dp"
+                        android:layout_marginStart="10dp"
+                        android:textStyle="normal|italic" />
+                </RelativeLayout>
+
+                <RelativeLayout
                     android:id="@+id/attachment_link_group"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/attachment_video_block">
+                    android:layout_below="@id/attachment_audio_block">
 
                     <RelativeLayout
                         android:id="@+id/attachment_link_preview"

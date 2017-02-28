@@ -6,7 +6,7 @@
     <!--integers-->
     <integer name="com_vk_sdk_AppId">5805873</integer>
 
-    <!-- Strings related to HelloActivity -->
+    <!-- Strings related to LoginActivity -->
     <string name="page_title1">Ease</string>
     <string name="page_title2">Fast</string>
     <string name="page_title3">Light</string>
@@ -31,4 +31,14 @@
     <string name="wall_note">Wall Note</string>
     <string name="your_message">Your message</string>
     <string name="load_more_comments">Load {0} more comments</string>
+    <string name="share_note">Share note</string>
+    <string name="on_my_wall">On my Wall</string>
+    <string name="in_group">In group</string>
+    <string name="add_message">Add message</string>
+    <string name="refresh_page">Refresh the page</string>
+    <string name="connection_lost_description">No Internet connection! Connect and try</string>
+    <string name="no_internet">No Internet connection</string>
+    <string name="note_repost_wall_success">Note successfully reposted to your wall</string>
+    <string name="link">Link</string>
+    <string name="wiki_page">Wiki-page</string>
 </resources>

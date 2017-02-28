@@ -234,7 +234,7 @@ public class LoginActivity extends Activity {
         @Override
         public View onCreateView(LayoutInflater pInflater, ViewGroup pContainer,
                                  Bundle pSavedInstanceState) {
-            View lRootView = pInflater.inflate(R.layout.fragment_app_start, pContainer, false);
+            View lRootView = pInflater.inflate(R.layout.fragment_activity_login, pContainer, false);
 
             mTitleTextView = (TextView) lRootView.findViewById(R.id.titleText);
             mContentTextView = (TextView) lRootView.findViewById(R.id.contentText);

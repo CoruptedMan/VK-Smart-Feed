@@ -15,7 +15,7 @@ public class GroupFeedViewActivity extends AppCompatActivity implements Observab
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.group_feed_view_layout);
+        setContentView(R.layout.activity_group_feed);
 
         ObservableListView listView = (ObservableListView) findViewById(R.id.group_feed_olw);
         listView.setScrollViewCallbacks(this);

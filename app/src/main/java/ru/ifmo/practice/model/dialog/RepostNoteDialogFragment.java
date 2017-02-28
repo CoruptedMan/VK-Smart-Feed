@@ -17,6 +17,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import ru.ifmo.practice.R;
+import ru.ifmo.practice.VKSmartFeedApplication;
 
 public class RepostNoteDialogFragment extends DialogFragment {
     private long mSourceId;
@@ -35,7 +36,7 @@ public class RepostNoteDialogFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        final View layout = inflater.inflate(R.layout.repost_dialog_layout, null);
+        final View layout = inflater.inflate(R.layout.dialog_repost, null);
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setView(layout);
         AlertDialog dialog = builder.create();
@@ -47,24 +48,29 @@ public class RepostNoteDialogFragment extends DialogFragment {
         repostToWall.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new VKRequest("wall.repost", VKParameters.from(
-                        "object", "wall" + mSourceId + "_" + mId,
-                        "message", messageEditText.getText()))
-                        .executeWithListener(new VKRequest.VKRequestListener() {
-                    @Override
-                    public void onComplete(VKResponse response) {
-                        try {
-                            mResponse = response.json.getJSONObject("response");
-                            int resultCode = Integer.parseInt(mResponse.get("success").toString());
-                            int repostCount = Integer.parseInt(mResponse.get("reposts_count").toString());
-                            int likesCount = Integer.parseInt(mResponse.get("likes_count").toString());
-                            dismiss();
-                            listener.onFinishRepostNoteDialog(resultCode, repostCount, likesCount);
-                        } catch (JSONException pE) {
-                            pE.printStackTrace();
-                        }
-                    }
-                });
+                if (VKSmartFeedApplication.isOnline()) {
+                    new VKRequest("wall.repost", VKParameters.from(
+                            "object", "wall" + mSourceId + "_" + mId,
+                            "message", messageEditText.getText()))
+                            .executeWithListener(new VKRequest.VKRequestListener() {
+                                @Override
+                                public void onComplete(VKResponse response) {
+                                    try {
+                                        mResponse = response.json.getJSONObject("response");
+                                        int resultCode = Integer.parseInt(mResponse.get("success").toString());
+                                        int repostCount = Integer.parseInt(mResponse.get("reposts_count").toString());
+                                        int likesCount = Integer.parseInt(mResponse.get("likes_count").toString());
+                                        dismiss();
+                                        listener.onFinishRepostNoteDialog(resultCode, repostCount, likesCount);
+                                    } catch (JSONException pE) {
+                                        pE.printStackTrace();
+                                    }
+                                }
+                            });
+                } else {
+                    dismiss();
+                    listener.onFinishRepostNoteDialog(2, 0, 0);
+                }
             }
         });
         repostToGroup.setOnClickListener(new View.OnClickListener() {

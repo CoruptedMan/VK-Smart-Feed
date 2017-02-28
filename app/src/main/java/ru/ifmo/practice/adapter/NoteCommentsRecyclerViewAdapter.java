@@ -51,7 +51,7 @@ public class NoteCommentsRecyclerViewAdapter
     @Override
     public DataObjectHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         final View view = LayoutInflater.from(mContext)
-                .inflate(R.layout.note_comment_layout, parent, false);
+                .inflate(R.layout.component_note_comment, parent, false);
 
         return new NoteCommentsRecyclerViewAdapter.DataObjectHolder(view);
     }

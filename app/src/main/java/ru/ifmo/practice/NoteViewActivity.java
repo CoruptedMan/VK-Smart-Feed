@@ -72,7 +72,7 @@ public class NoteViewActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.note_view_layout);
+        setContentView(R.layout.activity_note_view);
         mContext = this;
         Toolbar tb = (Toolbar) findViewById(R.id.note_view_toolbar);
         setSupportActionBar(tb);
@@ -137,7 +137,7 @@ public class NoteViewActivity extends AppCompatActivity {
             public void onClick(View v) {
                 VKRequest request;
                 int likes = mNote.getLikesCount();
-                request = new VKRequest("likes." + (mNote.getUserLikes()
+                request = new VKRequest("likes." + (mNote.isUserLikes()
                         ? "delete" : "add"), VKParameters.from("type", "post",
                         "owner_id", -mNote.getSourceId(),
                         "item_id", mNote.getId()));
@@ -170,9 +170,9 @@ public class NoteViewActivity extends AppCompatActivity {
                 likesCountText.setText(mNote.getLikesCount() > 0
                         ? String.valueOf(likes)
                         : "");
-                mNote.setUserLikes(!mNote.getUserLikes());
+                mNote.setUserLikes(!mNote.isUserLikes());
                 likeIcon.setImageDrawable(mContext.getDrawable(
-                        mNote.getUserLikes()
+                        mNote.isUserLikes()
                                 ? R.drawable.ic_favorite_pressed_24dp
                                 : R.drawable.ic_favorite_white_24dp));
             }
@@ -224,7 +224,7 @@ public class NoteViewActivity extends AppCompatActivity {
 
         likeIcon.setImageDrawable(ResourcesCompat.getDrawable(
                 VKSmartFeedApplication.getContext().getResources(),
-                mNote.getUserLikes()
+                mNote.isUserLikes()
                         ? R.drawable.ic_favorite_pressed_24dp
                         : R.drawable.ic_favorite_white_24dp,
                 null));
@@ -235,7 +235,7 @@ public class NoteViewActivity extends AppCompatActivity {
 
         repostIcon.setImageDrawable(ResourcesCompat.getDrawable(
                 VKSmartFeedApplication.getContext().getResources(),
-                mNote.getUserReposted()
+                mNote.isUserReposted()
                         ? R.drawable.ic_share_pressed_24dp
                         : R.drawable.ic_share_white_24dp,
                 null));
@@ -243,7 +243,7 @@ public class NoteViewActivity extends AppCompatActivity {
                 ? String.valueOf(mNote.getRepostsCount())
                 : "");
 
-        if (!mNote.getCanComment()) {
+        if (!mNote.isCanComment()) {
             loadMoreCommentsLayout.setVisibility(View.GONE);
             noteLeaveCommentLayout.setVisibility(View.GONE);
         }

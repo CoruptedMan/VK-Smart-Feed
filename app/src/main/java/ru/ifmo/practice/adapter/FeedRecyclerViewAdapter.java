@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,15 +35,14 @@ import org.ocpsoft.prettytime.PrettyTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
-import java.util.regex.Pattern;
 
+import ru.ifmo.practice.FeedActivity;
 import ru.ifmo.practice.GroupFeedViewActivity;
 import ru.ifmo.practice.NoteViewActivity;
 import ru.ifmo.practice.R;
 import ru.ifmo.practice.VKSmartFeedApplication;
 import ru.ifmo.practice.model.Note;
 import ru.ifmo.practice.model.dialog.RepostNoteDialogFragment;
-import ru.ifmo.practice.model.span.PatternEditableBuilder;
 
 import static com.vk.sdk.VKUIHelper.getApplicationContext;
 import static ru.ifmo.practice.R.id.context;
@@ -52,6 +52,7 @@ public class FeedRecyclerViewAdapter
 
     private final int VIEW_NOTE = 1;
     private final int VIEW_PROG_BAR = 0;
+    private final int VIEW_CONNECTION_ERROR = -1;
 
     private static ArrayList<Note> mDataSet;
     private static Activity mActivity;
@@ -108,6 +109,7 @@ public class FeedRecyclerViewAdapter
         private ImageView       attachmentVideoCountIcon;
         private ImageView       attachmentPagePhoto;
         private ImageView       signerIcon;
+        private ImageView       attachmentAudioIcon;
         private RelativeLayout  likeBlock;
         private RelativeLayout  commentBlock;
         private RelativeLayout  repostBlock;
@@ -117,6 +119,7 @@ public class FeedRecyclerViewAdapter
         private RelativeLayout  attachedLinkPreviewBlock;
         private RelativeLayout  attachedVideoBlock;
         private RelativeLayout  attachedPageBlock;
+        private RelativeLayout  attachedAudioBlock;
         private CardView        sourceInfoBlock;
         private CardView        optionsBlock;
         private CardView        attachedLinkBigBlock;
@@ -167,6 +170,7 @@ public class FeedRecyclerViewAdapter
             attachmentVideoCountIcon = (ImageView) itemView.findViewById(R.id.attachment_video_count_icon);
             signerIcon = (ImageView) itemView.findViewById(R.id.signer_icon);
             attachmentPagePhoto = (ImageView) itemView.findViewById(R.id.attachment_page_photo);
+            attachmentAudioIcon = (ImageView) itemView.findViewById(R.id.attachment_audio_icon);
             likeBlock = (RelativeLayout) itemView.findViewById(R.id.like_block);
             commentBlock = (RelativeLayout) itemView.findViewById(R.id.comment_block);
             repostBlock = (RelativeLayout) itemView.findViewById(R.id.repost_block);
@@ -175,6 +179,7 @@ public class FeedRecyclerViewAdapter
             attachedLinkGroupBlock = (RelativeLayout) itemView.findViewById(R.id.attachment_link_group);
             attachedVideoBlock = (RelativeLayout) itemView.findViewById(R.id.attachment_video_block);
             attachedPageBlock = (RelativeLayout) itemView.findViewById(R.id.attachment_page_block);
+            attachedAudioBlock = (RelativeLayout) itemView.findViewById(R.id.attachment_audio_block);
             sourceInfoBlock = (CardView) itemView.findViewById(R.id.source_info);
             optionsBlock = (CardView) itemView.findViewById(R.id.options_block);
             attachedLinkBigBlock = (CardView) itemView.findViewById(R.id.attachment_link_big);
@@ -184,16 +189,6 @@ public class FeedRecyclerViewAdapter
             attachmentVideoPlatformBlock = (CardView) itemView.findViewById(R.id.attachment_video_platform_block);
             attachmentPhotoCountBlock = (CardView) itemView.findViewById(R.id.attachment_photo_count_block);
             socialAcionsLayout = (LinearLayout) itemView.findViewById(R.id.social_actions);
-
-            new PatternEditableBuilder().
-                    addPattern(Pattern.compile("#"), Color.RED,
-                            new PatternEditableBuilder.SpannableClickedListener() {
-                                @Override
-                                public void onSpanClicked(String text) {
-                                    Toast.makeText(mActivity, "Clicked hashtag: " + text,
-                                            Toast.LENGTH_SHORT).show();
-                                }
-                            }).into(contextText);
 
             /*contextText.setFactory(this);
             Animation inAnimation = AnimationUtils.loadAnimation(mContext,
@@ -206,59 +201,66 @@ public class FeedRecyclerViewAdapter
             likeBlock.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Note tmpNote = mDataSet.get(getAdapterPosition());
-                    VKRequest request;
-                    int likes = tmpNote.getLikesCount();
-                    request = new VKRequest("likes." + (tmpNote.getUserLikes()
-                            ? "delete" : "add"), VKParameters.from("type", "post",
-                            "owner_id", -tmpNote.getSourceId(),
-                            "item_id", tmpNote.getId()));
-                    request.executeSyncWithListener(new VKRequest.VKRequestListener() {
-                        @Override
-                        public void onComplete(VKResponse response) {
-                            try {
-                                mResponse = response.json.getJSONObject("response");
-                            } catch (JSONException pE) {
-                                pE.printStackTrace();
+                    if (VKSmartFeedApplication.isOnline()) {
+                        Note tmpNote = mDataSet.get(getAdapterPosition());
+                        VKRequest request;
+                        int likes = tmpNote.getLikesCount();
+                        request = new VKRequest("likes." + (tmpNote.isUserLikes()
+                                ? "delete" : "add"), VKParameters.from("type", "post",
+                                "owner_id", -tmpNote.getSourceId(),
+                                "item_id", tmpNote.getId()));
+                        request.executeSyncWithListener(new VKRequest.VKRequestListener() {
+                            @Override
+                            public void onComplete(VKResponse response) {
+                                try {
+                                    mResponse = response.json.getJSONObject("response");
+                                } catch (JSONException pE) {
+                                    pE.printStackTrace();
+                                }
                             }
+
+                            @Override
+                            public void onError(VKError error) {
+                                Log.e("likesRequest", error.toString());
+                            }
+                        });
+                        try {
+                            likes = Integer.parseInt(mResponse.get("likes").toString());
+                        } catch (JSONException pE) {
+                            pE.printStackTrace();
                         }
-                        @Override
-                        public void onError(VKError error) {
-                            Toast.makeText(mContext, error.toString(), Toast.LENGTH_LONG).show();
-                        }
-                        @Override
-                        public void attemptFailed(VKRequest request,
-                                                  int attemptNumber,
-                                                  int totalAttempts) {
-                            Toast.makeText(mContext, "Attempt Failed!", Toast.LENGTH_LONG).show();
-                        }
-                    });
-                    try {
-                        likes = Integer.parseInt(mResponse.get("likes").toString());
-                    } catch (JSONException pE) {
-                        pE.printStackTrace();
+                        tmpNote.setLikesCount(likes);
+                        likesCountText.setText(tmpNote.getLikesCount() > 0
+                                ? String.valueOf(likes)
+                                : "");
+                        tmpNote.setUserLikes(
+                                !tmpNote.isUserLikes());
+                        likeIcon.setImageDrawable(mContext.getDrawable(
+                                tmpNote.isUserLikes()
+                                        ? R.drawable.ic_favorite_pressed_24dp
+                                        : R.drawable.ic_favorite_white_24dp));
                     }
-                    tmpNote.setLikesCount(likes);
-                    likesCountText.setText(tmpNote.getLikesCount() > 0
-                            ? String.valueOf(likes)
-                            : "");
-                    tmpNote.setUserLikes(
-                            !tmpNote.getUserLikes());
-                    likeIcon.setImageDrawable(mContext.getDrawable(
-                            tmpNote.getUserLikes()
-                                    ? R.drawable.ic_favorite_pressed_24dp
-                                    : R.drawable.ic_favorite_white_24dp));
+                    else {
+                        Toast.makeText(mContext, mContext.getResources().getString(R.string.no_internet),
+                                Toast.LENGTH_SHORT).show();
+                    }
                 }
             });
             View.OnClickListener openNoteByClick = new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(getApplicationContext(), NoteViewActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    mActivity.startActivity(intent);
-                    NoteViewActivity.mNote = mDataSet.get(getAdapterPosition());
-                    mActivity.overridePendingTransition(R.anim.slide_in_right,
-                            R.anim.slide_out_right);
+                    if (VKSmartFeedApplication.isOnline()) {
+                        Intent intent = new Intent(getApplicationContext(), NoteViewActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        mActivity.startActivity(intent);
+                        NoteViewActivity.mNote = mDataSet.get(getAdapterPosition());
+                        mActivity.overridePendingTransition(R.anim.slide_in_right,
+                                R.anim.slide_out_right);
+                    }
+                    else {
+                        // TODO let user pass to another activity, but show connect error in that
+                        // activity
+                    }
                 }
             };
             final RepostNoteDialogFragment dialog = new RepostNoteDialogFragment();
@@ -270,7 +272,7 @@ public class FeedRecyclerViewAdapter
                     args.putLong("source_id", -mDataSet.get(getAdapterPosition()).getSourceId());
                     args.putLong("object_id", mDataSet.get(getAdapterPosition()).getId());
                     dialog.setArguments(args);
-                    dialog.show(mActivity.getFragmentManager(), "test");
+                    dialog.show(mActivity.getFragmentManager(), "");
                 }
             });
             sourceInfoBlock.setOnClickListener(new View.OnClickListener() {
@@ -288,7 +290,7 @@ public class FeedRecyclerViewAdapter
             optionsBlock.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // ...
+                    // TODO
                 }
             });
         }
@@ -304,14 +306,18 @@ public class FeedRecyclerViewAdapter
         @Override
         public void onFinishRepostNoteDialog(int resultCode, int repostCount, int likesCount) {
             if (resultCode == 1) {
-                Toast.makeText(mContext, "Note successfully reposted to your wall!", Toast
-                        .LENGTH_LONG).show();
+                Toast.makeText(mContext, mContext.getResources().getString(R.string.note_repost_wall_success),
+                        Toast.LENGTH_LONG).show();
                 repostIcon.setImageDrawable(ResourcesCompat.getDrawable(
                         VKSmartFeedApplication.getContext().getResources(),
                         R.drawable.ic_share_pressed_24dp,
                         null));
                 repostsCountText.setText(String.valueOf(repostCount));
                 likesCountText.setText(String.valueOf(likesCount));
+            }
+            else if (resultCode == 2) {
+                Toast.makeText(mContext, mContext.getResources().getString(R.string.no_internet),
+                        Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -323,6 +329,20 @@ public class FeedRecyclerViewAdapter
         ProgressViewHolder(View v) {
             super(v);
             progressBar = (ProgressBar) v.findViewById(R.id.notes_list_progress_bar);
+        }
+    }
+
+    private final static class ConnectionLostViewHolder
+            extends RecyclerView.ViewHolder {
+        TextView descriptionText;
+        Button refreshButton;
+        ImageView icon;
+
+        ConnectionLostViewHolder(View v) {
+            super(v);
+            descriptionText = (TextView) v.findViewById(R.id.connection_lost_description);
+            refreshButton = (Button) v.findViewById(R.id.connection_lost_button);
+            icon = (ImageView) v.findViewById(R.id.connection_lost_image);
         }
     }
 
@@ -342,21 +362,24 @@ public class FeedRecyclerViewAdapter
         RecyclerView.ViewHolder viewHolder;
         if (viewType == VIEW_NOTE) {
             View view = LayoutInflater.from(VKSmartFeedApplication.getContext())
-                    .inflate(R.layout.activity_main_card_note_content, parent, false);
-
+                    .inflate(R.layout.activity_feed_note, parent, false);
             viewHolder = new DataObjectHolder(view);
+        } else if (viewType == VIEW_PROG_BAR) {
+            View view = LayoutInflater.from(VKSmartFeedApplication.getContext())
+                    .inflate(R.layout.progress_bar, parent, false);
+            viewHolder = new ProgressViewHolder(view);
         } else {
             View view = LayoutInflater.from(VKSmartFeedApplication.getContext())
-                    .inflate(R.layout.activity_main_card_progress_bar_content, parent, false);
-
-            viewHolder = new ProgressViewHolder (view);
+                    .inflate(R.layout.connection_lost, parent, false);
+            viewHolder = new ConnectionLostViewHolder(view);
         }
         return viewHolder;
     }
 
     @Override
     public int getItemViewType(int position) {
-        return mDataSet.get(position) != null ? VIEW_NOTE : VIEW_PROG_BAR;
+        return position != getItemCount() - 1 ? VIEW_NOTE :
+                VKSmartFeedApplication.isOnline() ? VIEW_PROG_BAR : VIEW_CONNECTION_ERROR;
     }
 
     @Override
@@ -376,9 +399,6 @@ public class FeedRecyclerViewAdapter
             Picasso.with(mContext)
                     .load(tmpNote.getSourcePhoto().getPhotoUrl())
                     .into(((DataObjectHolder) holder).sourcePhoto);
-            //((DataObjectHolder) holder).sourcePhoto.setImageBitmap(tmpNote.getSourcePhoto()
-            //        .getImageBitmap());
-
             ((DataObjectHolder) holder).optionsIcon.setImageDrawable(ResourcesCompat.getDrawable(
                     VKSmartFeedApplication.getContext().getResources(),
                     R.drawable.ic_more_vert_gray_24dp,
@@ -406,7 +426,6 @@ public class FeedRecyclerViewAdapter
                 Picasso.with(mContext)
                         .load(tmpNote.getAttachmentsVideos().get(0).getPhoto().getPhotoUrl())
                         .into(((DataObjectHolder) holder).attachedVideo);
-                //((DataObjectHolder) holder).attachedVideo.setImageBitmap();
                 ((DataObjectHolder) holder).attachedVideo.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -436,13 +455,8 @@ public class FeedRecyclerViewAdapter
                             }
 
                             @Override
-                            public void attemptFailed(VKRequest request, int attemptNumber, int totalAttempts) {
-                                System.out.println("error suka");
-                            }
-
-                            @Override
                             public void onError(VKError error) {
-                                System.out.println(error.toString());
+                                Log.e("videoGetRequest", error.toString());
                             }
                         });
                     }
@@ -487,8 +501,6 @@ public class FeedRecyclerViewAdapter
                 Picasso.with(mContext)
                         .load(tmpNote.getAttachmentsPhotos().get(0).getPhotoUrl())
                         .into(((DataObjectHolder) holder).attachedPhoto);
-                //((DataObjectHolder) holder).attachedPhoto.setImageBitmap(tmpNote
-                //       .getAttachmentsPhotos().get(0).getImageBitmap());
             }
             else {
                 ((DataObjectHolder) holder).attachedPhoto.setVisibility(View.GONE);
@@ -521,7 +533,9 @@ public class FeedRecyclerViewAdapter
                                         null
                                 ));
                         ((DataObjectHolder) holder).attachedLinkPreviewTitleText.setText(tmpNote.getAttachedLink()
-                                .getTitle().equals("") ? "Ссылка" : tmpNote.getAttachedLink().getTitle());
+                                .getTitle().equals("")
+                                    ? mContext.getResources().getString(R.string.link)
+                                    : tmpNote.getAttachedLink().getTitle());
                         ((DataObjectHolder) holder).attachedLinkPreviewCaptionText.setText(tmpNote.getAttachedLink()
                                 .getCaption());
                         ((DataObjectHolder) holder).attachedLinkPreviewBlock.setOnClickListener(new View.OnClickListener() {
@@ -541,8 +555,6 @@ public class FeedRecyclerViewAdapter
                         Picasso.with(mContext)
                                 .load(tmpNote.getAttachedLink().getPhoto().getPhotoUrl())
                                 .into(((DataObjectHolder) holder).attachedLinkSmallPhoto);
-                        //((DataObjectHolder) holder).attachedLinkSmallPhoto.setImageBitmap(tmpNote
-                        //    .getAttachedLink().getPhoto().getImageBitmap());
                         ((DataObjectHolder) holder).attachedLinkSmallTitleText.setText(tmpNote.getAttachedLink()
                                 .getTitle());
                         ((DataObjectHolder) holder).attachedLinkSmallCaptionText.setText(tmpNote.getAttachedLink()
@@ -564,8 +576,6 @@ public class FeedRecyclerViewAdapter
                         Picasso.with(mContext)
                                 .load(tmpNote.getAttachedLink().getPhoto().getPhotoUrl())
                                 .into(((DataObjectHolder) holder).attachedLinkBigPhoto);
-                        //((DataObjectHolder) holder).attachedLinkBigPhoto.setImageBitmap(tmpNote
-                        //    .getAttachedLink().getPhoto().getImageBitmap());
                         ((DataObjectHolder) holder).attachedLinkBigTitleText.setText(tmpNote.getAttachedLink().getTitle());
                         ((DataObjectHolder) holder).attachedLinkBigCaptionText.setText(tmpNote.getAttachedLink().getCaption());
                         ((DataObjectHolder) holder).attachedLinkBigBlock.setOnClickListener(new View.OnClickListener() {
@@ -588,7 +598,8 @@ public class FeedRecyclerViewAdapter
                 ((DataObjectHolder) holder).attachedPageBlock.setVisibility(View.VISIBLE);
                 ((DataObjectHolder) holder).attachmentPageTitle.setText(tmpNote.getAttachedPage()
                         .getTitle());
-                ((DataObjectHolder) holder).attachmentPageCaption.setText("Вики-страница");
+                ((DataObjectHolder) holder).attachmentPageCaption.setText(mContext
+                        .getResources().getString(R.string.wiki_page));
                 ((DataObjectHolder) holder).attachmentPagePhoto.setImageDrawable(
                         ResourcesCompat.getDrawable(
                                 mContext.getResources(),
@@ -609,6 +620,19 @@ public class FeedRecyclerViewAdapter
                 ((DataObjectHolder) holder).attachedPageBlock.setVisibility(View.GONE);
             }
 
+            if (tmpNote.isAudioAttached()) {
+                ((DataObjectHolder) holder).attachedAudioBlock.setVisibility(View.VISIBLE);
+                ((DataObjectHolder) holder).attachmentAudioIcon.setImageDrawable(
+                        ResourcesCompat.getDrawable(
+                                mContext.getResources(),
+                                R.drawable.ic_music_note_blue_36dp,
+                                null
+                        ));
+            }
+            else {
+                ((DataObjectHolder) holder).attachedAudioBlock.setVisibility(View.GONE);
+            }
+
             if (tmpNote.getSigner() != null) {
                 ((DataObjectHolder) holder).signerBlock.setVisibility(View.VISIBLE);
                 ((DataObjectHolder) holder).signerIcon.setImageDrawable(ResourcesCompat.getDrawable(
@@ -620,7 +644,7 @@ public class FeedRecyclerViewAdapter
                 ((DataObjectHolder) holder).signerBlock.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        // ...
+                        // TODO
                     }
                 });
             }
@@ -630,7 +654,7 @@ public class FeedRecyclerViewAdapter
 
             ((DataObjectHolder) holder).likeIcon.setImageDrawable(ResourcesCompat.getDrawable(
                     VKSmartFeedApplication.getContext().getResources(),
-                    tmpNote.getUserLikes()
+                    tmpNote.isUserLikes()
                             ? R.drawable.ic_favorite_pressed_24dp
                             : R.drawable.ic_favorite_white_24dp,
                     null));
@@ -639,7 +663,7 @@ public class FeedRecyclerViewAdapter
                     ? String.valueOf(tmpNote.getLikesCount())
                     : "");
 
-            ((DataObjectHolder) holder).commentBlock.setVisibility(tmpNote.getCanComment()
+            ((DataObjectHolder) holder).commentBlock.setVisibility(tmpNote.isCanComment()
                     ? View.VISIBLE
                     : View.GONE);
             ((DataObjectHolder) holder).commentIcon.setImageDrawable(ResourcesCompat.getDrawable(
@@ -652,7 +676,7 @@ public class FeedRecyclerViewAdapter
 
             ((DataObjectHolder) holder).repostIcon.setImageDrawable(ResourcesCompat.getDrawable(
                     VKSmartFeedApplication.getContext().getResources(),
-                    tmpNote.getUserReposted()
+                    tmpNote.isUserReposted()
                             ? R.drawable.ic_share_pressed_24dp
                             : R.drawable.ic_share_white_24dp,
                     null));
@@ -660,8 +684,26 @@ public class FeedRecyclerViewAdapter
                     ? String.valueOf(tmpNote.getRepostsCount())
                     : "");
         }
-        else {
+        else if (holder instanceof ProgressViewHolder) {
             ((ProgressViewHolder) holder).progressBar.setIndeterminate(true);
+        }
+        else {
+            ((ConnectionLostViewHolder) holder).descriptionText.setText(mContext.getResources()
+                    .getString(R.string.connection_lost_description));
+            ((ConnectionLostViewHolder) holder).refreshButton.setText(mContext.getResources()
+                    .getString(R.string.refresh_page));
+            ((ConnectionLostViewHolder) holder).icon.setImageDrawable(ResourcesCompat.getDrawable(
+                    VKSmartFeedApplication.getContext().getResources(),
+                    R.drawable.ic_warning_blue_36dp,
+                    null));
+            ((ConnectionLostViewHolder) holder).refreshButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (VKSmartFeedApplication.isOnline()) {
+                        ((FeedActivity) mActivity).refreshFeed();
+                    }
+                }
+            });
         }
     }
 
@@ -673,8 +715,10 @@ public class FeedRecyclerViewAdapter
                 ? String.format(Locale.getDefault(), "%d:", (secs % 3600) / 60)
                 : "0:";
         String seconds = String.format(Locale.getDefault(), "%02d", secs % 60);
-
-        return hours + minutes + seconds;
+        if ((hours + minutes + seconds).equals("0:00"))
+            return "Неизвестно";
+        else
+            return hours + minutes + seconds;
     }
 
     public void clear() {

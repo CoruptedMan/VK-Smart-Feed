@@ -18,7 +18,6 @@ import java.util.concurrent.ExecutionException;
 import ru.ifmo.practice.FeedActivity;
 import ru.ifmo.practice.model.Account;
 import ru.ifmo.practice.model.Note;
-import ru.ifmo.practice.model.attachments.Audio;
 import ru.ifmo.practice.model.attachments.Link;
 import ru.ifmo.practice.model.attachments.Page;
 import ru.ifmo.practice.model.attachments.Photo;
@@ -63,10 +62,6 @@ public class DownloadUserFeedDataTask extends AsyncTask<VKRequest, Void, ArrayLi
         });
         try {
             for (int index = 0; index < MIN_NOTES_COUNT; index++) {
-                System.out.println(mResponse
-                        .getJSONArray("items")
-                        .getJSONObject(index)
-                        .toString(2));
                 long sourceId = Math.abs(Integer.parseInt(mResponse
                         .getJSONArray("items")
                         .getJSONObject(index)
@@ -176,8 +171,8 @@ public class DownloadUserFeedDataTask extends AsyncTask<VKRequest, Void, ArrayLi
 
                 int i = 0;
                 ArrayList<Photo> attachmentsPhotos = new ArrayList<>();
-                ArrayList<Audio> attachmentsAudios = new ArrayList<>();
                 ArrayList<Video> attachmentsVideos = new ArrayList<>();
+                boolean isAudioAttached = false;
                 Link link = null;
                 Page page = null;
                 if (mResponse
@@ -514,47 +509,7 @@ public class DownloadUserFeedDataTask extends AsyncTask<VKRequest, Void, ArrayLi
                                 .get("type")
                                 .toString()
                                 .equals("audio")) {
-                            long audioId = Long.parseLong(mResponse
-                                    .getJSONArray("items")
-                                    .getJSONObject(index)
-                                    .getJSONArray("attachments")
-                                    .getJSONObject(i)
-                                    .getJSONObject("audio")
-                                    .get("id").toString());
-                            String audioArtist = mResponse
-                                    .getJSONArray("items")
-                                    .getJSONObject(index)
-                                    .getJSONArray("attachments")
-                                    .getJSONObject(i)
-                                    .getJSONObject("audio")
-                                    .get("artist").toString();
-                            String audioTitle = mResponse
-                                    .getJSONArray("items")
-                                    .getJSONObject(index)
-                                    .getJSONArray("attachments")
-                                    .getJSONObject(i)
-                                    .getJSONObject("audio")
-                                    .get("title").toString();
-                            int audioDuration = Integer.parseInt(mResponse
-                                    .getJSONArray("items")
-                                    .getJSONObject(index)
-                                    .getJSONArray("attachments")
-                                    .getJSONObject(i)
-                                    .getJSONObject("audio")
-                                    .get("duration").toString());
-                            String audioUrl = mResponse
-                                    .getJSONArray("items")
-                                    .getJSONObject(index)
-                                    .getJSONArray("attachments")
-                                    .getJSONObject(i)
-                                    .getJSONObject("audio")
-                                    .get("url").toString();
-                            Audio audio = new Audio(audioId,
-                                    audioArtist,
-                                    audioTitle,
-                                    audioDuration,
-                                    audioUrl);
-                            attachmentsAudios.add(audio);
+                            isAudioAttached = true;
                         } else if (mResponse
                                 .getJSONArray("items")
                                 .getJSONObject(index)
@@ -640,7 +595,7 @@ public class DownloadUserFeedDataTask extends AsyncTask<VKRequest, Void, ArrayLi
                         sourcePhoto,
                         attachmentsPhotos,
                         attachmentsVideos,
-                        attachmentsAudios,
+                        isAudioAttached,
                         likes,
                         userLikes,
                         comments,

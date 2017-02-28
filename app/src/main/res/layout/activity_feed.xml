@@ -92,6 +92,48 @@
             android:indeterminateTintMode="src_atop"
             android:indeterminateTint="@color/color_primary"/>
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/color_divider"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:id="@+id/no_internet_placeholder"
+            android:visibility="gone">
+
+            <Button
+                android:text="Попробовать снова"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
+                android:id="@+id/no_internet_placeholder_button"
+                style="@style/Base.Widget.AppCompat.Button.Borderless"
+                android:textColor="@color/color_primary"
+                android:layout_marginTop="10dp" />
+
+            <TextView
+                android:text="Не удалось загрузить данные: отсутствует интернет-соединение"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/no_internet_placeholder_text"
+                android:layout_above="@+id/no_internet_placeholder_button"
+                android:layout_centerHorizontal="true"
+                android:textAlignment="center"
+                android:textSize="16sp"
+                android:layout_marginEnd="40dp"
+                android:layout_marginStart="40dp" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_signal_wifi_off_blue_48dp"
+                android:id="@+id/no_internet_placeholder_image"
+                android:layout_above="@id/no_internet_placeholder_text"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="30dp" />
+        </RelativeLayout>
+
     </RelativeLayout>
 
 </RelativeLayout>

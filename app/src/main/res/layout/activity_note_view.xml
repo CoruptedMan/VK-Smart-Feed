@@ -257,8 +257,8 @@
                 android:id="@+id/note_view_comments"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_below="@+id/note_view_load_more_comments"/>
-
+                android:layout_below="@+id/note_view_load_more_comments"
+                android:overScrollMode="never"/>
         </RelativeLayout>
     </ScrollView>
 

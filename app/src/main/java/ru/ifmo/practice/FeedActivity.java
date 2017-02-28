@@ -9,8 +9,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.vk.sdk.VKSdk;
@@ -36,6 +39,8 @@ public class FeedActivity extends AppCompatActivity implements OnDownloadFeedDat
     private         FloatingActionButton    refreshButton;
     private         ProgressBar             progressBar;
     private         SwipeRefreshLayout      swipeContainer;
+    private         RelativeLayout          noInternetPlaceholder;
+    private         Button                  noInternetPlaceholderButton;
     private         RecyclerView            mRecyclerView;
     private         LinearLayoutManager     mLinearLayoutManager;
     private         FeedRecyclerViewAdapter mAdapter;
@@ -58,7 +63,7 @@ public class FeedActivity extends AppCompatActivity implements OnDownloadFeedDat
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_feed);
 
         mNotes = new ArrayList<>();
 
@@ -82,6 +87,21 @@ public class FeedActivity extends AppCompatActivity implements OnDownloadFeedDat
             }
         });
 
+        noInternetPlaceholder = (RelativeLayout) findViewById(R.id.no_internet_placeholder);
+        noInternetPlaceholderButton = (Button) findViewById(R.id.no_internet_placeholder_button);
+        noInternetPlaceholderButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (VKSmartFeedApplication.isOnline()) {
+                    try {
+                        addData();
+                        noInternetPlaceholder.setVisibility(View.GONE);
+                    } catch (InterruptedException | ExecutionException pE) {
+                        pE.printStackTrace();
+                    }
+                }
+            }
+        });
         progressBar = (ProgressBar) findViewById(R.id.progress_bar);
 
         swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
@@ -89,7 +109,7 @@ public class FeedActivity extends AppCompatActivity implements OnDownloadFeedDat
             @Override
             public void onRefresh() {
                 refreshFeed();
-                if (!isDataRelevant) {
+                if (isDataRelevant) {
                     refreshButton.animate().alpha(0.0f);
                     refreshButton.setVisibility(View.INVISIBLE);
                 }
@@ -112,7 +132,7 @@ public class FeedActivity extends AppCompatActivity implements OnDownloadFeedDat
             public void onClick(View v) {
                 VKSdk.logout();
                 startActivity(new Intent(getApplicationContext(), LoginActivity.class));
-                overridePendingTransition(R.anim.slide_in_right ,R.anim.slide_out_right);
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_right);
             }
         });
 
@@ -144,8 +164,6 @@ public class FeedActivity extends AppCompatActivity implements OnDownloadFeedDat
                         if (VKSmartFeedApplication.isOnline()) {
                             addData();
                             loading = true;
-                        } else {
-                            //TODO
                         }
                     } catch (ExecutionException | InterruptedException pE) {
                         pE.printStackTrace();
@@ -160,7 +178,7 @@ public class FeedActivity extends AppCompatActivity implements OnDownloadFeedDat
                 pE.printStackTrace();
             }
         } else {
-            //TODO
+            noInternetPlaceholder.setVisibility(View.VISIBLE);
         }
 
         new Thread(new Runnable() {
@@ -177,8 +195,7 @@ public class FeedActivity extends AppCompatActivity implements OnDownloadFeedDat
                                 final Long[] resultDate = {mAdapter.getDataSet().get(0).getDate()};
                                 new VKRequest("newsfeed.get", VKParameters.from(
                                         "filters", "post",
-                                        "count", 1,
-                                        "version", "5.62"))
+                                        "count", 1))
                                         .executeSyncWithListener(new VKRequest.VKRequestListener() {
                                             @Override
                                             public void onComplete(VKResponse response) {
@@ -196,14 +213,7 @@ public class FeedActivity extends AppCompatActivity implements OnDownloadFeedDat
 
                                             @Override
                                             public void onError(VKError error) {
-                                                Toast.makeText(getApplicationContext(), error.toString(), Toast
-                                                        .LENGTH_LONG).show();
-                                            }
-
-                                            @Override
-                                            public void attemptFailed(VKRequest request, int attemptNumber, int totalAttempts) {
-                                                Toast.makeText(getApplicationContext(), "Attempt Failed!", Toast
-                                                        .LENGTH_LONG).show();
+                                                Log.e("newsfeedGetRequest", error.toString());
                                             }
                                         });
                                 if (mAdapter.getDataSet().get(0).getDate() != resultDate[0]) {
@@ -239,11 +249,9 @@ public class FeedActivity extends AppCompatActivity implements OnDownloadFeedDat
     }
 
     private void addData() throws ExecutionException, InterruptedException {
-        VKRequest request = new VKRequest("newsfeed.get", VKParameters.from(
-                "filters", "post",
+        VKRequest request = new VKRequest("newsfeed.get", VKParameters.from("filters", "post",
                 "start_from", mStartFrom,
-                "count", MIN_NOTES_COUNT,
-                "version", "5.62"));
+                "count", MIN_NOTES_COUNT));
 
         new DownloadUserFeedDataTask(this).execute(request);
     }
@@ -262,7 +270,11 @@ public class FeedActivity extends AppCompatActivity implements OnDownloadFeedDat
             if (VKSmartFeedApplication.isOnline()) {
                 addData();
             } else {
-                //TODO
+                Toast.makeText(getApplicationContext(), getResources()
+                        .getString(R.string
+                        .no_internet),
+                        Toast.LENGTH_LONG).show();
+                toggleSwipeContainerRefreshingState(false);
             }
         } catch (ExecutionException | InterruptedException pE) {
             pE.printStackTrace();
@@ -313,5 +325,7 @@ public class FeedActivity extends AppCompatActivity implements OnDownloadFeedDat
             });
         }
         mStartFrom = pStartFrom;
+        if (noInternetPlaceholder.getVisibility() == View.VISIBLE)
+            noInternetPlaceholder.setVisibility(View.GONE);
     }
 }

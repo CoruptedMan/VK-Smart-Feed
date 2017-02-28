@@ -2,7 +2,6 @@ package ru.ifmo.practice.model;
 
 import java.util.ArrayList;
 
-import ru.ifmo.practice.model.attachments.Audio;
 import ru.ifmo.practice.model.attachments.Link;
 import ru.ifmo.practice.model.attachments.Page;
 import ru.ifmo.practice.model.attachments.Photo;
@@ -25,9 +24,10 @@ public class Note {
     private boolean             userLikes;
     private boolean             canComment;
     private boolean             userReposted;
+    private boolean             isAudioAttached;
     private ArrayList<Photo>    attachmentsPhotos;
     private ArrayList<Video>    attachmentsVideos;
-    private ArrayList<Audio>    attachmentsAudios;
+    //private ArrayList<Audio>    attachmentsAudios;
 
     public Note(long pId,
                 long pSourceId,
@@ -38,7 +38,7 @@ public class Note {
                 Photo pSourcePhoto,
                 ArrayList<Photo> pAttachmentsPhotos,
                 ArrayList<Video> pAttachmentsVideos,
-                ArrayList<Audio> pAttachmentsAudios,
+                boolean pIsAudioAttached,
                 int pLikesCount,
                 boolean pUserLikes,
                 int pCommentsCount,
@@ -54,44 +54,13 @@ public class Note {
         sourcePhoto = pSourcePhoto;
         attachmentsPhotos = pAttachmentsPhotos;
         attachmentsVideos = pAttachmentsVideos;
+        isAudioAttached = pIsAudioAttached;
         likesCount = pLikesCount;
         userLikes = pUserLikes;
         commentsCount = pCommentsCount;
         canComment = pCanComment;
         repostsCount = pRepostsCount;
         userReposted = pUserReposted;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long pId) {
-        id = pId;
-    }
-
-    public long getSourceId() {
-        return sourceId;
-    }
-
-    public String getSourceName() {
-        return sourceName;
-    }
-
-    public String getContext() {
-        return context;
-    }
-
-    public void setContext(String pContext) {
-        context = pContext;
-    }
-
-    public long getDate() {
-        return date;
-    }
-
-    public Photo getSourcePhoto() {
-        return sourcePhoto;
     }
 
     public int getLikesCount() {
@@ -114,24 +83,32 @@ public class Note {
         return repostsCount;
     }
 
-    public boolean getUserLikes() {
-        return userLikes;
+    public void setRepostsCount(int pRepostsCount) {
+        repostsCount = pRepostsCount;
     }
 
-    public void setUserLikes(boolean pUserLikes) {
-        userLikes = pUserLikes;
+    public long getId() {
+        return id;
     }
 
-    public boolean getCanComment() {
-        return canComment;
+    public void setId(long pId) {
+        id = pId;
     }
 
-    public boolean getUserReposted() {
-        return userReposted;
+    public long getSourceId() {
+        return sourceId;
     }
 
-    public String getContextPreview() {
-        return contextPreview;
+    public void setSourceId(long pSourceId) {
+        sourceId = pSourceId;
+    }
+
+    public long getDate() {
+        return date;
+    }
+
+    public void setDate(long pDate) {
+        date = pDate;
     }
 
     public Link getAttachedLink() {
@@ -142,12 +119,44 @@ public class Note {
         attachedLink = pAttachedLink;
     }
 
-    public ArrayList<Photo> getAttachmentsPhotos() {
-        return attachmentsPhotos;
+    public Page getAttachedPage() {
+        return attachedPage;
     }
 
-    public ArrayList<Video> getAttachmentsVideos() {
-        return attachmentsVideos;
+    public void setAttachedPage(Page pAttachedPage) {
+        attachedPage = pAttachedPage;
+    }
+
+    public Photo getSourcePhoto() {
+        return sourcePhoto;
+    }
+
+    public void setSourcePhoto(Photo pSourcePhoto) {
+        sourcePhoto = pSourcePhoto;
+    }
+
+    public String getSourceName() {
+        return sourceName;
+    }
+
+    public void setSourceName(String pSourceName) {
+        sourceName = pSourceName;
+    }
+
+    public String getContext() {
+        return context;
+    }
+
+    public void setContext(String pContext) {
+        context = pContext;
+    }
+
+    public String getContextPreview() {
+        return contextPreview;
+    }
+
+    public void setContextPreview(String pContextPreview) {
+        contextPreview = pContextPreview;
     }
 
     public Account getSigner() {
@@ -158,12 +167,52 @@ public class Note {
         signer = pSigner;
     }
 
-    public Page getAttachedPage() {
-        return attachedPage;
+    public boolean isUserLikes() {
+        return userLikes;
     }
 
-    public void setAttachedPage(Page pAttachedPage) {
-        attachedPage = pAttachedPage;
+    public void setUserLikes(boolean pUserLikes) {
+        userLikes = pUserLikes;
+    }
+
+    public boolean isCanComment() {
+        return canComment;
+    }
+
+    public void setCanComment(boolean pCanComment) {
+        canComment = pCanComment;
+    }
+
+    public boolean isUserReposted() {
+        return userReposted;
+    }
+
+    public void setUserReposted(boolean pUserReposted) {
+        userReposted = pUserReposted;
+    }
+
+    public boolean isAudioAttached() {
+        return isAudioAttached;
+    }
+
+    public void setAudioAttached(boolean pAudioAttached) {
+        isAudioAttached = pAudioAttached;
+    }
+
+    public ArrayList<Photo> getAttachmentsPhotos() {
+        return attachmentsPhotos;
+    }
+
+    public void setAttachmentsPhotos(ArrayList<Photo> pAttachmentsPhotos) {
+        attachmentsPhotos = pAttachmentsPhotos;
+    }
+
+    public ArrayList<Video> getAttachmentsVideos() {
+        return attachmentsVideos;
+    }
+
+    public void setAttachmentsVideos(ArrayList<Video> pAttachmentsVideos) {
+        attachmentsVideos = pAttachmentsVideos;
     }
 
     @Override
