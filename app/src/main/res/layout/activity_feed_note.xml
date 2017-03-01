@@ -116,21 +116,19 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/source_info"
                 android:layout_marginTop="5dp"
-                android:layout_marginBottom="10dp"
                 android:layout_marginStart="20dp"
                 android:layout_marginEnd="10dp"
                 android:lineSpacingExtra="4sp"
-                android:clickable="true"
                 android:textColor="@color/color_text_primary"/>
 
             <Button
                 android:id="@+id/see_more"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/context"
-                android:layout_centerHorizontal="true"
+                android:layout_centerHorizontal="false"
                 android:layout_marginEnd="20dp"
-                android:layout_marginStart="20dp"
+                android:layout_marginStart="15dp"
                 android:text="@string/see_more"
                 android:textColor="@color/color_primary"
                 android:textStyle="bold"
@@ -140,16 +138,25 @@
                 android:paddingTop="10dp"
                 android:minHeight="0dp"
                 android:minWidth="0dp"
-                android:visibility="gone"
+                android:visibility="visible"
                 android:theme="@style/SeeMoreButton"
-                style="@style/Widget.AppCompat.Button.Borderless" />
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp" />
+
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/see_more"
+                android:layout_margin="5dp"
+                android:id="@+id/space" />
 
             <RelativeLayout
                 android:id="@+id/attachment_block"
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/see_more"
+                android:layout_below="@+id/space"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentEnd="true">
 
@@ -344,7 +351,8 @@
                         android:layout_width="match_parent"
                         android:layout_below="@id/attachment_video_main"
                         android:layout_height="wrap_content"
-                        android:id="@+id/attachment_video_info">
+                        android:id="@+id/attachment_video_info"
+                        android:background="@drawable/bg_bottom_white_border">
 
                         <TextView
                             android:layout_width="match_parent"
@@ -477,7 +485,8 @@
                         android:visibility="gone"
                         android:layout_marginEnd="10dp"
                         android:layout_marginStart="10dp"
-                        android:layout_marginBottom="10dp">
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginTop="10dp">
                         <RelativeLayout
                             android:layout_width="match_parent"
                             android:layout_height="match_parent">

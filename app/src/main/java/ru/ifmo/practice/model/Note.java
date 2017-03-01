@@ -27,24 +27,23 @@ public class Note {
     private boolean             isAudioAttached;
     private ArrayList<Photo>    attachmentsPhotos;
     private ArrayList<Video>    attachmentsVideos;
-    //private ArrayList<Audio>    attachmentsAudios;
 
-    public Note(long pId,
-                long pSourceId,
-                String pSourceName,
-                String pContext,
-                String pContextPreview,
-                long pDate,
-                Photo pSourcePhoto,
-                ArrayList<Photo> pAttachmentsPhotos,
-                ArrayList<Video> pAttachmentsVideos,
-                boolean pIsAudioAttached,
-                int pLikesCount,
-                boolean pUserLikes,
-                int pCommentsCount,
-                boolean pCanComment,
-                int pRepostsCount,
-                boolean pUserReposted) {
+    public Note(long                pId,
+                long                pSourceId,
+                String              pSourceName,
+                String              pContext,
+                String              pContextPreview,
+                long                pDate,
+                Photo               pSourcePhoto,
+                ArrayList<Photo>    pAttachmentsPhotos,
+                ArrayList<Video>    pAttachmentsVideos,
+                boolean             pIsAudioAttached,
+                int                 pLikesCount,
+                boolean             pUserLikes,
+                int                 pCommentsCount,
+                boolean             pCanComment,
+                int                 pRepostsCount,
+                boolean             pUserReposted) {
         id = pId;
         sourceId = pSourceId;
         sourceName = pSourceName;
@@ -83,10 +82,6 @@ public class Note {
         return repostsCount;
     }
 
-    public void setRepostsCount(int pRepostsCount) {
-        repostsCount = pRepostsCount;
-    }
-
     public long getId() {
         return id;
     }
@@ -99,16 +94,8 @@ public class Note {
         return sourceId;
     }
 
-    public void setSourceId(long pSourceId) {
-        sourceId = pSourceId;
-    }
-
     public long getDate() {
         return date;
-    }
-
-    public void setDate(long pDate) {
-        date = pDate;
     }
 
     public Link getAttachedLink() {
@@ -131,16 +118,8 @@ public class Note {
         return sourcePhoto;
     }
 
-    public void setSourcePhoto(Photo pSourcePhoto) {
-        sourcePhoto = pSourcePhoto;
-    }
-
     public String getSourceName() {
         return sourceName;
-    }
-
-    public void setSourceName(String pSourceName) {
-        sourceName = pSourceName;
     }
 
     public String getContext() {
@@ -153,10 +132,6 @@ public class Note {
 
     public String getContextPreview() {
         return contextPreview;
-    }
-
-    public void setContextPreview(String pContextPreview) {
-        contextPreview = pContextPreview;
     }
 
     public Account getSigner() {
@@ -179,40 +154,20 @@ public class Note {
         return canComment;
     }
 
-    public void setCanComment(boolean pCanComment) {
-        canComment = pCanComment;
-    }
-
     public boolean isUserReposted() {
         return userReposted;
-    }
-
-    public void setUserReposted(boolean pUserReposted) {
-        userReposted = pUserReposted;
     }
 
     public boolean isAudioAttached() {
         return isAudioAttached;
     }
 
-    public void setAudioAttached(boolean pAudioAttached) {
-        isAudioAttached = pAudioAttached;
-    }
-
     public ArrayList<Photo> getAttachmentsPhotos() {
         return attachmentsPhotos;
     }
 
-    public void setAttachmentsPhotos(ArrayList<Photo> pAttachmentsPhotos) {
-        attachmentsPhotos = pAttachmentsPhotos;
-    }
-
     public ArrayList<Video> getAttachmentsVideos() {
         return attachmentsVideos;
-    }
-
-    public void setAttachmentsVideos(ArrayList<Video> pAttachmentsVideos) {
-        attachmentsVideos = pAttachmentsVideos;
     }
 
     @Override

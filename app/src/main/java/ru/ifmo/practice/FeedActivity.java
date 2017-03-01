@@ -16,7 +16,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.vk.sdk.VKSdk;
 import com.vk.sdk.api.VKError;
@@ -39,7 +38,6 @@ import static ru.ifmo.practice.util.AppConsts.MIN_NOTES_COUNT;
 public class FeedActivity extends AppCompatActivity implements OnDownloadFeedDataResultDelegate {
 
     private         CoordinatorLayout       coordinatorLayout;
-    //private         FloatingActionButton    refreshButton;
     private         ProgressBar             progressBar;
     private         SwipeRefreshLayout      swipeContainer;
     private         RelativeLayout          noInternetPlaceholder;
@@ -86,15 +84,13 @@ public class FeedActivity extends AppCompatActivity implements OnDownloadFeedDat
                 });
         mSnackbarRefresh.setActionTextColor(ContextCompat.getColor(getApplicationContext(),
                 R.color.color_accent));
-        View snackbarView = mSnackbarRefresh.getView();
-        snackbarView.setBackgroundColor(ContextCompat.getColor(getApplicationContext(),
+        mSnackbarRefresh.getView().setBackgroundColor(ContextCompat.getColor(getApplicationContext(),
                 R.color.color_black_transparent_light));
-        TextView textView = (TextView) snackbarView.findViewById(android.support.design.R.id.snackbar_text);
-        textView.setTextColor(ContextCompat.getColor(getApplicationContext(),
-                R.color.color_text));
 
         mSnackbarNoInternetError = Snackbar.make(coordinatorLayout, getResources().getString(R
                 .string.no_internet), Snackbar.LENGTH_LONG);
+        mSnackbarNoInternetError.getView().setBackgroundColor(ContextCompat.getColor(getApplicationContext(),
+                R.color.color_black_transparent_light));
         mSnackbarNoInternetError.addCallback(new Snackbar.Callback() {
             @Override
             public void onDismissed(Snackbar snackbar, int event) {

@@ -9,11 +9,8 @@ import android.os.Bundle;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
 import android.text.Spanned;
-import android.text.TextPaint;
-import android.text.method.LinkMovementMethod;
-import android.text.style.ClickableSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,8 +35,11 @@ import org.json.JSONObject;
 import org.ocpsoft.prettytime.PrettyTime;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import ru.ifmo.practice.FeedActivity;
 import ru.ifmo.practice.GroupFeedViewActivity;
@@ -48,6 +48,14 @@ import ru.ifmo.practice.R;
 import ru.ifmo.practice.VKSmartFeedApplication;
 import ru.ifmo.practice.model.Note;
 import ru.ifmo.practice.model.dialog.RepostNoteDialogFragment;
+import ru.ifmo.practice.model.span.EmailSpan;
+import ru.ifmo.practice.model.span.GroupHashtagSpan;
+import ru.ifmo.practice.model.span.HashtagSpan;
+import ru.ifmo.practice.model.span.LinkSpan;
+import ru.ifmo.practice.model.span.LinkTouchMovementMethod;
+import ru.ifmo.practice.model.span.MyClickableSpan;
+import ru.ifmo.practice.model.span.ReferenceSpan;
+import ru.ifmo.practice.util.AppConsts;
 
 import static com.vk.sdk.VKUIHelper.getApplicationContext;
 import static ru.ifmo.practice.R.id.context;
@@ -208,9 +216,8 @@ public class FeedRecyclerViewAdapter
                 public void onClick(View v) {
                     if (VKSmartFeedApplication.isOnline()) {
                         Note tmpNote = mDataSet.get(getAdapterPosition());
-                        VKRequest request;
                         int likes = tmpNote.getLikesCount();
-                        request = new VKRequest("likes." + (tmpNote.isUserLikes()
+                        VKRequest request = new VKRequest("likes." + (tmpNote.isUserLikes()
                                 ? "delete" : "add"), VKParameters.from("type", "post",
                                 "owner_id", -tmpNote.getSourceId(),
                                 "item_id", tmpNote.getId()));
@@ -236,7 +243,7 @@ public class FeedRecyclerViewAdapter
                         }
                         tmpNote.setLikesCount(likes);
                         likesCountText.setText(tmpNote.getLikesCount() > 0
-                                ? String.valueOf(likes)
+                                ? optimizeBigValues(likes)
                                 : "");
                         tmpNote.setUserLikes(
                                 !tmpNote.isUserLikes());
@@ -317,8 +324,8 @@ public class FeedRecyclerViewAdapter
                         VKSmartFeedApplication.getContext().getResources(),
                         R.drawable.ic_share_pressed_24dp,
                         null));
-                repostsCountText.setText(String.valueOf(repostCount));
-                likesCountText.setText(String.valueOf(likesCount));
+                repostsCountText.setText(optimizeBigValues(repostCount));
+                likesCountText.setText(optimizeBigValues(likesCount));
             }
             else if (resultCode == 2) {
                 Toast.makeText(mContext, mContext.getResources().getString(R.string.no_internet),
@@ -400,7 +407,6 @@ public class FeedRecyclerViewAdapter
             ((DataObjectHolder) holder).dateText.setText(new PrettyTime(Locale.getDefault())
                     .format(new Date(tmpNote.getDate() * 1000)));
 
-
             Picasso.with(mContext)
                     .load(tmpNote.getSourcePhoto().getPhotoUrl())
                     .into(((DataObjectHolder) holder).sourcePhoto);
@@ -412,36 +418,20 @@ public class FeedRecyclerViewAdapter
             ((DataObjectHolder) holder).contextText.setVisibility(tmpNote.getContext().equals("")
                     ? View.GONE
                     : View.VISIBLE);
-            /*((DataObjectHolder) holder).seeMoreText.setVisibility(tmpNote.getContextPreview().equals("")
+            ((DataObjectHolder) holder).seeMoreText.setVisibility(tmpNote.getContextPreview().equals("")
                 ? View.GONE
-                : View.VISIBLE);*/
+                : View.VISIBLE);
             ((DataObjectHolder) holder).seeMoreText.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ((DataObjectHolder) holder).contextText.setText(tmpNote.getContext());
+                    ((DataObjectHolder) holder).contextText.setText(getSpannableString(tmpNote.getContext()));
                     ((DataObjectHolder) holder).seeMoreText.setVisibility(View.GONE);
                 }
             });
-            /*((DataObjectHolder) holder).contextText.setText(((DataObjectHolder) holder).seeMoreText.getVisibility() == View.VISIBLE
-                    ? tmpNote.getContextPreview()
-                    : tmpNote.getContext());*/
-            SpannableString ss = new SpannableString("Android is a Software stack");
-            ClickableSpan clickableSpan = new ClickableSpan() {
-                @Override
-                public void onClick(View textView) {
-                    System.out.println("Clicked on span!");
-                }
-                @Override
-                public void updateDrawState(TextPaint ds) {
-                    super.updateDrawState(ds);
-                    ds.setUnderlineText(false);
-                    ds.setColor(Color.RED);
-                }
-            };
-            ss.setSpan(clickableSpan, 22, 27, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            ((DataObjectHolder) holder).contextText.setText(ss);
-            ((DataObjectHolder) holder).contextText.setMovementMethod(LinkMovementMethod.getInstance());
-            ((DataObjectHolder) holder).contextText.setHighlightColor(Color.RED);
+            ((DataObjectHolder) holder).contextText.setText(((DataObjectHolder) holder).seeMoreText.getVisibility() == View.VISIBLE
+                    ? getSpannableString(tmpNote.getContextPreview())
+                    : getSpannableString(tmpNote.getContext()));
+            ((DataObjectHolder) holder).contextText.setMovementMethod(new LinkTouchMovementMethod());
 
             if (tmpNote.getAttachmentsVideos().size() > 0) {
                 ((DataObjectHolder) holder).attachedVideoBlock.setVisibility(View.VISIBLE);
@@ -682,7 +672,7 @@ public class FeedRecyclerViewAdapter
                     null));
 
             ((DataObjectHolder) holder).likesCountText.setText(tmpNote.getLikesCount() != 0
-                    ? String.valueOf(tmpNote.getLikesCount())
+                    ? optimizeBigValues(tmpNote.getLikesCount())
                     : "");
 
             ((DataObjectHolder) holder).commentBlock.setVisibility(tmpNote.isCanComment()
@@ -693,7 +683,7 @@ public class FeedRecyclerViewAdapter
                     R.drawable.ic_question_answer_white_24dp,
                     null));
             ((DataObjectHolder) holder).commentsCountText.setText(tmpNote.getCommentsCount() != 0
-                    ? String.valueOf(tmpNote.getCommentsCount())
+                    ? optimizeBigValues(tmpNote.getCommentsCount())
                     : "");
 
             ((DataObjectHolder) holder).repostIcon.setImageDrawable(ResourcesCompat.getDrawable(
@@ -703,7 +693,7 @@ public class FeedRecyclerViewAdapter
                             : R.drawable.ic_share_white_24dp,
                     null));
             ((DataObjectHolder) holder).repostsCountText.setText(tmpNote.getRepostsCount() != 0
-                    ? String.valueOf(tmpNote.getRepostsCount())
+                    ? optimizeBigValues(tmpNote.getRepostsCount())
                     : "");
         }
         else if (holder instanceof ProgressViewHolder) {
@@ -743,6 +733,13 @@ public class FeedRecyclerViewAdapter
             return hours + minutes + seconds;
     }
 
+    private static String optimizeBigValues(double value) {
+        if (value > 1000) {
+            return String.format(Locale.getDefault(), "%.1fK", value / 1000);
+        }
+        else return String.format(Locale.getDefault(), "%.0f", value);
+    }
+
     public void clear() {
         mDataSet.clear();
     }
@@ -756,5 +753,116 @@ public class FeedRecyclerViewAdapter
     @Override
     public int getItemCount() {
         return mDataSet.size();
+    }
+
+    private SpannableStringBuilder getSpannableString(String inputString) {
+        SpannableStringBuilder sb = new SpannableStringBuilder();
+
+        Pattern referencePattern = Pattern.compile(AppConsts.REGEX_REFERENCE_PATTERN);
+        Pattern hashtagPattern = Pattern.compile(AppConsts.REGEX_SEPARATE_HASHTAG_PATTERN);
+        Pattern groupPattern = Pattern.compile(AppConsts.REGEX_GROUP_HASHTAG_PATTERN);
+        Pattern linkPattern = Pattern.compile(AppConsts.REGEX_WEB_LINK_PATTERN);
+        Pattern emailPattern = Pattern.compile(AppConsts.REGEX_EMAIL_PATTERN);
+
+        Matcher referenceMatcher = referencePattern.matcher(inputString);
+        Matcher hashtagMatcher = hashtagPattern.matcher(inputString);
+        Matcher groupMatcher = groupPattern.matcher(inputString);
+        Matcher linkMatcher = linkPattern.matcher(inputString);
+        Matcher emailMatcher = emailPattern.matcher(inputString);
+
+        ArrayList<MyClickableSpan> spans = new ArrayList<>();
+
+        while (referenceMatcher.find()) {
+            spans.add(new ReferenceSpan(referenceMatcher.start(),
+                    referenceMatcher.end(),
+                    referenceMatcher.group(),
+                    mContext));
+        }
+        while (groupMatcher.find()) {
+            spans.add(new GroupHashtagSpan(groupMatcher.start(),
+                    groupMatcher.end(),
+                    groupMatcher.group(),
+                    mContext));
+        }
+        while (linkMatcher.find()) {
+            spans.add(new LinkSpan(linkMatcher.start(),
+                    linkMatcher.end(),
+                    linkMatcher.group(),
+                    mContext));
+        }
+        while (emailMatcher.find()) {
+            spans.add(new EmailSpan(emailMatcher.start(),
+                    emailMatcher.end(),
+                    emailMatcher.group(),
+                    mContext));
+        }
+        // TODO make separate check for unnecessary (included in other) spans and delete them
+        // from entire List
+        while (hashtagMatcher.find()) {
+            boolean canAdd = true;
+            for (int i = 0; i < spans.size(); i++) {
+                if (spans.get(i) instanceof GroupHashtagSpan) {
+                    if (hashtagMatcher.start() == spans.get(i).getStartPosition()) {
+                        canAdd = false;
+                        break;
+                    }
+                }
+                else if (spans.get(i) instanceof LinkSpan) {
+                    if (hashtagMatcher.start() >= spans.get(i).getStartPosition() &&
+                            hashtagMatcher.end() <= spans.get(i).getEndPosition()) {
+                        canAdd = false;
+                        break;
+                    }
+                }
+            }
+            if(canAdd) {
+                spans.add(new HashtagSpan(hashtagMatcher.start(),
+                        hashtagMatcher.end(),
+                        hashtagMatcher.group(),
+                        mContext));
+            }
+        }
+
+        if (spans.size() > 0) {
+            Collections.sort(spans, MyClickableSpan.MyClickableSpanComparator);
+            int lastSpanEndPosition = 0;
+            for (MyClickableSpan span : spans) {
+                String beforeSpan = inputString.substring(lastSpanEndPosition,
+                        span.getStartPosition());
+                sb.append(beforeSpan);
+                span.setStartPosition(sb.length());
+                if (span instanceof LinkSpan) {
+                    if (((LinkSpan) span).getShortString().length() > 0) {
+                        span.setVisibleEndPosition(sb.length() +
+                                ((LinkSpan) span).getShortString().length());
+                        sb.append(((LinkSpan) span).getShortString());
+                    }
+                    else {
+                        span.setVisibleEndPosition(sb.length() +
+                                span.getString().length());
+                        sb.append(span.getString());
+                    }
+                }
+                else if (span instanceof ReferenceSpan) {
+                    span.setVisibleEndPosition(sb.length() + ((ReferenceSpan) span).getName().length());
+                    sb.append(((ReferenceSpan) span).getName());
+                }
+                else {
+                    span.setVisibleEndPosition(sb.length() + span.getString().length());
+                    sb.append(span.getString());
+                }
+                sb.setSpan(span,
+                        span.getStartPosition(),
+                        span.getVisibleEndPosition(),
+                        Spanned.SPAN_INTERMEDIATE);
+                lastSpanEndPosition = span.getEndPosition();
+            }
+            if (lastSpanEndPosition < inputString.length() - 1) {
+                sb.append(inputString.substring(lastSpanEndPosition, inputString.length()));
+            }
+        } else {
+            sb.append(inputString);
+        }
+        return sb;
     }
 }
