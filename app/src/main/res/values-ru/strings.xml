@@ -33,4 +33,6 @@
     <string name="note_repost_wall_success">Запись была добавлена к вам на стену</string>
     <string name="link">Ссылка</string>
     <string name="wiki_page">Вики-страница</string>
+    <string name="new_notes">Есть новые записи.</string>
+    <string name="show">Показать</string>
 </resources>

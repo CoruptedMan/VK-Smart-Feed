@@ -41,4 +41,6 @@
     <string name="note_repost_wall_success">Note successfully reposted to your wall</string>
     <string name="link">Link</string>
     <string name="wiki_page">Wiki-page</string>
+    <string name="new_notes">New notes available.</string>
+    <string name="show">Show</string>
 </resources>

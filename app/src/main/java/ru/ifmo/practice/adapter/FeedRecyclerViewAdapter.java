@@ -203,14 +203,6 @@ public class FeedRecyclerViewAdapter
             attachmentPhotoCountBlock = (CardView) itemView.findViewById(R.id.attachment_photo_count_block);
             socialAcionsLayout = (LinearLayout) itemView.findViewById(R.id.social_actions);
 
-            /*contextText.setFactory(this);
-            Animation inAnimation = AnimationUtils.loadAnimation(mContext,
-                    android.R.anim.fade_in);
-            Animation outAnimation = AnimationUtils.loadAnimation(mContext,
-                    android.R.anim.fade_out);
-            contextText.setInAnimation(inAnimation);
-            contextText.setOutAnimation(outAnimation);*/
-
             likeBlock.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -713,6 +705,9 @@ public class FeedRecyclerViewAdapter
                 public void onClick(View v) {
                     if (VKSmartFeedApplication.isOnline()) {
                         ((FeedActivity) mActivity).refreshFeed();
+                        if (!((FeedActivity) mActivity).isDataRelevant()) {
+                            ((FeedActivity) mActivity).getSnackbarRefresh().dismiss();
+                        }
                     }
                 }
             });

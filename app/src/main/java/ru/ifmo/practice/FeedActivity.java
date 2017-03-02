@@ -37,27 +37,35 @@ import static ru.ifmo.practice.util.AppConsts.MIN_NOTES_COUNT;
 
 public class FeedActivity extends AppCompatActivity implements OnDownloadFeedDataResultDelegate {
 
-    private         CoordinatorLayout       coordinatorLayout;
-    private         ProgressBar             progressBar;
-    private         SwipeRefreshLayout      swipeContainer;
-    private         RelativeLayout          noInternetPlaceholder;
-    private         Button                  noInternetPlaceholderButton;
+    private         CoordinatorLayout       mCoordinatorLayout;
+    private         ProgressBar             mProgressBar;
+    private         SwipeRefreshLayout      mSwipeRefreshLayout;
+    private         RelativeLayout          mNoInternetPlaceholder;
+    private         Button                  mNoInternetPlaceholderButton;
     private         RecyclerView            mRecyclerView;
     private         LinearLayoutManager     mLinearLayoutManager;
     private         FeedRecyclerViewAdapter mAdapter;
     private         ArrayList<Note>         mNotes;
     private         Snackbar                mSnackbarRefresh;
     private         Snackbar                mSnackbarNoInternetError;
-    private         int                     visibleThreshold = MIN_NOTES_COUNT;
-    private         int                     totalItemCount = 0;
-    private         int                     previousTotal = 0;
-    private         int                     firstVisibleItem;
-    private         int                     visibleItemCount;
-    private         boolean                 isDataRelevant = true;
-    private         boolean                 loading = true;
-    public          int                     index = -1;
-    public          int                     top = -1;
-    public  static  String                  mStartFrom = "";
+    private         int                     mVisibleThreshold       = MIN_NOTES_COUNT;
+    private         int                     mTotalItemCount         = 0;
+    private         int                     mPreviousTotal          = 0;
+    private         int                     mFirstVisibleItem;
+    private         int                     mVisibleItemCount;
+    private         boolean                 mIsDataRelevant         = true;
+    private         boolean                 mLoading                = true;
+    public          int                     mIndex                  = -1;
+    public          int                     mTop                    = -1;
+    public  static  String                  mStartFrom              = "";
+
+    public Snackbar getSnackbarRefresh() {
+        return mSnackbarRefresh;
+    }
+
+    public boolean isDataRelevant() {
+        return mIsDataRelevant;
+    }
 
     public String getStartFrom() {
         return mStartFrom;
@@ -66,30 +74,40 @@ public class FeedActivity extends AppCompatActivity implements OnDownloadFeedDat
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_feed);
-        coordinatorLayout = (CoordinatorLayout) findViewById(R.id.activity_main);
-        noInternetPlaceholder = (RelativeLayout) findViewById(R.id.no_internet_placeholder);
-        noInternetPlaceholderButton = (Button) findViewById(R.id.no_internet_placeholder_button);
-        progressBar = (ProgressBar) findViewById(R.id.progress_bar);
-        swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
-        mRecyclerView = (RecyclerView) findViewById(R.id.feed_recycler_view);
 
-        mSnackbarRefresh = Snackbar.make(coordinatorLayout, "Есть новые записи.", Snackbar.LENGTH_INDEFINITE)
-                .setAction("Показать", new View.OnClickListener() {
+        setContentView(R.layout.activity_feed);
+        mCoordinatorLayout              = (CoordinatorLayout) findViewById(R.id.activity_main);
+        mNoInternetPlaceholder          = (RelativeLayout) findViewById(R.id.no_internet_placeholder);
+        mNoInternetPlaceholderButton    = (Button) findViewById(R.id.no_internet_placeholder_button);
+        mProgressBar                    = (ProgressBar) findViewById(R.id.progress_bar);
+        mSwipeRefreshLayout             = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
+        mRecyclerView                   = (RecyclerView) findViewById(R.id.feed_recycler_view);
+
+        mSnackbarRefresh = Snackbar.make(mCoordinatorLayout,
+                getResources().getString(R.string.new_notes),
+                Snackbar.LENGTH_INDEFINITE).setAction(getResources().getString(R.string.show),
+                new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         mSnackbarRefresh.dismiss();
                         refreshFeed();
                     }
                 });
-        mSnackbarRefresh.setActionTextColor(ContextCompat.getColor(getApplicationContext(),
+        mSnackbarRefresh
+                .setActionTextColor(ContextCompat.getColor(getApplicationContext(),
                 R.color.color_accent));
-        mSnackbarRefresh.getView().setBackgroundColor(ContextCompat.getColor(getApplicationContext(),
+        mSnackbarRefresh
+                .getView()
+                .setBackgroundColor(ContextCompat.getColor(getApplicationContext(),
                 R.color.color_black_transparent_light));
 
-        mSnackbarNoInternetError = Snackbar.make(coordinatorLayout, getResources().getString(R
-                .string.no_internet), Snackbar.LENGTH_LONG);
-        mSnackbarNoInternetError.getView().setBackgroundColor(ContextCompat.getColor(getApplicationContext(),
+        mSnackbarNoInternetError = Snackbar.make(mCoordinatorLayout,
+                getResources().getString(R
+                .string.no_internet),
+                Snackbar.LENGTH_LONG);
+        mSnackbarNoInternetError
+                .getView()
+                .setBackgroundColor(ContextCompat.getColor(getApplicationContext(),
                 R.color.color_black_transparent_light));
         mSnackbarNoInternetError.addCallback(new Snackbar.Callback() {
             @Override
@@ -109,20 +127,20 @@ public class FeedActivity extends AppCompatActivity implements OnDownloadFeedDat
             @Override
             public void onClick(View v) {
                 mLinearLayoutManager.scrollToPositionWithOffset(0, 0);
-                if (!isDataRelevant) {
+                if (!mIsDataRelevant) {
                     refreshFeed();
                     mSnackbarRefresh.dismiss();
                 }
             }
         });
 
-        noInternetPlaceholderButton.setOnClickListener(new View.OnClickListener() {
+        mNoInternetPlaceholderButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (VKSmartFeedApplication.isOnline()) {
                     try {
                         addData();
-                        noInternetPlaceholder.setVisibility(View.GONE);
+                        mNoInternetPlaceholder.setVisibility(View.GONE);
                     } catch (InterruptedException | ExecutionException pE) {
                         pE.printStackTrace();
                     }
@@ -130,16 +148,16 @@ public class FeedActivity extends AppCompatActivity implements OnDownloadFeedDat
             }
         });
 
-        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 refreshFeed();
-                if (isDataRelevant) {
+                if (mIsDataRelevant) {
                     mSnackbarRefresh.dismiss();
                 }
             }
         });
-        swipeContainer.setColorSchemeResources(R.color.color_primary, R.color.color_primary_dark);
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.color_primary, R.color.color_primary_dark);
 
         findViewById(R.id.log_out).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -161,23 +179,23 @@ public class FeedActivity extends AppCompatActivity implements OnDownloadFeedDat
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
 
-                visibleItemCount = mLinearLayoutManager.getChildCount();
-                totalItemCount = mLinearLayoutManager.getItemCount();
-                firstVisibleItem = mLinearLayoutManager.findFirstVisibleItemPosition();
+                mVisibleItemCount = mLinearLayoutManager.getChildCount();
+                mTotalItemCount = mLinearLayoutManager.getItemCount();
+                mFirstVisibleItem = mLinearLayoutManager.findFirstVisibleItemPosition();
 
-                if (loading) {
-                    if (totalItemCount > previousTotal) {
-                        loading = false;
-                        previousTotal = totalItemCount;
+                if (mLoading) {
+                    if (mTotalItemCount > mPreviousTotal) {
+                        mLoading = false;
+                        mPreviousTotal = mTotalItemCount;
                     }
                 }
 
-                if (!loading && (totalItemCount - visibleItemCount)
-                        <= (firstVisibleItem + visibleThreshold)) {
+                if (!mLoading && (mTotalItemCount - mVisibleItemCount)
+                        <= (mFirstVisibleItem + mVisibleThreshold)) {
                     try {
                         if (VKSmartFeedApplication.isOnline()) {
                             addData();
-                            loading = true;
+                            mLoading = true;
                         }
                     } catch (ExecutionException | InterruptedException pE) {
                         pE.printStackTrace();
@@ -192,7 +210,7 @@ public class FeedActivity extends AppCompatActivity implements OnDownloadFeedDat
                 pE.printStackTrace();
             }
         } else {
-            noInternetPlaceholder.setVisibility(View.VISIBLE);
+            mNoInternetPlaceholder.setVisibility(View.VISIBLE);
         }
 
         new Thread(new Runnable() {
@@ -201,7 +219,7 @@ public class FeedActivity extends AppCompatActivity implements OnDownloadFeedDat
                 while (true) {
                     try {
                         synchronized (this) {
-                            wait(5000);
+                            wait(2500);
                             if (!VKSmartFeedApplication.isOnline()) {
                                 continue;
                             }
@@ -231,7 +249,7 @@ public class FeedActivity extends AppCompatActivity implements OnDownloadFeedDat
                                             }
                                         });
                                 if (mAdapter.getDataSet().get(0).getDate() != resultDate[0]) {
-                                    if (isDataRelevant) {
+                                    if (mIsDataRelevant) {
                                         runOnUiThread(new Runnable() {
                                             @Override
                                             public void run() {
@@ -239,7 +257,7 @@ public class FeedActivity extends AppCompatActivity implements OnDownloadFeedDat
                                             }
                                         });
                                     }
-                                    isDataRelevant = false;
+                                    mIsDataRelevant = false;
                                 }
                             } else {
                                 if (VKSmartFeedApplication.isOnline()) {
@@ -268,13 +286,13 @@ public class FeedActivity extends AppCompatActivity implements OnDownloadFeedDat
     }
 
     private void toggleSwipeContainerRefreshingState(boolean state) {
-        if (swipeContainer != null)
-            swipeContainer.setRefreshing(state);
+        if (mSwipeRefreshLayout != null)
+            mSwipeRefreshLayout.setRefreshing(state);
     }
 
     public void refreshFeed() {
         mLinearLayoutManager.scrollToPositionWithOffset(0, 0);
-        previousTotal = 0;
+        mPreviousTotal = 0;
         mStartFrom = "";
         toggleSwipeContainerRefreshingState(true);
         try {
@@ -287,16 +305,16 @@ public class FeedActivity extends AppCompatActivity implements OnDownloadFeedDat
         } catch (ExecutionException | InterruptedException pE) {
             pE.printStackTrace();
         }
-        isDataRelevant = true;
+        mIsDataRelevant = true;
     }
 
     @Override
     public void onPause() {
         super.onPause();
 
-        index = mLinearLayoutManager.findFirstVisibleItemPosition();
+        mIndex = mLinearLayoutManager.findFirstVisibleItemPosition();
         View v = mRecyclerView.getChildAt(0);
-        top = (v == null)
+        mTop = (v == null)
                 ? 0
                 : (v.getTop() - mRecyclerView.getPaddingTop());
     }
@@ -305,8 +323,8 @@ public class FeedActivity extends AppCompatActivity implements OnDownloadFeedDat
     public void onResume() {
         super.onResume();
 
-        if(index != -1) {
-            mLinearLayoutManager.scrollToPositionWithOffset(index, top);
+        if(mIndex != -1) {
+            mLinearLayoutManager.scrollToPositionWithOffset(mIndex, mTop);
         }
     }
 
@@ -321,7 +339,7 @@ public class FeedActivity extends AppCompatActivity implements OnDownloadFeedDat
                     mAdapter.notifyDataSetChanged();
                     toggleSwipeContainerRefreshingState(false);
                     mRecyclerView.setVisibility(View.VISIBLE);
-                    progressBar.setVisibility(View.GONE);
+                    mProgressBar.setVisibility(View.GONE);
                 }
             });
         } else {
@@ -333,7 +351,7 @@ public class FeedActivity extends AppCompatActivity implements OnDownloadFeedDat
             });
         }
         mStartFrom = pStartFrom;
-        if (noInternetPlaceholder.getVisibility() == View.VISIBLE)
-            noInternetPlaceholder.setVisibility(View.GONE);
+        if (mNoInternetPlaceholder.getVisibility() == View.VISIBLE)
+            mNoInternetPlaceholder.setVisibility(View.GONE);
     }
 }

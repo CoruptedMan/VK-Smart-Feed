@@ -16,7 +16,7 @@ public class MyClickableSpan extends ClickableSpan implements Comparable<MyClick
     private Context context;
     private TextPaint mTextPaint;
     private boolean mIsPressed;
-    private final int PRESSED_BACKGROUND_COLOR = 0xFFA7C2DF;
+    private final int PRESSED_BACKGROUND_COLOR = 0x88A7C2DF;
     private final int NORMAL_TEXT_COLOR = 0xFF5477A3;
     private final int PRESSED_TEXT_COLOR = 0xFF5477A3;
 
