@@ -13,6 +13,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKCallback;
 import com.vk.sdk.VKSdk;
@@ -27,18 +29,19 @@ import me.relex.circleindicator.CircleIndicator;
 import ru.ifmo.practice.model.Account;
 
 public class LoginActivity extends Activity {
-
     public static Account mAccount;
+    @BindView(R.id.logoType) TextView logoText;
+    @BindView(R.id.container) ViewPager viewPager;
+    @BindView(R.id.attachment_photo_indicator) CircleIndicator circleIndicator;
 
     @Override
     protected void onCreate(Bundle pSavedInstanceState) {
         super.onCreate(pSavedInstanceState);
         setContentView(R.layout.activity_login);
-        TextView lLogoText = (TextView) findViewById(R.id.logoType);
-        ViewPager lViewPager = (ViewPager) findViewById(R.id.container);
-        CircleIndicator lCircleIndicator = (CircleIndicator) findViewById(R.id.attachment_photo_indicator);
+        ButterKnife.bind(this);
+
         Typeface bukhari = Typeface.createFromAsset(getAssets(), "fonts/Bukhari.otf");
-        lLogoText.setTypeface(bukhari);
+        logoText.setTypeface(bukhari);
 
         findViewById(R.id.btn_change_scene).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -48,11 +51,10 @@ public class LoginActivity extends Activity {
         });
 
         SectionsPagerAdapter lSectionsPagerAdapter = new SectionsPagerAdapter(getFragmentManager());
-        lViewPager.setAdapter(lSectionsPagerAdapter);
-        lCircleIndicator.setViewPager(lViewPager);
+        viewPager.setAdapter(lSectionsPagerAdapter);
+        circleIndicator.setViewPager(viewPager);
         if (VKAccessToken.currentToken() != null && !VKAccessToken.currentToken().isExpired()) {
-            VKRequest request = new VKRequest("users.get", VKParameters.from("fields",
-                    "photo_100"));
+            VKRequest request = new VKRequest("users.get", VKParameters.from("fields", "photo_100"));
             request.executeSyncWithListener(new VKRequest.VKRequestListener() {
                 @Override
                 public void onComplete(VKResponse response) {
@@ -86,22 +88,11 @@ public class LoginActivity extends Activity {
                         pE.printStackTrace();
                     }
                 }
-
-                @Override
-                public void attemptFailed(VKRequest request, int attemptNumber, int totalAttempts) {
-                    super.attemptFailed(request, attemptNumber, totalAttempts);
-                }
-
-                @Override
-                public void onError(VKError error) {
-                    super.onError(error);
-                }
             });
             startActivity(new Intent(getApplicationContext(), FeedActivity.class));
             overridePendingTransition(R.anim.slide_in_right ,R.anim.slide_out_right);
             finish();
         }
-
     }
 
     @Override
@@ -144,16 +135,6 @@ public class LoginActivity extends Activity {
                             pE.printStackTrace();
                         }
                     }
-
-                    @Override
-                    public void attemptFailed(VKRequest request, int attemptNumber, int totalAttempts) {
-                        super.attemptFailed(request, attemptNumber, totalAttempts);
-                    }
-
-                    @Override
-                    public void onError(VKError error) {
-                        super.onError(error);
-                    }
                 });
 
                 startActivity(new Intent(getApplicationContext(), FeedActivity.class));
@@ -170,7 +151,7 @@ public class LoginActivity extends Activity {
         }
     }
 
-    public class SectionsPagerAdapter extends FragmentStatePagerAdapter {
+    private class SectionsPagerAdapter extends FragmentStatePagerAdapter {
 
         SectionsPagerAdapter(FragmentManager pFragmentManager) {
             super(pFragmentManager);
@@ -222,22 +203,22 @@ public class LoginActivity extends Activity {
         public static PlaceholderFragment newInstance(String pTitleText,
                                                       String pContentText,
                                                       int pSectionNumber) {
-            PlaceholderFragment lFragment = new PlaceholderFragment();
-            Bundle lArgs = new Bundle();
-            lArgs.putString(TITLE_TEXT, pTitleText);
-            lArgs.putString(CONTENT_TEXT, pContentText);
-            lArgs.putInt(ARG_SECTION_NUMBER, pSectionNumber);
-            lFragment.setArguments(lArgs);
-            return lFragment;
+            PlaceholderFragment fragment = new PlaceholderFragment();
+            Bundle args = new Bundle();
+            args.putString(TITLE_TEXT, pTitleText);
+            args.putString(CONTENT_TEXT, pContentText);
+            args.putInt(ARG_SECTION_NUMBER, pSectionNumber);
+            fragment.setArguments(args);
+            return fragment;
         }
 
         @Override
         public View onCreateView(LayoutInflater pInflater, ViewGroup pContainer,
                                  Bundle pSavedInstanceState) {
-            View lRootView = pInflater.inflate(R.layout.fragment_activity_login, pContainer, false);
+            View rootView = pInflater.inflate(R.layout.fragment_activity_login, pContainer, false);
 
-            mTitleTextView = (TextView) lRootView.findViewById(R.id.titleText);
-            mContentTextView = (TextView) lRootView.findViewById(R.id.contentText);
+            mTitleTextView = (TextView) rootView.findViewById(R.id.titleText);
+            mContentTextView = (TextView) rootView.findViewById(R.id.contentText);
 
             mTitleTextView.setText(getString(R.string.content_format, getArguments().getString(TITLE_TEXT)));
             mContentTextView.setText(getString(R.string.content_format, getArguments().getString(CONTENT_TEXT)));
@@ -249,7 +230,7 @@ public class LoginActivity extends Activity {
             mTitleTextView.setTypeface(robotoBlack);
             mContentTextView.setTypeface(robotoThin);
 
-            return lRootView;
+            return rootView;
         }
     }
 }

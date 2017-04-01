@@ -18,6 +18,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import com.vk.sdk.api.VKError;
 import com.vk.sdk.api.VKParameters;
 import com.vk.sdk.api.VKRequest;
@@ -38,41 +40,42 @@ import ru.ifmo.practice.model.attachments.Photo;
 import ru.ifmo.practice.adapter.NoteCommentsRecyclerViewAdapter;
 
 public class NoteViewActivity extends AppCompatActivity {
+    @BindView(R.id.note_view_source_name) TextView sourceNameText;
+    @BindView(R.id.note_view_context) TextView contextText;
+    @BindView(R.id.note_view_date) TextView dateText;
+    @BindView(R.id.note_view_likes_count) TextView likesCountText;
+    @BindView(R.id.note_view_reposts_count) TextView repostsCountText;
+    @BindView(R.id.note_view_load_more_comments_text) TextView loadMoreCommentsText;
+    @BindView(R.id.note_view_attachment_link_title) TextView attachedLinkTitleText;
+    @BindView(R.id.note_view_attachment_link_caption) TextView attachedLinkCaptionText;
+    @BindView(R.id.note_view_like_icon) ImageView likeIcon;
+    @BindView(R.id.note_view_repost_icon) ImageView repostIcon;
+    @BindView(R.id.note_view_source_photo) ImageView sourcePhoto;
+    @BindView(R.id.note_view_attachment_link_photo) ImageView attachedLinkPhoto;
+    @BindView(R.id.note_view_load_more_comments) LinearLayout loadMoreCommentsLayout;
+    @BindView(R.id.note_leave_comment_layout) LinearLayout noteLeaveCommentLayout;
+    @BindView(R.id.note_view_attachments_icon) RelativeLayout attachBlock;
+    @BindView(R.id.note_view_emoji_icon) RelativeLayout emojiBlock;
+    @BindView(R.id.note_view_send_icon) RelativeLayout sendBlock;
+    @BindView(R.id.note_view_like_block) RelativeLayout likeBlock;
+    @BindView(R.id.note_view_repost_block) RelativeLayout repostBlock;
+    @BindView(R.id.note_view_attachment_block) RelativeLayout attachmentBlock;
+    @BindView(R.id.note_view_source_info) CardView sourceInfoBlock;
+    @BindView(R.id.note_view_attachment_link) CardView attachedLinkBlock;
+    @BindView(R.id.note_view_comments) RecyclerView rv;
 
     public static Note mNote;
     private Context mContext;
-    private LinearLayoutManager mLinearLayoutManager;
-    private NoteCommentsRecyclerViewAdapter mAdapter;
     private JSONObject mResponse;
-    private TextView sourceNameText;
-    private TextView contextText;
-    private TextView dateText;
-    private TextView likesCountText;
-    private TextView repostsCountText;
-    private TextView loadMoreCommentsText;
-    private TextView attachedLinkTitleText;
-    private TextView attachedLinkCaptionText;
-    private ImageView likeIcon;
-    private ImageView repostIcon;
-    private ImageView sourcePhoto;
-    private ImageView attachedLinkPhoto;
-    private LinearLayout loadMoreCommentsLayout;
-    private LinearLayout noteLeaveCommentLayout;
-    private RelativeLayout attachBlock;
-    private RelativeLayout emojiBlock;
-    private RelativeLayout sendBlock;
-    private RelativeLayout likeBlock;
-    private RelativeLayout repostBlock;
-    private RelativeLayout mainLayout;
-    private RelativeLayout attachmentBlock;
-    private CardView sourceInfoBlock;
-    private CardView attachedLinkBlock;
+    private NoteCommentsRecyclerViewAdapter mAdapter;
+    private LinearLayoutManager linearLayoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_note_view);
+        ButterKnife.bind(this);
+
         mContext = this;
         Toolbar tb = (Toolbar) findViewById(R.id.note_view_toolbar);
         setSupportActionBar(tb);
@@ -90,35 +93,11 @@ public class NoteViewActivity extends AppCompatActivity {
         if (ab != null) {
             ab.setDisplayShowTitleEnabled(false);
         }
-        sourceNameText = (TextView) findViewById(R.id.note_view_source_name);
-        contextText = (TextView) findViewById(R.id.note_view_context);
-        dateText = (TextView) findViewById(R.id.note_view_date);
-        likesCountText = (TextView) findViewById(R.id.note_view_likes_count);
-        repostsCountText = (TextView) findViewById(R.id.note_view_reposts_count);
-        loadMoreCommentsText = (TextView) findViewById(R.id.note_view_load_more_comments_text);
-        attachedLinkTitleText = (TextView) findViewById(R.id.note_view_attachment_link_title);
-        attachedLinkCaptionText = (TextView) findViewById(R.id.note_view_attachment_link_caption);
-        sourcePhoto = (ImageView) findViewById(R.id.note_view_source_photo);
-        likeIcon = (ImageView) findViewById(R.id.note_view_like_icon);
-        repostIcon = (ImageView) findViewById(R.id.note_view_repost_icon);
-        attachedLinkPhoto = (ImageView) findViewById(R.id.note_view_attachment_link_photo);
-        loadMoreCommentsLayout = (LinearLayout) findViewById(R.id.note_view_load_more_comments);
-        noteLeaveCommentLayout = (LinearLayout) findViewById(R.id.note_leave_comment_layout);
-        likeBlock = (RelativeLayout) findViewById(R.id.note_view_like_block);
-        repostBlock = (RelativeLayout) findViewById(R.id.note_view_repost_block);
-        mainLayout = (RelativeLayout) findViewById(R.id.note_view_main_layout);
-        attachBlock = (RelativeLayout) findViewById(R.id.note_view_attachments_icon);
-        emojiBlock = (RelativeLayout) findViewById(R.id.note_view_emoji_icon);
-        sendBlock = (RelativeLayout) findViewById(R.id.note_view_send_icon);
-        attachmentBlock = (RelativeLayout) findViewById(R.id.note_view_attachment_block);
-        sourceInfoBlock = (CardView) findViewById(R.id.note_view_source_info);
-        attachedLinkBlock = (CardView) findViewById(R.id.note_view_attachment_link);
-        RecyclerView rv = (RecyclerView) findViewById(R.id.note_view_comments);
-        mLinearLayoutManager = new LinearLayoutManager(this);
+        linearLayoutManager = new LinearLayoutManager(this);
         rv.setHasFixedSize(true);
         rv.setFocusable(false);
         rv.setNestedScrollingEnabled(false);
-        rv.setLayoutManager(mLinearLayoutManager);
+        rv.setLayoutManager(linearLayoutManager);
         mAdapter = new NoteCommentsRecyclerViewAdapter(getApplicationContext(),
                 mNote.getSourceId(),
                 addData());

@@ -29,14 +29,10 @@ public class GroupFeedViewActivity extends AppCompatActivity implements Observab
     }
 
     @Override
-    public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {
-
-    }
+    public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) { }
 
     @Override
-    public void onDownMotionEvent() {
-
-    }
+    public void onDownMotionEvent() { }
 
     @Override
     public void onUpOrCancelMotionEvent(ScrollState scrollState) {

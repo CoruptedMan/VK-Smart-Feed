@@ -17,6 +17,9 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
+import android.widget.TextView;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import com.vk.sdk.VKSdk;
 import com.vk.sdk.api.VKError;
 import com.vk.sdk.api.VKParameters;
@@ -35,29 +38,30 @@ import ru.ifmo.practice.util.task.DownloadUserFeedDataTask;
 
 import static ru.ifmo.practice.util.AppConsts.MIN_NOTES_COUNT;
 
-public class FeedActivity extends AppCompatActivity implements OnDownloadFeedDataResultDelegate {
-
-    private         CoordinatorLayout       mCoordinatorLayout;
-    private         ProgressBar             mProgressBar;
-    private         SwipeRefreshLayout      mSwipeRefreshLayout;
-    private         RelativeLayout          mNoInternetPlaceholder;
-    private         Button                  mNoInternetPlaceholderButton;
-    private         RecyclerView            mRecyclerView;
-    private         LinearLayoutManager     mLinearLayoutManager;
-    private         FeedRecyclerViewAdapter mAdapter;
-    private         ArrayList<Note>         mNotes;
-    private         Snackbar                mSnackbarRefresh;
-    private         Snackbar                mSnackbarNoInternetError;
-    private         int                     mVisibleThreshold       = MIN_NOTES_COUNT;
-    private         int                     mTotalItemCount         = 0;
-    private         int                     mPreviousTotal          = 0;
-    private         int                     mFirstVisibleItem;
-    private         int                     mVisibleItemCount;
-    private         boolean                 mIsDataRelevant         = true;
-    private         boolean                 mLoading                = true;
-    public          int                     mIndex                  = -1;
-    public          int                     mTop                    = -1;
-    public  static  String                  mStartFrom              = "";
+public class FeedActivity
+        extends AppCompatActivity
+        implements OnDownloadFeedDataResultDelegate {
+    @BindView(R.id.activity_main)                   CoordinatorLayout       mCoordinatorLayout;
+    @BindView(R.id.progress_bar)                    ProgressBar             mProgressBar;
+    @BindView(R.id.swipeContainer)                  SwipeRefreshLayout      mSwipeRefreshLayout;
+    @BindView(R.id.no_internet_placeholder)         RelativeLayout          mNoInternetPlaceholder;
+    @BindView(R.id.no_internet_placeholder_button)  Button                  mNoInternetPlaceholderButton;
+    @BindView(R.id.feed_recycler_view)              RecyclerView            mRecyclerView;
+    private                                         LinearLayoutManager     mLinearLayoutManager;
+    private                                         FeedRecyclerViewAdapter mAdapter;
+    private                                         ArrayList<Note>         mNotes;
+    private                                         Snackbar                mSnackbarRefresh;
+    private                                         Snackbar                mSnackbarNoInternetError;
+    private                                         int                     mFirstVisibleItem;
+    private                                         int                     mVisibleItemCount;
+    private                                         int                     mVisibleThreshold       = MIN_NOTES_COUNT;
+    private                                         int                     mTotalItemCount         = 0;
+    private                                         int                     mPreviousTotal          = 0;
+    private                                         boolean                 mIsDataRelevant         = true;
+    private                                         boolean                 mLoading                = true;
+    public                                          int                     mIndex                  = -1;
+    public                                          int                     mTop                    = -1;
+    public  static                                  String                  mStartFrom              = "";
 
     public Snackbar getSnackbarRefresh() {
         return mSnackbarRefresh;
@@ -74,14 +78,8 @@ public class FeedActivity extends AppCompatActivity implements OnDownloadFeedDat
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_feed);
-        mCoordinatorLayout              = (CoordinatorLayout) findViewById(R.id.activity_main);
-        mNoInternetPlaceholder          = (RelativeLayout) findViewById(R.id.no_internet_placeholder);
-        mNoInternetPlaceholderButton    = (Button) findViewById(R.id.no_internet_placeholder_button);
-        mProgressBar                    = (ProgressBar) findViewById(R.id.progress_bar);
-        mSwipeRefreshLayout             = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
-        mRecyclerView                   = (RecyclerView) findViewById(R.id.feed_recycler_view);
+        ButterKnife.bind(this);
 
         mSnackbarRefresh = Snackbar.make(mCoordinatorLayout,
                 getResources().getString(R.string.new_notes),

@@ -24,6 +24,9 @@ import android.widget.TextSwitcher;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import com.squareup.picasso.Picasso;
 import com.vk.sdk.api.VKError;
 import com.vk.sdk.api.VKParameters;
@@ -79,177 +82,73 @@ public class FeedRecyclerViewAdapter
         return mDataSet;
     }
 
-    private final static class DataObjectHolder
+    final static class DataObjectHolder
             extends RecyclerView.ViewHolder
             implements TextSwitcher.ViewFactory,
             RepostNoteDialogFragment.RepostNoteDialogListener {
-        private Context         mContext;
-        private JSONObject      mResponse;
-        private Button          seeMoreText;
-        private TextView        sourceNameText;
-        private TextView        dateText;
-        private TextView        addNewNoteText;
-        private TextView        likesCountText;
-        private TextView        commentsCountText;
-        private TextView        repostsCountText;
-        private TextView        attachedLinkBigTitleText;
-        private TextView        attachedLinkBigCaptionText;
-        private TextView        attachedLinkSmallTitleText;
-        private TextView        attachedLinkSmallCaptionText;
-        private TextView        attachedLinkPreviewTitleText;
-        private TextView        attachedLinkPreviewCaptionText;
-        private TextView        attachmentPhotoCountText;
-        private TextView        attachmentVideoCountText;
-        private TextView        attachmentVideoTimeText;
-        private TextView        attachmentVideoPlatformText;
-        private TextView        attachmentVideoTitleText;
-        private TextView        attachmentVideoViewsText;
-        private TextView        signerNameText;
-        private TextView        contextText;
-        private TextView        attachmentPageTitle;
-        private TextView        attachmentPageCaption;
-        private ImageView       likeIcon;
-        private ImageView       commentIcon;
-        private ImageView       repostIcon;
-        private ImageView       optionsIcon;
-        private ImageView       sourcePhoto;
-        private ImageView       attachedPhoto;
-        private ImageView       attachedVideo;
-        private ImageView       attachedLinkBigPhoto;
-        private ImageView       attachedLinkSmallPhoto;
-        private ImageView       attachedLinkPreviewPhoto;
-        private ImageView       attachmentPhotoCountIcon;
-        private ImageView       attachmentVideoCountIcon;
-        private ImageView       attachmentPagePhoto;
-        private ImageView       signerIcon;
-        private ImageView       attachmentAudioIcon;
-        private RelativeLayout  likeBlock;
-        private RelativeLayout  commentBlock;
-        private RelativeLayout  repostBlock;
-        private RelativeLayout  cardLayout;
-        private RelativeLayout  signerBlock;
-        private RelativeLayout  attachedLinkGroupBlock;
-        private RelativeLayout  attachedLinkPreviewBlock;
-        private RelativeLayout  attachedVideoBlock;
-        private RelativeLayout  attachedPageBlock;
-        private RelativeLayout  attachedAudioBlock;
-        private CardView        sourceInfoBlock;
-        private CardView        optionsBlock;
-        private CardView        attachedLinkBigBlock;
-        private CardView        attachedLinkSmallBlock;
-        private CardView        attachmentPhotoCountBlock;
-        private CardView        attachmentVideoCountBlock;
-        private CardView        attachmentVideoPlatformBlock;
-        private LinearLayout    socialAcionsLayout;
+        @BindView(R.id.see_more)                       Button          seeMoreText;
+        @BindView(R.id.source_name)                    TextView        sourceNameText;
+        @BindView(R.id.note_date)                      TextView        dateText;
+        @BindView(R.id.add_note)                       TextView        addNewNoteText;
+        @BindView(R.id.likes_count)                    TextView        likesCountText;
+        @BindView(R.id.comments_count)                 TextView        commentsCountText;
+        @BindView(R.id.reposts_count)                  TextView        repostsCountText;
+        @BindView(R.id.attachment_link_big_title)      TextView        attachedLinkBigTitleText;
+        @BindView(R.id.attachment_link_big_caption)    TextView        attachedLinkBigCaptionText;
+        @BindView(R.id.attachment_link_small_title)    TextView        attachedLinkSmallTitleText;
+        @BindView(R.id.attachment_link_small_caption)  TextView        attachedLinkSmallCaptionText;
+        @BindView(R.id.attachment_link_preview_title)  TextView        attachedLinkPreviewTitleText;
+        @BindView(R.id.attachment_link_preview_caption)TextView        attachedLinkPreviewCaptionText;
+        @BindView(R.id.attachment_photo_count)         TextView        attachmentPhotoCountText;
+        @BindView(R.id.attachment_video_count)         TextView        attachmentVideoCountText;
+        @BindView(R.id.attachment_video_time)          TextView        attachmentVideoTimeText;
+        @BindView(R.id.attachment_video_platform)      TextView        attachmentVideoPlatformText;
+        @BindView(R.id.attachment_video_title)         TextView        attachmentVideoTitleText;
+        @BindView(R.id.attachment_video_views_count)   TextView        attachmentVideoViewsText;
+        @BindView(R.id.signer_name)                    TextView        signerNameText;
+        @BindView(R.id.context)                        TextView        contextText;
+        @BindView(R.id.attachment_page_title)          TextView        attachmentPageTitle;
+        @BindView(R.id.attachment_page_caption)        TextView        attachmentPageCaption;
+        @BindView(R.id.like_icon)                      ImageView       likeIcon;
+        @BindView(R.id.comment_icon)                   ImageView       commentIcon;
+        @BindView(R.id.repost_icon)                    ImageView       repostIcon;
+        @BindView(R.id.options)                        ImageView       optionsIcon;
+        @BindView(R.id.source_photo)                   ImageView       sourcePhoto;
+        @BindView(R.id.attachment_photo)               ImageView       attachedPhoto;
+        @BindView(R.id.attachment_video)               ImageView       attachedVideo;
+        @BindView(R.id.attachment_link_big_photo)      ImageView       attachedLinkBigPhoto;
+        @BindView(R.id.attachment_link_small_photo)    ImageView       attachedLinkSmallPhoto;
+        @BindView(R.id.attachment_link_preview_photo)  ImageView       attachedLinkPreviewPhoto;
+        @BindView(R.id.attachment_photo_count_icon)    ImageView       attachmentPhotoCountIcon;
+        @BindView(R.id.attachment_video_count_icon)    ImageView       attachmentVideoCountIcon;
+        @BindView(R.id.attachment_page_photo)          ImageView       attachmentPagePhoto;
+        @BindView(R.id.attachment_audio_icon)          ImageView       attachmentAudioIcon;
+        @BindView(R.id.signer_icon)                    ImageView       signerIcon;
+        @BindView(R.id.comment_block)                  RelativeLayout  commentBlock;
+        @BindView(R.id.repost_block)                   RelativeLayout  repostBlock;
+        @BindView(R.id.note_relative_layout)           RelativeLayout  cardLayout;
+        @BindView(R.id.signer_block)                   RelativeLayout  signerBlock;
+        @BindView(R.id.attachment_link_group)          RelativeLayout  attachedLinkGroupBlock;
+        @BindView(R.id.attachment_link_preview)        RelativeLayout  attachedLinkPreviewBlock;
+        @BindView(R.id.attachment_video_block)         RelativeLayout  attachedVideoBlock;
+        @BindView(R.id.attachment_page_block)          RelativeLayout  attachedPageBlock;
+        @BindView(R.id.attachment_audio_block)         RelativeLayout  attachedAudioBlock;
+        @BindView(R.id.source_info)                    CardView        sourceInfoBlock;
+        @BindView(R.id.options_block)                  CardView        optionsBlock;
+        @BindView(R.id.attachment_link_big)            CardView        attachedLinkBigBlock;
+        @BindView(R.id.attachment_link_small)          CardView        attachedLinkSmallBlock;
+        @BindView(R.id.attachment_photo_count_block)   CardView        attachmentPhotoCountBlock;
+        @BindView(R.id.attachment_video_count_block)   CardView        attachmentVideoCountBlock;
+        @BindView(R.id.attachment_video_platform_block)CardView        attachmentVideoPlatformBlock;
+        @BindView(R.id.social_actions)                 LinearLayout    socialAcionsLayout;
+        private                                        Context         mContext;
+        private                                        JSONObject      mResponse;
 
         DataObjectHolder(View itemView) {
             super(itemView);
-
+            ButterKnife.bind(this, itemView);
             mContext = itemView.getContext();
-            seeMoreText = (Button) itemView.findViewById(R.id.see_more);
-            sourceNameText = (TextView) itemView.findViewById(R.id.source_name);
-            dateText = (TextView) itemView.findViewById(R.id.note_date);
-            addNewNoteText = (TextView) itemView.findViewById(R.id.add_note);
-            contextText = (TextView) itemView.findViewById(context);
-            likesCountText = (TextView) itemView.findViewById(R.id.likes_count);
-            commentsCountText = (TextView) itemView.findViewById(R.id.comments_count);
-            repostsCountText = (TextView) itemView.findViewById(R.id.reposts_count);
-            attachedLinkBigTitleText = (TextView) itemView.findViewById(R.id.attachment_link_big_title);
-            attachedLinkBigCaptionText = (TextView) itemView.findViewById(R.id.attachment_link_big_caption);
-            attachedLinkSmallTitleText = (TextView) itemView.findViewById(R.id.attachment_link_small_title);
-            attachedLinkSmallCaptionText = (TextView) itemView.findViewById(R.id.attachment_link_small_caption);
-            attachedLinkPreviewTitleText = (TextView) itemView.findViewById(R.id.attachment_link_preview_title);
-            attachedLinkPreviewCaptionText = (TextView) itemView.findViewById(R.id.attachment_link_preview_caption);
-            attachmentPhotoCountText = (TextView) itemView.findViewById(R.id.attachment_photo_count);
-            attachmentVideoCountText = (TextView) itemView.findViewById(R.id.attachment_video_count);
-            attachmentVideoTimeText = (TextView) itemView.findViewById(R.id.attachment_video_time);
-            attachmentVideoPlatformText = (TextView) itemView.findViewById(R.id.attachment_video_platform);
-            attachmentVideoTitleText = (TextView) itemView.findViewById(R.id.attachment_video_title);
-            attachmentVideoViewsText = (TextView) itemView.findViewById(R.id.attachment_video_views_count);
-            signerNameText = (TextView) itemView.findViewById(R.id.signer_name);
-            attachmentPageTitle = (TextView) itemView.findViewById(R.id.attachment_page_title);
-            attachmentPageCaption = (TextView) itemView.findViewById(R.id.attachment_page_caption);
-            sourcePhoto = (ImageView) itemView.findViewById(R.id.source_photo);
-            likeIcon = (ImageView) itemView.findViewById(R.id.like_icon);
-            commentIcon = (ImageView) itemView.findViewById(R.id.comment_icon);
-            repostIcon = (ImageView) itemView.findViewById(R.id.repost_icon);
-            optionsIcon = (ImageView) itemView.findViewById(R.id.options);
-            attachedPhoto = (ImageView) itemView.findViewById(R.id.attachment_photo);
-            attachedVideo = (ImageView) itemView.findViewById(R.id.attachment_video);
-            attachedLinkBigPhoto = (ImageView) itemView.findViewById(R.id.attachment_link_big_photo);
-            attachedLinkSmallPhoto = (ImageView) itemView.findViewById(R.id.attachment_link_small_photo);
-            attachedLinkPreviewPhoto = (ImageView) itemView.findViewById(R.id.attachment_link_preview_photo);
-            attachmentPhotoCountIcon = (ImageView) itemView.findViewById(R.id.attachment_photo_count_icon);
-            attachmentVideoCountIcon = (ImageView) itemView.findViewById(R.id.attachment_video_count_icon);
-            signerIcon = (ImageView) itemView.findViewById(R.id.signer_icon);
-            attachmentPagePhoto = (ImageView) itemView.findViewById(R.id.attachment_page_photo);
-            attachmentAudioIcon = (ImageView) itemView.findViewById(R.id.attachment_audio_icon);
-            likeBlock = (RelativeLayout) itemView.findViewById(R.id.like_block);
-            commentBlock = (RelativeLayout) itemView.findViewById(R.id.comment_block);
-            repostBlock = (RelativeLayout) itemView.findViewById(R.id.repost_block);
-            cardLayout = (RelativeLayout) itemView.findViewById(R.id.note_relative_layout);
-            signerBlock = (RelativeLayout) itemView.findViewById(R.id.signer_block);
-            attachedLinkGroupBlock = (RelativeLayout) itemView.findViewById(R.id.attachment_link_group);
-            attachedVideoBlock = (RelativeLayout) itemView.findViewById(R.id.attachment_video_block);
-            attachedPageBlock = (RelativeLayout) itemView.findViewById(R.id.attachment_page_block);
-            attachedAudioBlock = (RelativeLayout) itemView.findViewById(R.id.attachment_audio_block);
-            sourceInfoBlock = (CardView) itemView.findViewById(R.id.source_info);
-            optionsBlock = (CardView) itemView.findViewById(R.id.options_block);
-            attachedLinkBigBlock = (CardView) itemView.findViewById(R.id.attachment_link_big);
-            attachedLinkSmallBlock = (CardView) itemView.findViewById(R.id.attachment_link_small);
-            attachedLinkPreviewBlock = (RelativeLayout) itemView.findViewById(R.id.attachment_link_preview);
-            attachmentVideoCountBlock = (CardView) itemView.findViewById(R.id.attachment_video_count_block);
-            attachmentVideoPlatformBlock = (CardView) itemView.findViewById(R.id.attachment_video_platform_block);
-            attachmentPhotoCountBlock = (CardView) itemView.findViewById(R.id.attachment_photo_count_block);
-            socialAcionsLayout = (LinearLayout) itemView.findViewById(R.id.social_actions);
 
-            likeBlock.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (VKSmartFeedApplication.isOnline()) {
-                        Note tmpNote = mDataSet.get(getAdapterPosition());
-                        int likes = tmpNote.getLikesCount();
-                        VKRequest request = new VKRequest("likes." + (tmpNote.isUserLikes()
-                                ? "delete" : "add"), VKParameters.from("type", "post",
-                                "owner_id", -tmpNote.getSourceId(),
-                                "item_id", tmpNote.getId()));
-                        request.executeSyncWithListener(new VKRequest.VKRequestListener() {
-                            @Override
-                            public void onComplete(VKResponse response) {
-                                try {
-                                    mResponse = response.json.getJSONObject("response");
-                                } catch (JSONException pE) {
-                                    pE.printStackTrace();
-                                }
-                            }
-
-                            @Override
-                            public void onError(VKError error) {
-                                Log.e("likesRequest", error.toString());
-                            }
-                        });
-                        try {
-                            likes = Integer.parseInt(mResponse.get("likes").toString());
-                        } catch (JSONException pE) {
-                            pE.printStackTrace();
-                        }
-                        tmpNote.setLikesCount(likes);
-                        likesCountText.setText(tmpNote.getLikesCount() > 0
-                                ? optimizeBigValues(likes)
-                                : "");
-                        tmpNote.setUserLikes(
-                                !tmpNote.isUserLikes());
-                        likeIcon.setImageDrawable(mContext.getDrawable(
-                                tmpNote.isUserLikes()
-                                        ? R.drawable.ic_favorite_pressed_24dp
-                                        : R.drawable.ic_favorite_white_24dp));
-                    }
-                    else {
-                        Toast.makeText(mContext, mContext.getResources().getString(R.string.no_internet),
-                                Toast.LENGTH_SHORT).show();
-                    }
-                }
-            });
             View.OnClickListener openNoteByClick = new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -258,8 +157,7 @@ public class FeedRecyclerViewAdapter
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         mActivity.startActivity(intent);
                         NoteViewActivity.mNote = mDataSet.get(getAdapterPosition());
-                        mActivity.overridePendingTransition(R.anim.slide_in_right,
-                                R.anim.slide_out_right);
+                        mActivity.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_right);
                     }
                     else {
                         // TODO let user pass to another activity, but show connect error in that
@@ -297,6 +195,43 @@ public class FeedRecyclerViewAdapter
                     // TODO
                 }
             });
+        }
+
+        @OnClick(R.id.like_block)
+        void likeClick() {
+            if (VKSmartFeedApplication.isOnline()) {
+                Note tmpNote = mDataSet.get(getAdapterPosition());
+                int likes = tmpNote.getLikesCount();
+                VKRequest request = new VKRequest("likes." + (tmpNote.isUserLikes()
+                        ? "delete" : "add"), VKParameters.from("type", "post",
+                        "owner_id", -tmpNote.getSourceId(),
+                        "item_id", tmpNote.getId()));
+                request.executeSyncWithListener(new VKRequest.VKRequestListener() {
+                    @Override
+                    public void onComplete(VKResponse response) {
+                        try {
+                            mResponse = response.json.getJSONObject("response");
+                        } catch (JSONException pE) {
+                            pE.printStackTrace();
+                        }
+                    }
+                });
+                try {
+                    likes = Integer.parseInt(mResponse.get("likes").toString());
+                } catch (JSONException pE) {
+                    pE.printStackTrace();
+                }
+                tmpNote.setLikesCount(likes);
+                likesCountText.setText(tmpNote.getLikesCount() > 0 ? optimizeBigValues(likes) : "");
+                tmpNote.setUserLikes(!tmpNote.isUserLikes());
+                likeIcon.setImageDrawable(mContext.getDrawable(tmpNote.isUserLikes()
+                                ? R.drawable.ic_favorite_pressed_24dp
+                                : R.drawable.ic_favorite_white_24dp));
+            }
+            else {
+                Toast.makeText(mContext, mContext.getResources().getString(R.string.no_internet),Toast.LENGTH_SHORT)
+                        .show();
+            }
         }
 
         @Override
@@ -338,15 +273,13 @@ public class FeedRecyclerViewAdapter
 
     private final static class ConnectionLostViewHolder
             extends RecyclerView.ViewHolder {
-        TextView descriptionText;
-        Button refreshButton;
-        ImageView icon;
+        @BindView(R.id.connection_lost_description) TextView descriptionText;
+        @BindView(R.id.connection_lost_button) Button refreshButton;
+        @BindView(R.id.connection_lost_image) ImageView icon;
 
         ConnectionLostViewHolder(View v) {
             super(v);
-            descriptionText = (TextView) v.findViewById(R.id.connection_lost_description);
-            refreshButton = (Button) v.findViewById(R.id.connection_lost_button);
-            icon = (ImageView) v.findViewById(R.id.connection_lost_image);
+            ButterKnife.bind(this, v);
         }
     }
 
@@ -382,8 +315,11 @@ public class FeedRecyclerViewAdapter
 
     @Override
     public int getItemViewType(int position) {
-        return position != getItemCount() - 1 ? VIEW_NOTE :
-                VKSmartFeedApplication.isOnline() ? VIEW_PROG_BAR : VIEW_CONNECTION_ERROR;
+        return position != getItemCount() - 1
+                ? VIEW_NOTE
+                : VKSmartFeedApplication.isOnline()
+                    ? VIEW_PROG_BAR
+                    : VIEW_CONNECTION_ERROR;
     }
 
     @Override
