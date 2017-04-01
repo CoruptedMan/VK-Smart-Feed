@@ -197,8 +197,8 @@ public class LoginActivity extends Activity {
         private static final String CONTENT_TEXT = "content_text";
         private static final String ARG_SECTION_NUMBER = "section_number";
 
-        TextView mTitleTextView;
-        TextView mContentTextView;
+        @BindView(R.id.titleText) TextView titleTextView;
+        @BindView(R.id.contentText) TextView contentTextView;
 
         public static PlaceholderFragment newInstance(String pTitleText,
                                                       String pContentText,
@@ -216,19 +216,17 @@ public class LoginActivity extends Activity {
         public View onCreateView(LayoutInflater pInflater, ViewGroup pContainer,
                                  Bundle pSavedInstanceState) {
             View rootView = pInflater.inflate(R.layout.fragment_activity_login, pContainer, false);
+            ButterKnife.bind(this, rootView);
 
-            mTitleTextView = (TextView) rootView.findViewById(R.id.titleText);
-            mContentTextView = (TextView) rootView.findViewById(R.id.contentText);
-
-            mTitleTextView.setText(getString(R.string.content_format, getArguments().getString(TITLE_TEXT)));
-            mContentTextView.setText(getString(R.string.content_format, getArguments().getString(CONTENT_TEXT)));
+            titleTextView.setText(getString(R.string.content_format, getArguments().getString(TITLE_TEXT)));
+            contentTextView.setText(getString(R.string.content_format, getArguments().getString(CONTENT_TEXT)));
 
             Typeface robotoThin = Typeface.createFromAsset(getResources().getAssets(), "fonts/RobotoThin.ttf");
             Typeface robotoBlack = Typeface.createFromAsset(getResources().getAssets(),
                     "fonts/RobotoBlack.ttf");
 
-            mTitleTextView.setTypeface(robotoBlack);
-            mContentTextView.setTypeface(robotoThin);
+            titleTextView.setTypeface(robotoBlack);
+            contentTextView.setTypeface(robotoThin);
 
             return rootView;
         }

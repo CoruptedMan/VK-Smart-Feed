@@ -40,35 +40,35 @@ import ru.ifmo.practice.model.attachments.Photo;
 import ru.ifmo.practice.adapter.NoteCommentsRecyclerViewAdapter;
 
 public class NoteViewActivity extends AppCompatActivity {
-    @BindView(R.id.note_view_source_name) TextView sourceNameText;
-    @BindView(R.id.note_view_context) TextView contextText;
-    @BindView(R.id.note_view_date) TextView dateText;
-    @BindView(R.id.note_view_likes_count) TextView likesCountText;
-    @BindView(R.id.note_view_reposts_count) TextView repostsCountText;
-    @BindView(R.id.note_view_load_more_comments_text) TextView loadMoreCommentsText;
-    @BindView(R.id.note_view_attachment_link_title) TextView attachedLinkTitleText;
-    @BindView(R.id.note_view_attachment_link_caption) TextView attachedLinkCaptionText;
-    @BindView(R.id.note_view_like_icon) ImageView likeIcon;
-    @BindView(R.id.note_view_repost_icon) ImageView repostIcon;
-    @BindView(R.id.note_view_source_photo) ImageView sourcePhoto;
-    @BindView(R.id.note_view_attachment_link_photo) ImageView attachedLinkPhoto;
-    @BindView(R.id.note_view_load_more_comments) LinearLayout loadMoreCommentsLayout;
-    @BindView(R.id.note_leave_comment_layout) LinearLayout noteLeaveCommentLayout;
-    @BindView(R.id.note_view_attachments_icon) RelativeLayout attachBlock;
-    @BindView(R.id.note_view_emoji_icon) RelativeLayout emojiBlock;
-    @BindView(R.id.note_view_send_icon) RelativeLayout sendBlock;
-    @BindView(R.id.note_view_like_block) RelativeLayout likeBlock;
-    @BindView(R.id.note_view_repost_block) RelativeLayout repostBlock;
-    @BindView(R.id.note_view_attachment_block) RelativeLayout attachmentBlock;
-    @BindView(R.id.note_view_source_info) CardView sourceInfoBlock;
-    @BindView(R.id.note_view_attachment_link) CardView attachedLinkBlock;
-    @BindView(R.id.note_view_comments) RecyclerView rv;
+    @BindView(R.id.note_view_source_name)               TextView        sourceNameText;
+    @BindView(R.id.note_view_context)                   TextView        contextText;
+    @BindView(R.id.note_view_date)                      TextView        dateText;
+    @BindView(R.id.note_view_likes_count)               TextView        likesCountText;
+    @BindView(R.id.note_view_reposts_count)             TextView        repostsCountText;
+    @BindView(R.id.note_view_load_more_comments_text)   TextView        loadMoreCommentsText;
+    @BindView(R.id.note_view_attachment_link_title)     TextView        attachedLinkTitleText;
+    @BindView(R.id.note_view_attachment_link_caption)   TextView        attachedLinkCaptionText;
+    @BindView(R.id.note_view_like_icon)                 ImageView       likeIcon;
+    @BindView(R.id.note_view_repost_icon)               ImageView       repostIcon;
+    @BindView(R.id.note_view_source_photo)              ImageView       sourcePhoto;
+    @BindView(R.id.note_view_attachment_link_photo)     ImageView       attachedLinkPhoto;
+    @BindView(R.id.note_view_load_more_comments)        LinearLayout    loadMoreCommentsLayout;
+    @BindView(R.id.note_leave_comment_layout)           LinearLayout    noteLeaveCommentLayout;
+    @BindView(R.id.note_view_attachments_icon)          RelativeLayout  attachBlock;
+    @BindView(R.id.note_view_emoji_icon)                RelativeLayout  emojiBlock;
+    @BindView(R.id.note_view_send_icon)                 RelativeLayout  sendBlock;
+    @BindView(R.id.note_view_like_block)                RelativeLayout  likeBlock;
+    @BindView(R.id.note_view_repost_block)              RelativeLayout  repostBlock;
+    @BindView(R.id.note_view_attachment_block)          RelativeLayout  attachmentBlock;
+    @BindView(R.id.note_view_source_info)               CardView        sourceInfoBlock;
+    @BindView(R.id.note_view_attachment_link)           CardView        attachedLinkBlock;
+    @BindView(R.id.note_view_comments)                  RecyclerView    rv;
 
-    public static Note mNote;
-    private Context mContext;
-    private JSONObject mResponse;
-    private NoteCommentsRecyclerViewAdapter mAdapter;
-    private LinearLayoutManager linearLayoutManager;
+    public  static      Note                                mNote;
+    private             Context                             mContext;
+    private             JSONObject                          mResponse;
+    private             NoteCommentsRecyclerViewAdapter     mAdapter;
+    private             LinearLayoutManager                 mLinearLayoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,11 +93,11 @@ public class NoteViewActivity extends AppCompatActivity {
         if (ab != null) {
             ab.setDisplayShowTitleEnabled(false);
         }
-        linearLayoutManager = new LinearLayoutManager(this);
+        mLinearLayoutManager = new LinearLayoutManager(this);
         rv.setHasFixedSize(true);
         rv.setFocusable(false);
         rv.setNestedScrollingEnabled(false);
-        rv.setLayoutManager(linearLayoutManager);
+        rv.setLayoutManager(mLinearLayoutManager);
         mAdapter = new NoteCommentsRecyclerViewAdapter(getApplicationContext(),
                 mNote.getSourceId(),
                 addData());
@@ -382,9 +382,4 @@ public class NoteViewActivity extends AppCompatActivity {
         }
         return results;
     }
-/*
-    @Override
-    public void onBackPressed() {
-        finish();
-    }*/
 }

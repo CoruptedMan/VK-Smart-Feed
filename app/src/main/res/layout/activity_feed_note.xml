@@ -15,7 +15,7 @@
         android:layout_marginBottom="10dp"
         card_view:cardElevation="2dp"
         card_view:cardCornerRadius="0dp"
-        card_view:cardBackgroundColor="@color/cardview_light_background" >
+        card_view:cardBackgroundColor="@color/cardview_light_background">
 
         <RelativeLayout
             android:id="@+id/note_relative_layout"
@@ -38,12 +38,12 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="49dp">
-                        <de.hdodenhof.circleimageview.CircleImageView
-                            android:id="@+id/source_photo"
-                            android:layout_width="49dp"
-                            android:layout_height="49dp"
-                            android:layout_alignParentTop="true"
-                            android:layout_alignParentStart="true"/>
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/source_photo"
+                        android:layout_width="49dp"
+                        android:layout_height="49dp"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentStart="true"/>
 
                     <TextView
                         android:id="@+id/note_date"
@@ -57,35 +57,35 @@
                         android:layout_marginBottom="5dp"/>
 
                     <TextView
-                            android:id="@+id/source_name"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="20dp"
-                            android:layout_marginEnd="10dp"
-                            android:layout_alignParentTop="true"
-                            android:layout_toEndOf="@+id/source_photo"
-                            android:maxLines="1"
-                            android:ellipsize="end"
-                            android:textSize="14sp"
-                            android:textColor="@color/color_primary"
-                            android:textStyle="normal|bold"
-                            android:layout_marginTop="5dp"
-                            android:maxEms="11" />
+                        android:id="@+id/source_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginEnd="10dp"
+                        android:layout_alignParentTop="true"
+                        android:layout_toEndOf="@+id/source_photo"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        android:textSize="14sp"
+                        android:textColor="@color/color_primary"
+                        android:textStyle="normal|bold"
+                        android:layout_marginTop="5dp"
+                        android:maxEms="11"/>
 
                     <TextView
-                            android:id="@+id/add_note"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:layout_marginStart="20dp"
-                            android:layout_marginEnd="10dp"
-                            android:layout_toEndOf="@+id/source_photo"
-                            android:maxLines="1"
-                            android:ellipsize="end"
-                            android:textSize="16sp"
-                            android:textColor="@color/color_text_secondary"
-                            android:text="@string/add_note"
-                            android:gravity="center_vertical"
-                            android:visibility="gone" />
+                        android:id="@+id/add_note"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginEnd="10dp"
+                        android:layout_toEndOf="@+id/source_photo"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        android:textSize="16sp"
+                        android:textColor="@color/color_text_secondary"
+                        android:text="@string/add_note"
+                        android:gravity="center_vertical"
+                        android:visibility="gone"/>
                 </RelativeLayout>
             </android.support.v7.widget.CardView>
 
@@ -142,14 +142,14 @@
                 android:theme="@style/SeeMoreButton"
                 style="@style/Widget.AppCompat.Button.Borderless"
                 android:paddingStart="5dp"
-                android:paddingEnd="5dp" />
+                android:paddingEnd="5dp"/>
 
             <Space
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/see_more"
                 android:layout_margin="5dp"
-                android:id="@+id/space" />
+                android:id="@+id/space"/>
 
             <RelativeLayout
                 android:id="@+id/attachment_block"
@@ -218,305 +218,225 @@
                                 android:layout_marginBottom="5dp"/>
 
                             <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:id="@+id/attachment_photo_count"
-                                android:textStyle="normal|bold"
-                                android:textSize="16sp"
-                                android:textColor="@color/color_primary"
-                                android:gravity="center"
-                                android:layout_centerVertical="true"
-                                android:layout_toEndOf="@+id/attachment_photo_count_icon"
-                                android:layout_marginEnd="5dp"
-                                android:layout_marginStart="5dp"/>
-                        </RelativeLayout>
-                    </android.support.v7.widget.CardView>
-                </RelativeLayout>
-
-
-                <RelativeLayout
-                    android:id="@+id/attachment_video_block"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/attachment_photo_block"
-                    android:visibility="gone"
-                    android:layout_marginTop="3dp">
-
-                    <RelativeLayout
-                        android:id="@+id/attachment_video_main"
-                        android:layout_width="match_parent"
-                        android:layout_height="240dp">
-
-                        <android.support.v7.widget.CardView
-                            android:id="@+id/attachment_video_count_block"
-                            android:layout_marginStart="10dp"
-                            android:layout_marginTop="10dp"
-                            android:layout_height="wrap_content"
-                            android:layout_width="wrap_content"
-                            android:visibility="visible"
-                            card_view:cardCornerRadius="3dp"
-                            card_view:cardBackgroundColor="@color/color_light_primary">
-
-                            <RelativeLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent">
-
-                                <ImageView
-                                    android:id="@+id/attachment_video_count_icon"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    card_view:srcCompat="@drawable/ic_videocam_blue_24dp"
-                                    android:layout_centerVertical="true"
-                                    android:layout_alignParentStart="true"
-                                    android:layout_marginStart="5dp"
-                                    android:layout_marginTop="5dp"
-                                    android:layout_marginBottom="5dp"/>
-
-                                <TextView
-                                    android:id="@+id/attachment_video_count"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
+                                    android:id="@+id/attachment_photo_count"
                                     android:textStyle="normal|bold"
                                     android:textSize="16sp"
                                     android:textColor="@color/color_primary"
                                     android:gravity="center"
                                     android:layout_centerVertical="true"
-                                    android:layout_toEndOf="@+id/attachment_video_count_icon"
+                                    android:layout_toEndOf="@+id/attachment_photo_count_icon"
                                     android:layout_marginEnd="5dp"
                                     android:layout_marginStart="5dp"/>
+                        </RelativeLayout>
+                    </android.support.v7.widget.CardView>
+                </RelativeLayout>
+
+
+                <RelativeLayout
+                        android:id="@+id/attachment_video_block"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/attachment_photo_block"
+                        android:visibility="gone"
+                        android:layout_marginTop="3dp">
+
+                    <RelativeLayout
+                            android:id="@+id/attachment_video_main"
+                            android:layout_width="match_parent"
+                            android:layout_height="240dp">
+
+                        <android.support.v7.widget.CardView
+                                android:id="@+id/attachment_video_count_block"
+                                android:layout_marginStart="10dp"
+                                android:layout_marginTop="10dp"
+                                android:layout_height="wrap_content"
+                                android:layout_width="wrap_content"
+                                android:visibility="visible"
+                                card_view:cardCornerRadius="3dp"
+                                card_view:cardBackgroundColor="@color/color_light_primary">
+
+                            <RelativeLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent">
+
+                                <ImageView
+                                        android:id="@+id/attachment_video_count_icon"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        card_view:srcCompat="@drawable/ic_videocam_blue_24dp"
+                                        android:layout_centerVertical="true"
+                                        android:layout_alignParentStart="true"
+                                        android:layout_marginStart="5dp"
+                                        android:layout_marginTop="5dp"
+                                        android:layout_marginBottom="5dp" />
+
+                                <TextView
+                                        android:id="@+id/attachment_video_count"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:textStyle="normal|bold"
+                                        android:textSize="16sp"
+                                        android:textColor="@color/color_primary"
+                                        android:gravity="center"
+                                        android:layout_centerVertical="true"
+                                        android:layout_toEndOf="@+id/attachment_video_count_icon"
+                                        android:layout_marginEnd="5dp"
+                                        android:layout_marginStart="5dp" />
 
                             </RelativeLayout>
                         </android.support.v7.widget.CardView>
 
                         <ImageView
-                            android:id="@+id/attachment_video"
-                            android:layout_width="match_parent"
-                            android:layout_height="240dp"
-                            android:adjustViewBounds="true"
-                            android:scaleType="centerCrop"
-                            android:visibility="visible"
-                            android:background="@color/color_text_primary"
-                            android:foreground="@drawable/ic_play_circle_filled_white_48dp"
-                            android:foregroundGravity="center"
-                            tools:foreground="@color/color_black_transparent" />
+                                android:id="@+id/attachment_video"
+                                android:layout_width="match_parent"
+                                android:layout_height="240dp"
+                                android:adjustViewBounds="true"
+                                android:scaleType="centerCrop"
+                                android:visibility="visible"
+                                android:background="@color/color_text_primary"
+                                android:foreground="@drawable/ic_play_circle_filled_white_48dp"
+                                android:foregroundGravity="center"
+                                tools:foreground="@color/color_black_transparent" />
 
-                        <android.support.v7.widget.CardView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentBottom="true"
-                            android:layout_alignParentEnd="true"
-                            android:layout_marginEnd="10dp"
-                            android:layout_marginBottom="10dp"
-                            android:id="@+id/attachment_video_time_block"
-                            card_view:cardBackgroundColor="@color/color_black_transparent"
-                            card_view:cardCornerRadius="5dp"
-                            card_view:cardElevation="0dp">
+                        <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:id="@+id/attachment_video_info"
+                                android:background="@color/color_transparent"
+                                android:layout_alignParentBottom="true" android:layout_alignParentStart="true">
 
                             <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:id="@+id/attachment_video_time"
-                                android:layout_alignParentBottom="true"
-                                android:layout_alignParentEnd="true"
-                                android:padding="5dp"
-                                android:textColor="@color/color_text" />
-                        </android.support.v7.widget.CardView>
-
-                        <android.support.v7.widget.CardView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentBottom="true"
-                            android:layout_alignParentEnd="false"
-                            android:layout_marginBottom="10dp"
-                            android:id="@+id/attachment_video_platform_block"
-                            card_view:cardBackgroundColor="@color/color_black_transparent"
-                            card_view:cardCornerRadius="5dp"
-                            android:layout_alignParentStart="true"
-                            android:layout_marginStart="10dp"
-                            card_view:cardElevation="0dp">
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:id="@+id/attachment_video_title"
+                                    android:textSize="14sp"
+                                    android:textColor="@color/color_text"
+                                    android:layout_marginBottom="5dp"
+                                    android:layout_marginTop="5dp"
+                                    android:layout_marginStart="10dp"
+                                    android:ellipsize="end"
+                                    android:maxLines="2"
+                                    android:textStyle="bold" android:layout_toStartOf="@+id/attachment_video_time"
+                                    android:layout_marginEnd="15dp" />
 
                             <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:id="@+id/attachment_video_views_count"
+                                    android:layout_below="@+id/attachment_video_title"
+                                    android:layout_alignParentStart="true"
+                                    android:layout_marginStart="10dp"
+                                    android:textColor="@color/color_text"
+                                    android:maxLines="1"
+                                    android:ellipsize="end"
+                                    android:layout_marginBottom="5dp"
+                                    android:layout_toStartOf="@+id/attachment_video_time"
+                                    android:layout_marginEnd="15dp" />
+                            <TextView
+                                    android:layout_width="40dp"
+                                    android:layout_height="wrap_content"
+                                    android:id="@+id/attachment_video_time"
+                                    android:padding="5dp"
+                                    android:textColor="@color/color_text"
+                                    android:layout_centerVertical="true" android:layout_alignParentEnd="true"
+                                    android:layout_marginEnd="10dp" />
+                        </RelativeLayout>
+
+                        <android.support.v7.widget.CardView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:id="@+id/attachment_video_platform"
-                                android:layout_alignParentBottom="true"
-                                android:layout_alignParentEnd="true"
-                                android:padding="5dp"
-                                android:textColor="@color/color_text" />
+                                android:id="@+id/attachment_video_platform_block"
+                                card_view:cardBackgroundColor="@color/color_black_transparent"
+                                card_view:cardCornerRadius="5dp"
+                                card_view:cardElevation="0dp"
+                                android:layout_alignTop="@+id/attachment_video"
+                                android:layout_alignParentEnd="true" android:layout_marginEnd="15dp"
+                                android:layout_marginTop="15dp">
+
+                            <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:id="@+id/attachment_video_platform"
+                                    android:layout_alignParentBottom="true"
+                                    android:layout_alignParentEnd="true"
+                                    android:padding="5dp"
+                                    android:textColor="@color/color_text" />
                         </android.support.v7.widget.CardView>
 
                     </RelativeLayout>
 
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_below="@id/attachment_video_main"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/attachment_video_info"
-                        android:background="@drawable/bg_bottom_white_border">
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/attachment_video_title"
-                            android:textSize="14sp"
-                            android:textColor="@color/color_text_primary"
-                            android:layout_marginBottom="5dp"
-                            android:layout_marginTop="5dp"
-                            android:layout_marginEnd="10dp"
-                            android:layout_marginStart="10dp"
-                            android:ellipsize="end"
-                            android:maxLines="2"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/attachment_video_views_count"
-                            android:layout_below="@+id/attachment_video_title"
-                            android:layout_alignParentStart="true"
-                            android:layout_marginStart="10dp"
-                            android:layout_marginEnd="10dp"
-                            android:textColor="@color/color_text_secondary"
-                            android:maxLines="1"
-                            android:ellipsize="end"
-                            android:layout_marginBottom="5dp" />
-                    </RelativeLayout>
                 </RelativeLayout>
 
                 <RelativeLayout
-                    android:id="@+id/attachment_audio_block"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/attachment_video_block"
-                    android:visibility="gone">
+                        android:id="@+id/attachment_audio_block"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/attachment_video_block"
+                        android:visibility="gone">
 
 
                     <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        card_view:srcCompat="@drawable/ic_music_note_blue_36dp"
-                        android:id="@+id/attachment_audio_icon"
-                        android:layout_alignParentTop="true"
-                        android:layout_alignParentStart="true"
-                        android:layout_marginBottom="5dp"
-                        android:layout_marginTop="5dp"
-                        android:layout_marginStart="20dp" />
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            card_view:srcCompat="@drawable/ic_music_note_blue_36dp"
+                            android:id="@+id/attachment_audio_icon"
+                            android:layout_alignParentTop="true"
+                            android:layout_alignParentStart="true"
+                            android:layout_marginBottom="5dp"
+                            android:layout_marginTop="5dp"
+                            android:layout_marginStart="20dp"/>
 
                     <TextView
-                        android:text="Прослушивание аудиозаписей недоступно в неофициальных приложениях."
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/attachment_audio_unavailable"
-                        android:textColor="@color/color_text_secondary"
-                        android:textSize="14sp"
-                        android:layout_centerVertical="true"
-                        android:layout_toEndOf="@+id/attachment_audio_icon"
-                        android:layout_marginEnd="10dp"
-                        android:layout_marginStart="10dp"
-                        android:textStyle="normal|italic" />
+                            android:text="Прослушивание аудиозаписей недоступно в неофициальных приложениях."
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/attachment_audio_unavailable"
+                            android:textColor="@color/color_text_secondary"
+                            android:textSize="14sp"
+                            android:layout_centerVertical="true"
+                            android:layout_toEndOf="@+id/attachment_audio_icon"
+                            android:layout_marginEnd="10dp"
+                            android:layout_marginStart="10dp"
+                            android:textStyle="normal|italic"/>
                 </RelativeLayout>
 
                 <RelativeLayout
-                    android:id="@+id/attachment_link_group"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/attachment_audio_block">
+                        android:id="@+id/attachment_link_group"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/attachment_audio_block">
 
                     <RelativeLayout
-                        android:id="@+id/attachment_link_preview"
-                        android:layout_width="match_parent"
-                        android:visibility="gone"
-                        android:foreground="@drawable/selectable_effect"
-                        android:paddingStart="20dp"
-                        android:paddingEnd="20dp"
-                        android:layout_height="80dp">
+                            android:id="@+id/attachment_link_preview"
+                            android:layout_width="match_parent"
+                            android:visibility="gone"
+                            android:foreground="@drawable/selectable_effect"
+                            android:paddingStart="20dp"
+                            android:paddingEnd="20dp"
+                            android:layout_height="80dp">
 
                         <RelativeLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_toEndOf="@+id/attachment_link_preview_photo">
-
-                            <TextView
-                                android:id="@+id/attachment_link_preview_title"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:textStyle="normal|bold"
-                                android:textColor="@color/color_text_primary"
-                                android:layout_marginStart="15dp"
-                                android:layout_marginTop="15dp"
-                                android:maxLines="2"
-                                android:ellipsize="end"
-                                android:textSize="14sp"
-                                android:layout_marginEnd="15dp" />
-
-                            <TextView
-                                android:id="@+id/attachment_link_preview_caption"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_alignParentBottom="true"
-                                android:layout_alignParentStart="true"
-                                android:textColor="@color/color_text_secondary"
-                                android:textSize="12sp"
-                                android:layout_marginStart="15dp"
-                                android:layout_marginBottom="15dp"
-                                android:maxLines="1"
-                                android:ellipsize="end"
-                                android:layout_marginEnd="15dp" />
-                        </RelativeLayout>
-
-                        <ImageView
-                            android:id="@+id/attachment_link_preview_photo"
-                            android:layout_height="wrap_content"
-                            android:layout_width="wrap_content"
-                            android:src="@drawable/ic_pageview_gray_36dp"
-                            android:layout_centerVertical="true"
-                            android:layout_alignParentStart="true" />
-                    </RelativeLayout>
-
-                    <android.support.v7.widget.CardView
-                        android:id="@+id/attachment_link_big"
-                        android:layout_width="match_parent"
-                        android:layout_height="240dp"
-                        android:foreground="@drawable/selectable_effect"
-                        card_view:cardBackgroundColor="@color/cardview_light_background"
-                        card_view:cardElevation="1dp"
-                        card_view:cardCornerRadius="2dp"
-                        card_view:contentPadding="0dp"
-                        android:visibility="gone"
-                        android:layout_marginEnd="10dp"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:layout_marginTop="10dp">
-                        <RelativeLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent">
-                            <ImageView
-                                android:id="@+id/attachment_link_big_photo"
-                                android:layout_width="match_parent"
-                                android:layout_height="160dp"
-                                android:adjustViewBounds="true"
-                                android:scaleType="centerCrop"
-                                android:layout_alignParentTop="true"
-                                android:layout_alignParentStart="true" />
-                            <RelativeLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
-                                android:layout_alignParentStart="true"
-                                android:layout_below="@+id/attachment_link_big_photo">
-                                <TextView
-                                    android:id="@+id/attachment_link_big_title"
+                                android:layout_toEndOf="@+id/attachment_link_preview_photo">
+
+                            <TextView
+                                    android:id="@+id/attachment_link_preview_title"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:textStyle="normal|bold"
                                     android:textColor="@color/color_text_primary"
                                     android:layout_marginStart="15dp"
-                                    android:layout_marginTop="10dp"
-                                    android:maxLines="2"
+                                    android:layout_marginTop="15dp"
+                                    android:maxLines="1"
                                     android:ellipsize="end"
                                     android:textSize="14sp"
                                     android:layout_marginEnd="15dp" />
-                                <TextView
-                                    android:id="@+id/attachment_link_big_caption"
+
+                            <TextView
+                                    android:id="@+id/attachment_link_preview_caption"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:layout_alignParentBottom="true"
@@ -524,86 +444,152 @@
                                     android:textColor="@color/color_text_secondary"
                                     android:textSize="12sp"
                                     android:layout_marginStart="15dp"
-                                    android:layout_marginBottom="10dp"
+                                    android:layout_marginBottom="15dp"
                                     android:maxLines="1"
                                     android:ellipsize="end"
-                                    android:layout_marginEnd="15dp" />
+                                    android:layout_marginEnd="15dp"/>
+                        </RelativeLayout>
+
+                        <ImageView
+                                android:id="@+id/attachment_link_preview_photo"
+                                android:layout_height="wrap_content"
+                                android:layout_width="wrap_content"
+                                android:src="@drawable/ic_pageview_gray_36dp"
+                                android:layout_centerVertical="true"
+                                android:layout_alignParentStart="true"/>
+                    </RelativeLayout>
+
+                    <android.support.v7.widget.CardView
+                            android:id="@+id/attachment_link_big"
+                            android:layout_width="match_parent"
+                            android:layout_height="240dp"
+                            android:foreground="@drawable/selectable_effect"
+                            card_view:cardBackgroundColor="@color/cardview_light_background"
+                            card_view:cardElevation="1dp"
+                            card_view:cardCornerRadius="2dp"
+                            card_view:contentPadding="0dp"
+                            android:visibility="gone"
+                            android:layout_marginEnd="10dp"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginBottom="10dp"
+                            android:layout_marginTop="10dp">
+                        <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent">
+                            <ImageView
+                                    android:id="@+id/attachment_link_big_photo"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="160dp"
+                                    android:adjustViewBounds="true"
+                                    android:scaleType="centerCrop"
+                                    android:layout_alignParentTop="true"
+                                    android:layout_alignParentStart="true"/>
+                            <RelativeLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_alignParentStart="true"
+                                    android:layout_below="@+id/attachment_link_big_photo">
+                                <TextView
+                                        android:id="@+id/attachment_link_big_title"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:textStyle="normal|bold"
+                                        android:textColor="@color/color_text_primary"
+                                        android:layout_marginStart="15dp"
+                                        android:layout_marginTop="10dp"
+                                        android:maxLines="2"
+                                        android:ellipsize="end"
+                                        android:textSize="14sp"
+                                        android:layout_marginEnd="15dp"/>
+                                <TextView
+                                        android:id="@+id/attachment_link_big_caption"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_alignParentBottom="true"
+                                        android:layout_alignParentStart="true"
+                                        android:textColor="@color/color_text_secondary"
+                                        android:textSize="12sp"
+                                        android:layout_marginStart="15dp"
+                                        android:layout_marginBottom="10dp"
+                                        android:maxLines="1"
+                                        android:ellipsize="end"
+                                        android:layout_marginEnd="15dp"/>
                             </RelativeLayout>
                         </RelativeLayout>
                     </android.support.v7.widget.CardView>
                     <android.support.v7.widget.CardView
-                        android:id="@+id/attachment_link_small"
-                        android:layout_width="match_parent"
-                        android:layout_height="80dp"
-                        android:foreground="@drawable/selectable_effect"
-                        card_view:cardBackgroundColor="@color/cardview_light_background"
-                        card_view:cardElevation="1dp"
-                        card_view:cardCornerRadius="2dp"
-                        card_view:contentPadding="0dp"
-                        android:visibility="gone"
-                        android:layout_marginEnd="10dp"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginBottom="10dp">
-                        <RelativeLayout
+                            android:id="@+id/attachment_link_small"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent">
-                            <ImageView
-                                android:id="@+id/attachment_link_small_photo"
-                                android:layout_height="80dp"
-                                android:layout_width="80dp"
-                                android:adjustViewBounds="true"
-                                android:scaleType="centerCrop"/>
-                            <RelativeLayout
+                            android:layout_height="80dp"
+                            android:foreground="@drawable/selectable_effect"
+                            card_view:cardBackgroundColor="@color/cardview_light_background"
+                            card_view:cardElevation="1dp"
+                            card_view:cardCornerRadius="2dp"
+                            card_view:contentPadding="0dp"
+                            android:visibility="gone"
+                            android:layout_marginEnd="10dp"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginBottom="10dp">
+                        <RelativeLayout
                                 android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:layout_toEndOf="@+id/attachment_link_small_photo"
-                                android:background="@drawable/bg_top_white_border">
+                                android:layout_height="match_parent">
+                            <ImageView
+                                    android:id="@+id/attachment_link_small_photo"
+                                    android:layout_height="80dp"
+                                    android:layout_width="80dp"
+                                    android:adjustViewBounds="true"
+                                    android:scaleType="centerCrop"/>
+                            <RelativeLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_toEndOf="@+id/attachment_link_small_photo"
+                                    android:background="@drawable/bg_top_white_border">
 
                                 <TextView
-                                    android:id="@+id/attachment_link_small_title"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:textStyle="normal|bold"
-                                    android:textColor="@color/color_text_primary"
-                                    android:layout_marginStart="15dp"
-                                    android:layout_marginTop="5dp"
-                                    android:maxLines="3"
-                                    android:ellipsize="end"
-                                    android:textSize="14sp"/>
+                                        android:id="@+id/attachment_link_small_title"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:textStyle="normal|bold"
+                                        android:textColor="@color/color_text_primary"
+                                        android:layout_marginStart="15dp"
+                                        android:layout_marginTop="5dp"
+                                        android:maxLines="3"
+                                        android:ellipsize="end"
+                                        android:textSize="14sp"/>
 
                                 <TextView
-                                    android:id="@+id/attachment_link_small_caption"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:layout_alignParentBottom="true"
-                                    android:layout_alignParentStart="true"
-                                    android:textColor="@color/color_text_secondary"
-                                    android:textSize="12sp"
-                                    android:layout_marginStart="15dp"
-                                    android:layout_marginBottom="5dp"
-                                    android:maxLines="1"
-                                    android:ellipsize="end"/>
+                                        android:id="@+id/attachment_link_small_caption"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_alignParentBottom="true"
+                                        android:layout_alignParentStart="true"
+                                        android:textColor="@color/color_text_secondary"
+                                        android:textSize="12sp"
+                                        android:layout_marginStart="15dp"
+                                        android:layout_marginBottom="5dp"
+                                        android:maxLines="1"
+                                        android:ellipsize="end"/>
                             </RelativeLayout>
                         </RelativeLayout>
                     </android.support.v7.widget.CardView>
                 </RelativeLayout>
 
                 <RelativeLayout
-                    android:id="@+id/attachment_page_block"
-                    android:layout_width="match_parent"
-                    android:layout_height="80dp"
-                    android:layout_below="@id/attachment_link_group"
-                    android:paddingStart="20dp"
-                    android:paddingEnd="20dp"
-                    android:visibility="gone"
-                    android:foreground="@drawable/selectable_effect">
+                        android:id="@+id/attachment_page_block"
+                        android:layout_width="match_parent"
+                        android:layout_height="80dp"
+                        android:layout_below="@id/attachment_link_group"
+                        android:paddingStart="20dp"
+                        android:paddingEnd="20dp"
+                        android:visibility="gone"
+                        android:foreground="@drawable/selectable_effect">
 
-                        <RelativeLayout
+                    <RelativeLayout
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_toEndOf="@+id/attachment_page_photo">
 
-                            <TextView
+                        <TextView
                                 android:id="@+id/attachment_page_title"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -614,9 +600,9 @@
                                 android:maxLines="2"
                                 android:ellipsize="end"
                                 android:textSize="14sp"
-                                android:layout_marginEnd="15dp" />
+                                android:layout_marginEnd="15dp"/>
 
-                            <TextView
+                        <TextView
                                 android:id="@+id/attachment_page_caption"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -628,137 +614,137 @@
                                 android:layout_marginBottom="15dp"
                                 android:maxLines="1"
                                 android:ellipsize="end"
-                                android:layout_marginEnd="15dp" />
-                        </RelativeLayout>
+                                android:layout_marginEnd="15dp"/>
+                    </RelativeLayout>
 
-                        <ImageView
+                    <ImageView
                             android:id="@+id/attachment_page_photo"
                             android:layout_height="wrap_content"
                             android:layout_width="wrap_content"
                             android:src="@drawable/ic_pageview_gray_36dp"
                             android:layout_centerVertical="true"
-                            android:layout_alignParentStart="true" />
+                            android:layout_alignParentStart="true"/>
                 </RelativeLayout>
             </RelativeLayout>
 
             <RelativeLayout
-                android:id="@+id/signer_block"
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/attachment_block"
-                android:foreground="@drawable/selectable_effect"
-                android:visibility="gone">
+                    android:id="@+id/signer_block"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/attachment_block"
+                    android:foreground="@drawable/selectable_effect"
+                    android:visibility="gone">
 
 
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    card_view:srcCompat="@drawable/ic_account_circle_blue_24dp"
-                    android:id="@+id/signer_icon"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginBottom="10dp"
-                    android:layout_marginTop="10dp" />
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        card_view:srcCompat="@drawable/ic_account_circle_blue_24dp"
+                        android:id="@+id/signer_icon"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginTop="10dp"/>
 
                 <TextView
-                    android:id="@+id/signer_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_toEndOf="@+id/signer_icon"
-                    android:layout_marginStart="10dp"
-                    android:textStyle="normal|bold"
-                    android:textColor="@color/color_primary" />
+                        android:id="@+id/signer_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toEndOf="@+id/signer_icon"
+                        android:layout_marginStart="10dp"
+                        android:textStyle="normal|bold"
+                        android:textColor="@color/color_primary"/>
             </RelativeLayout>
 
             <LinearLayout
-                android:id="@+id/social_actions"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/signer_block"
-                android:orientation="horizontal"
-                android:background="@color/color_primary"
-                android:baselineAligned="false">
+                    android:id="@+id/social_actions"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/signer_block"
+                    android:orientation="horizontal"
+                    android:background="@color/color_primary"
+                    android:baselineAligned="false">
 
                 <RelativeLayout
-                    android:id="@+id/like_block"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:paddingBottom="10dp"
-                    android:paddingTop="10dp"
-                    android:foreground="?android:attr/selectableItemBackground">
+                        android:id="@+id/like_block"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:paddingBottom="10dp"
+                        android:paddingTop="10dp"
+                        android:foreground="?android:attr/selectableItemBackground">
                     <ImageView
-                        android:id="@+id/like_icon"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignBottom="@+id/likes_count"
-                        android:layout_alignTop="@+id/likes_count"
-                        android:contentDescription="@string/likes_counter"/>
+                            android:id="@+id/like_icon"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignBottom="@+id/likes_count"
+                            android:layout_alignTop="@+id/likes_count"
+                            android:contentDescription="@string/likes_counter"/>
                     <TextView
-                        android:id="@+id/likes_count"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/color_text"
-                        android:textAlignment="viewStart"
-                        android:layout_toEndOf="@+id/like_icon"
-                        android:layout_marginStart="10dp"
-                        android:textSize="16sp"/>
+                            android:id="@+id/likes_count"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/color_text"
+                            android:textAlignment="viewStart"
+                            android:layout_toEndOf="@+id/like_icon"
+                            android:layout_marginStart="10dp"
+                            android:textSize="16sp"/>
                 </RelativeLayout>
 
                 <RelativeLayout
-                    android:id="@+id/comment_block"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:paddingBottom="10dp"
-                    android:paddingTop="10dp"
-                    android:foreground="?android:attr/selectableItemBackground">
+                        android:id="@+id/comment_block"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:paddingBottom="10dp"
+                        android:paddingTop="10dp"
+                        android:foreground="?android:attr/selectableItemBackground">
                     <ImageView
-                        android:id="@+id/comment_icon"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignBottom="@+id/comments_count"
-                        android:layout_alignTop="@+id/comments_count"
-                        android:contentDescription="@string/comments_counter"/>
+                            android:id="@+id/comment_icon"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignBottom="@+id/comments_count"
+                            android:layout_alignTop="@+id/comments_count"
+                            android:contentDescription="@string/comments_counter"/>
                     <TextView
-                        android:id="@+id/comments_count"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/color_text"
-                        android:textAlignment="viewStart"
-                        android:layout_toEndOf="@+id/comment_icon"
-                        android:layout_marginStart="10dp"
-                        android:textSize="16sp"/>
+                            android:id="@+id/comments_count"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/color_text"
+                            android:textAlignment="viewStart"
+                            android:layout_toEndOf="@+id/comment_icon"
+                            android:layout_marginStart="10dp"
+                            android:textSize="16sp"/>
                 </RelativeLayout>
 
                 <RelativeLayout
-                    android:id="@+id/repost_block"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:paddingBottom="10dp"
-                    android:paddingTop="10dp"
-                    android:foreground="?android:attr/selectableItemBackground">
+                        android:id="@+id/repost_block"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:paddingBottom="10dp"
+                        android:paddingTop="10dp"
+                        android:foreground="?android:attr/selectableItemBackground">
                     <ImageView
-                        android:id="@+id/repost_icon"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignBottom="@+id/reposts_count"
-                        android:layout_alignTop="@+id/reposts_count"
-                        android:contentDescription="@string/repost_counter"/>
+                            android:id="@+id/repost_icon"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignBottom="@+id/reposts_count"
+                            android:layout_alignTop="@+id/reposts_count"
+                            android:contentDescription="@string/repost_counter"/>
                     <TextView
-                        android:id="@+id/reposts_count"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/color_text"
-                        android:textAlignment="viewStart"
-                        android:layout_toEndOf="@+id/repost_icon"
-                        android:layout_marginStart="10dp"
-                        android:textSize="16sp"/>
+                            android:id="@+id/reposts_count"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/color_text"
+                            android:textAlignment="viewStart"
+                            android:layout_toEndOf="@+id/repost_icon"
+                            android:layout_marginStart="10dp"
+                            android:textSize="16sp"/>
                 </RelativeLayout>
             </LinearLayout>
 

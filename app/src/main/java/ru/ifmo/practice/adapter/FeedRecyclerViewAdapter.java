@@ -141,8 +141,9 @@ public class FeedRecyclerViewAdapter
         @BindView(R.id.attachment_video_count_block)   CardView        attachmentVideoCountBlock;
         @BindView(R.id.attachment_video_platform_block)CardView        attachmentVideoPlatformBlock;
         @BindView(R.id.social_actions)                 LinearLayout    socialAcionsLayout;
-        private                                        Context         mContext;
-        private                                        JSONObject      mResponse;
+
+        private Context    mContext;
+        private JSONObject mResponse;
 
         DataObjectHolder(View itemView) {
             super(itemView);

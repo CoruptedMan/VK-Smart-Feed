@@ -7,11 +7,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.*;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import com.vk.sdk.api.VKError;
 import com.vk.sdk.api.VKParameters;
 import com.vk.sdk.api.VKRequest;
@@ -87,29 +86,20 @@ public class NoteCommentsRecyclerViewAdapter
 
     final static class DataObjectHolder extends RecyclerView.ViewHolder {
         private JSONObject mResponse;
-        private TextView authorNameText;
-        private TextView contextText;
-        private TextView dateText;
-        private TextView likesCountText;
-        private ImageView likeIcon;
-        private ImageView authorPhoto;
-        private RelativeLayout likeBlock;
-        private RelativeLayout mainLayout;
-        private CardView authorInfoBlock;
+        @BindView(R.id.comment_author_name) TextView authorNameText;
+        @BindView(R.id.comment_context) TextView contextText;
+        @BindView(R.id.comment_date) TextView dateText;
+        @BindView(R.id.comment_likes_count) TextView likesCountText;
+        @BindView(R.id.comment_like_icon) ImageView likeIcon;
+        @BindView(R.id.comment_author_photo) ImageView authorPhoto;
+        @BindView(R.id.comment_like_block) RelativeLayout likeBlock;
+        @BindView(R.id.comment_view) RelativeLayout mainLayout;
+        @BindView(R.id.comment_author_info) CardView authorInfoBlock;
 
         DataObjectHolder(View itemView) {
             super(itemView);
-
+            ButterKnife.bind(this, itemView);
             final Context context = itemView.getContext();
-            authorNameText = (TextView) itemView.findViewById(R.id.comment_author_name);
-            contextText = (TextView) itemView.findViewById(R.id.comment_context);
-            dateText = (TextView) itemView.findViewById(R.id.comment_date);
-            likesCountText = (TextView) itemView.findViewById(R.id.comment_likes_count);
-            authorPhoto = (ImageView) itemView.findViewById(R.id.comment_author_photo);
-            likeIcon = (ImageView) itemView.findViewById(R.id.comment_like_icon);
-            likeBlock = (RelativeLayout) itemView.findViewById(R.id.comment_like_block);
-            mainLayout = (RelativeLayout) itemView.findViewById(R.id.comment_view);
-            authorInfoBlock = (CardView) itemView.findViewById(R.id.comment_author_info);
 
             mainLayout.setOnClickListener(new View.OnClickListener() {
                 @Override

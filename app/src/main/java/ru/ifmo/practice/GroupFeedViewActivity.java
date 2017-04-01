@@ -5,19 +5,24 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ArrayAdapter;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import com.github.ksoichiro.android.observablescrollview.ObservableListView;
+import com.github.ksoichiro.android.observablescrollview.ObservableScrollView;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
 import com.github.ksoichiro.android.observablescrollview.ScrollState;
 
 import java.util.ArrayList;
 
 public class GroupFeedViewActivity extends AppCompatActivity implements ObservableScrollViewCallbacks {
+    @BindView(R.id.group_feed_olw) ObservableListView listView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_feed);
+        ButterKnife.bind(this);
 
-        ObservableListView listView = (ObservableListView) findViewById(R.id.group_feed_olw);
         listView.setScrollViewCallbacks(this);
 
         // TODO These are dummy. Populate your data here.
