@@ -61,7 +61,6 @@ import ru.ifmo.practice.model.span.ReferenceSpan;
 import ru.ifmo.practice.util.AppConsts;
 
 import static com.vk.sdk.VKUIHelper.getApplicationContext;
-import static ru.ifmo.practice.R.id.context;
 
 public class FeedRecyclerViewAdapter
         extends RecyclerView.Adapter {
@@ -86,61 +85,61 @@ public class FeedRecyclerViewAdapter
             extends RecyclerView.ViewHolder
             implements TextSwitcher.ViewFactory,
             RepostNoteDialogFragment.RepostNoteDialogListener {
-        @BindView(R.id.see_more)                       Button          seeMoreText;
-        @BindView(R.id.source_name)                    TextView        sourceNameText;
-        @BindView(R.id.note_date)                      TextView        dateText;
-        @BindView(R.id.add_note)                       TextView        addNewNoteText;
-        @BindView(R.id.likes_count)                    TextView        likesCountText;
-        @BindView(R.id.comments_count)                 TextView        commentsCountText;
-        @BindView(R.id.reposts_count)                  TextView        repostsCountText;
-        @BindView(R.id.attachment_link_big_title)      TextView        attachedLinkBigTitleText;
-        @BindView(R.id.attachment_link_big_caption)    TextView        attachedLinkBigCaptionText;
-        @BindView(R.id.attachment_link_small_title)    TextView        attachedLinkSmallTitleText;
-        @BindView(R.id.attachment_link_small_caption)  TextView        attachedLinkSmallCaptionText;
-        @BindView(R.id.attachment_link_preview_title)  TextView        attachedLinkPreviewTitleText;
-        @BindView(R.id.attachment_link_preview_caption)TextView        attachedLinkPreviewCaptionText;
-        @BindView(R.id.attachment_photo_count)         TextView        attachmentPhotoCountText;
-        @BindView(R.id.attachment_video_count)         TextView        attachmentVideoCountText;
-        @BindView(R.id.attachment_video_time)          TextView        attachmentVideoTimeText;
-        @BindView(R.id.attachment_video_platform)      TextView        attachmentVideoPlatformText;
-        @BindView(R.id.attachment_video_title)         TextView        attachmentVideoTitleText;
-        @BindView(R.id.attachment_video_views_count)   TextView        attachmentVideoViewsText;
-        @BindView(R.id.signer_name)                    TextView        signerNameText;
-        @BindView(R.id.context)                        TextView        contextText;
-        @BindView(R.id.attachment_page_title)          TextView        attachmentPageTitle;
-        @BindView(R.id.attachment_page_caption)        TextView        attachmentPageCaption;
-        @BindView(R.id.like_icon)                      ImageView       likeIcon;
-        @BindView(R.id.comment_icon)                   ImageView       commentIcon;
-        @BindView(R.id.repost_icon)                    ImageView       repostIcon;
-        @BindView(R.id.options)                        ImageView       optionsIcon;
-        @BindView(R.id.source_photo)                   ImageView       sourcePhoto;
-        @BindView(R.id.attachment_photo)               ImageView       attachedPhoto;
-        @BindView(R.id.attachment_video)               ImageView       attachedVideo;
-        @BindView(R.id.attachment_link_big_photo)      ImageView       attachedLinkBigPhoto;
-        @BindView(R.id.attachment_link_small_photo)    ImageView       attachedLinkSmallPhoto;
-        @BindView(R.id.attachment_link_preview_photo)  ImageView       attachedLinkPreviewPhoto;
-        @BindView(R.id.attachment_photo_count_icon)    ImageView       attachmentPhotoCountIcon;
-        @BindView(R.id.attachment_video_count_icon)    ImageView       attachmentVideoCountIcon;
-        @BindView(R.id.attachment_page_photo)          ImageView       attachmentPagePhoto;
-        @BindView(R.id.attachment_audio_icon)          ImageView       attachmentAudioIcon;
-        @BindView(R.id.signer_icon)                    ImageView       signerIcon;
-        @BindView(R.id.comment_block)                  RelativeLayout  commentBlock;
-        @BindView(R.id.repost_block)                   RelativeLayout  repostBlock;
-        @BindView(R.id.note_relative_layout)           RelativeLayout  cardLayout;
-        @BindView(R.id.signer_block)                   RelativeLayout  signerBlock;
-        @BindView(R.id.attachment_link_group)          RelativeLayout  attachedLinkGroupBlock;
-        @BindView(R.id.attachment_link_preview)        RelativeLayout  attachedLinkPreviewBlock;
-        @BindView(R.id.attachment_video_block)         RelativeLayout  attachedVideoBlock;
-        @BindView(R.id.attachment_page_block)          RelativeLayout  attachedPageBlock;
-        @BindView(R.id.attachment_audio_block)         RelativeLayout  attachedAudioBlock;
-        @BindView(R.id.source_info)                    CardView        sourceInfoBlock;
-        @BindView(R.id.options_block)                  CardView        optionsBlock;
-        @BindView(R.id.attachment_link_big)            CardView        attachedLinkBigBlock;
-        @BindView(R.id.attachment_link_small)          CardView        attachedLinkSmallBlock;
-        @BindView(R.id.attachment_photo_count_block)   CardView        attachmentPhotoCountBlock;
-        @BindView(R.id.attachment_video_count_block)   CardView        attachmentVideoCountBlock;
-        @BindView(R.id.attachment_video_platform_block)CardView        attachmentVideoPlatformBlock;
-        @BindView(R.id.social_actions)                 LinearLayout    socialAcionsLayout;
+        @BindView(R.id.see_more)                        Button          seeMoreText;
+        @BindView(R.id.source_name)                     TextView        sourceNameText;
+        @BindView(R.id.note_date)                       TextView        dateText;
+        @BindView(R.id.add_note)                        TextView        addNewNoteText;
+        @BindView(R.id.likes_count)                     TextView        likesCountText;
+        @BindView(R.id.comments_count)                  TextView        commentsCountText;
+        @BindView(R.id.reposts_count)                   TextView        repostsCountText;
+        @BindView(R.id.attachment_link_big_title)       TextView        attachedLinkBigTitleText;
+        @BindView(R.id.attachment_link_big_caption)     TextView        attachedLinkBigCaptionText;
+        @BindView(R.id.attachment_link_small_title)     TextView        attachedLinkSmallTitleText;
+        @BindView(R.id.attachment_link_small_caption)   TextView        attachedLinkSmallCaptionText;
+        @BindView(R.id.attachment_link_preview_title)   TextView        attachedLinkPreviewTitleText;
+        @BindView(R.id.attachment_link_preview_caption) TextView        attachedLinkPreviewCaptionText;
+        @BindView(R.id.attachment_photo_count)          TextView        attachmentPhotoCountText;
+        @BindView(R.id.attachment_video_count)          TextView        attachmentVideoCountText;
+        @BindView(R.id.attachment_video_time)           TextView        attachmentVideoTimeText;
+        @BindView(R.id.attachment_video_platform)       TextView        attachmentVideoPlatformText;
+        @BindView(R.id.attachment_video_title)          TextView        attachmentVideoTitleText;
+        @BindView(R.id.attachment_video_views_count)    TextView        attachmentVideoViewsText;
+        @BindView(R.id.signer_name)                     TextView        signerNameText;
+        @BindView(R.id.context)                         TextView        contextText;
+        @BindView(R.id.attachment_page_title)           TextView        attachmentPageTitle;
+        @BindView(R.id.attachment_page_caption)         TextView        attachmentPageCaption;
+        @BindView(R.id.like_icon)                       ImageView       likeIcon;
+        @BindView(R.id.comment_icon)                    ImageView       commentIcon;
+        @BindView(R.id.repost_icon)                     ImageView       repostIcon;
+        @BindView(R.id.options)                         ImageView       optionsIcon;
+        @BindView(R.id.source_photo)                    ImageView       sourcePhoto;
+        @BindView(R.id.attachment_photo)                ImageView       attachedPhoto;
+        @BindView(R.id.attachment_video)                ImageView       attachedVideo;
+        @BindView(R.id.attachment_link_big_photo)       ImageView       attachedLinkBigPhoto;
+        @BindView(R.id.attachment_link_small_photo)     ImageView       attachedLinkSmallPhoto;
+        @BindView(R.id.attachment_link_preview_photo)   ImageView       attachedLinkPreviewPhoto;
+        @BindView(R.id.attachment_photo_count_icon)     ImageView       attachmentPhotoCountIcon;
+        @BindView(R.id.attachment_video_count_icon)     ImageView       attachmentVideoCountIcon;
+        @BindView(R.id.attachment_page_photo)           ImageView       attachmentPagePhoto;
+        @BindView(R.id.attachment_audio_icon)           ImageView       attachmentAudioIcon;
+        @BindView(R.id.signer_icon)                     ImageView       signerIcon;
+        @BindView(R.id.comment_block)                   RelativeLayout  commentBlock;
+        @BindView(R.id.repost_block)                    RelativeLayout  repostBlock;
+        @BindView(R.id.note_relative_layout)            RelativeLayout  cardLayout;
+        @BindView(R.id.signer_block)                    RelativeLayout  signerBlock;
+        @BindView(R.id.attachment_link_group)           RelativeLayout  attachedLinkGroupBlock;
+        @BindView(R.id.attachment_link_preview)         RelativeLayout  attachedLinkPreviewBlock;
+        @BindView(R.id.attachment_video_block)          RelativeLayout  attachedVideoBlock;
+        @BindView(R.id.attachment_page_block)           RelativeLayout  attachedPageBlock;
+        @BindView(R.id.attachment_audio_block)          RelativeLayout  attachedAudioBlock;
+        @BindView(R.id.source_info)                     CardView        sourceInfoBlock;
+        @BindView(R.id.options_block)                   CardView        optionsBlock;
+        @BindView(R.id.attachment_link_big)             CardView        attachedLinkBigBlock;
+        @BindView(R.id.attachment_link_small)           CardView        attachedLinkSmallBlock;
+        @BindView(R.id.attachment_photo_count_block)    CardView        attachmentPhotoCountBlock;
+        @BindView(R.id.attachment_video_count_block)    CardView        attachmentVideoCountBlock;
+        @BindView(R.id.attachment_video_platform_block) CardView        attachmentVideoPlatformBlock;
+        @BindView(R.id.social_actions)                  LinearLayout    socialAcionsLayout;
 
         private Context    mContext;
         private JSONObject mResponse;
@@ -230,8 +229,7 @@ public class FeedRecyclerViewAdapter
                                 : R.drawable.ic_favorite_white_24dp));
             }
             else {
-                Toast.makeText(mContext, mContext.getResources().getString(R.string.no_internet),Toast.LENGTH_SHORT)
-                        .show();
+                Toast.makeText(mContext, mContext.getResources().getString(R.string.no_internet),Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -272,11 +270,11 @@ public class FeedRecyclerViewAdapter
         }
     }
 
-    private final static class ConnectionLostViewHolder
+    final static class ConnectionLostViewHolder
             extends RecyclerView.ViewHolder {
-        @BindView(R.id.connection_lost_description) TextView descriptionText;
-        @BindView(R.id.connection_lost_button) Button refreshButton;
-        @BindView(R.id.connection_lost_image) ImageView icon;
+        @BindView(R.id.connection_lost_description) TextView    descriptionText;
+        @BindView(R.id.connection_lost_button)      Button      refreshButton;
+        @BindView(R.id.connection_lost_image)       ImageView   icon;
 
         ConnectionLostViewHolder(View v) {
             super(v);
