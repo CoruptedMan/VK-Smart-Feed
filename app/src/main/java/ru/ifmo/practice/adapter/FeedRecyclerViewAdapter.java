@@ -123,6 +123,7 @@ public class FeedRecyclerViewAdapter
         @BindView(R.id.attachment_page_photo)           ImageView       attachmentPagePhoto;
         @BindView(R.id.attachment_audio_icon)           ImageView       attachmentAudioIcon;
         @BindView(R.id.signer_icon)                     ImageView       signerIcon;
+        //@BindView(R.id.note_relative_layout)                            RelativeLayout        note;
         @BindView(R.id.comment_block)                   RelativeLayout  commentBlock;
         @BindView(R.id.repost_block)                    RelativeLayout  repostBlock;
         @BindView(R.id.note_relative_layout)            RelativeLayout  cardLayout;
@@ -461,6 +462,7 @@ public class FeedRecyclerViewAdapter
             if (tmpNote.getAttachedLink() != null) {
                 ((DataObjectHolder) holder).attachedLinkGroupBlock.setVisibility(View.VISIBLE);
                 switch (tmpNote.getAttachedLink().getPhotoType()) {
+                    // link type: preview
                     case 0:
                         ((DataObjectHolder) holder).attachedLinkBigBlock.setVisibility(View.GONE);
                         ((DataObjectHolder) holder).attachedLinkSmallBlock.setVisibility(View.GONE);
@@ -487,6 +489,7 @@ public class FeedRecyclerViewAdapter
                             }
                         });
                         break;
+                    // link type: small
                     case 1:
                         ((DataObjectHolder) holder).attachedLinkPreviewBlock.setVisibility(View.GONE);
                         ((DataObjectHolder) holder).attachedLinkBigBlock.setVisibility(View.GONE);
@@ -508,6 +511,7 @@ public class FeedRecyclerViewAdapter
                             }
                         });
                         break;
+                    // link type: big
                     case 2:
                         ((DataObjectHolder) holder).attachedLinkPreviewBlock.setVisibility(View.GONE);
                         ((DataObjectHolder) holder).attachedLinkSmallBlock.setVisibility(View.GONE);
