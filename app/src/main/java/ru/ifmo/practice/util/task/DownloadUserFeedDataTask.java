@@ -338,45 +338,47 @@ public class DownloadUserFeedDataTask extends AsyncTask<VKRequest, Void, ArrayLi
                                 linkIsExternal = true;
                             }
                             int linkPhotoType = 0;
-                            if (!mResponse
+                            if (mResponse
+                                    .getJSONArray("items")
+                                    .getJSONObject(index)
+                                    .getJSONArray("attachments")
+                                    .getJSONObject(i)
+                                    .getJSONObject("link")
+                                    .has("image_big")) {
+                                linkPhotoUrl = mResponse
+                                        .getJSONArray("items")
+                                        .getJSONObject(index)
+                                        .getJSONArray("attachments")
+                                        .getJSONObject(i)
+                                        .getJSONObject("link")
+                                        .get("image_big").toString();
+                                linkPhotoType = 2;
+                            } else if (mResponse
+                                    .getJSONArray("items")
+                                    .getJSONObject(index)
+                                    .getJSONArray("attachments")
+                                    .getJSONObject(i)
+                                    .getJSONObject("link")
+                                    .has("image_src")) {
+                                linkPhotoUrl = mResponse
+                                        .getJSONArray("items")
+                                        .getJSONObject(index)
+                                        .getJSONArray("attachments")
+                                        .getJSONObject(i)
+                                        .getJSONObject("link")
+                                        .get("image_src").toString();
+                                linkPhotoType = 1;
+                            }
+                            // TODO !!!
+                            /*else if (!mResponse
                                     .getJSONArray("items")
                                     .getJSONObject(index)
                                     .getJSONArray("attachments")
                                     .getJSONObject(i)
                                     .getJSONObject("link")
                                     .has("preview_page")) {
-                                if (mResponse
-                                        .getJSONArray("items")
-                                        .getJSONObject(index)
-                                        .getJSONArray("attachments")
-                                        .getJSONObject(i)
-                                        .getJSONObject("link")
-                                        .has("image_big")) {
-                                    linkPhotoUrl = mResponse
-                                            .getJSONArray("items")
-                                            .getJSONObject(index)
-                                            .getJSONArray("attachments")
-                                            .getJSONObject(i)
-                                            .getJSONObject("link")
-                                            .get("image_big").toString();
-                                    linkPhotoType = 2;
-                                } else if (mResponse
-                                        .getJSONArray("items")
-                                        .getJSONObject(index)
-                                        .getJSONArray("attachments")
-                                        .getJSONObject(i)
-                                        .getJSONObject("link")
-                                        .has("image_src")) {
-                                    linkPhotoUrl = mResponse
-                                            .getJSONArray("items")
-                                            .getJSONObject(index)
-                                            .getJSONArray("attachments")
-                                            .getJSONObject(i)
-                                            .getJSONObject("link")
-                                            .get("image_src").toString();
-                                    linkPhotoType = 1;
-                                }
-                            }
+
+                            }*/
                             link = new Link(linkUrl,
                                     linkTitle,
                                     linkDescription,
