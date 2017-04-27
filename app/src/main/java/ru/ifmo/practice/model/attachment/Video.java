@@ -1,4 +1,4 @@
-package ru.ifmo.practice.model.attachments;
+package ru.ifmo.practice.model.attachment;
 
 public class Video {
     private long id;
@@ -12,6 +12,7 @@ public class Video {
     private String platform;
     private String accessKey;
     private Photo photo;
+    private boolean isLive;
 
     public Video(long pId,
                  long pOwnerId,
@@ -23,7 +24,8 @@ public class Video {
                  String pDescription,
                  String pPlatform,
                  String pAccessKey,
-                 Photo pPhoto) {
+                 Photo pPhoto,
+                 boolean pLive) {
         id = pId;
         ownerId = pOwnerId;
         date = pDate;
@@ -35,14 +37,11 @@ public class Video {
         platform = pPlatform;
         accessKey = pAccessKey;
         photo = pPhoto;
+        isLive = pLive;
     }
 
     public long getOwnerId() {
         return ownerId;
-    }
-
-    public void setOwnerId(long pOwnerId) {
-        ownerId = pOwnerId;
     }
 
     public long getId() {
@@ -57,32 +56,12 @@ public class Video {
         return viewsCount;
     }
 
-    public void setViewsCount(int pViewsCount) {
-        viewsCount = pViewsCount;
-    }
-
-    public long getDate() {
-        return date;
-    }
-
-    public void setDate(long pDate) {
-        date = pDate;
-    }
-
     public int getDuration() {
         return duration;
     }
 
     public void setDuration(int pDuration) {
         duration = pDuration;
-    }
-
-    public int getCommentsCount() {
-        return commentsCount;
-    }
-
-    public void setCommentsCount(int pCommentsCount) {
-        commentsCount = pCommentsCount;
     }
 
     public String getTitle() {
@@ -93,35 +72,23 @@ public class Video {
         title = pTitle;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String pDescription) {
-        description = pDescription;
-    }
-
     public Photo getPhoto() {
         return photo;
-    }
-
-    public void setPhoto(Photo pPhoto) {
-        photo = pPhoto;
     }
 
     public String getPlatform() {
         return platform;
     }
 
-    public void setPlatform(String pPlatform) {
-        platform = pPlatform;
-    }
-
     public String getAccessKey() {
         return accessKey;
     }
 
-    public void setAccessKey(String pAccessKey) {
-        accessKey = pAccessKey;
+    public boolean isLive() {
+        return isLive;
+    }
+
+    public void setLive(boolean pLive) {
+        isLive = pLive;
     }
 }

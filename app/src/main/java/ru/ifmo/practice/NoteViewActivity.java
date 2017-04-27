@@ -36,7 +36,7 @@ import java.util.concurrent.ExecutionException;
 
 import ru.ifmo.practice.model.Comment;
 import ru.ifmo.practice.model.Note;
-import ru.ifmo.practice.model.attachments.Photo;
+import ru.ifmo.practice.model.attachment.Photo;
 import ru.ifmo.practice.adapter.NoteCommentsRecyclerViewAdapter;
 
 public class NoteViewActivity extends AppCompatActivity {

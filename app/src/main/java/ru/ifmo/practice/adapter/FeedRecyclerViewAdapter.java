@@ -123,7 +123,6 @@ public class FeedRecyclerViewAdapter
         @BindView(R.id.attachment_page_photo)           ImageView       attachmentPagePhoto;
         @BindView(R.id.attachment_audio_icon)           ImageView       attachmentAudioIcon;
         @BindView(R.id.signer_icon)                     ImageView       signerIcon;
-        //@BindView(R.id.note_relative_layout)                            RelativeLayout        note;
         @BindView(R.id.comment_block)                   RelativeLayout  commentBlock;
         @BindView(R.id.repost_block)                    RelativeLayout  repostBlock;
         @BindView(R.id.note_relative_layout)            RelativeLayout  cardLayout;
@@ -166,14 +165,17 @@ public class FeedRecyclerViewAdapter
                     }
                 }
             };
-            final RepostNoteDialogFragment dialog = new RepostNoteDialogFragment();
-            dialog.setListener(this);
+            final RepostNoteDialogFragment.RepostNoteDialogListener dialogListener = this;
             repostBlock.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Bundle args = new Bundle();
                     args.putLong("source_id", -mDataSet.get(getAdapterPosition()).getSourceId());
                     args.putLong("object_id", mDataSet.get(getAdapterPosition()).getId());
+                    args.putBoolean("is_reposted", mDataSet.get(getAdapterPosition()).isUserReposted());
+                    System.out.println("from FRVA: " + mDataSet.get(getAdapterPosition()).isUserReposted());
+                    RepostNoteDialogFragment dialog = new RepostNoteDialogFragment();
+                    dialog.setListener(dialogListener);
                     dialog.setArguments(args);
                     dialog.show(mActivity.getFragmentManager(), "");
                 }
@@ -188,7 +190,12 @@ public class FeedRecyclerViewAdapter
                             R.anim.slide_out_right);
                 }
             });
-            cardLayout.setOnClickListener(openNoteByClick);
+            cardLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View pView) {
+                    // TODO open some options or smth.
+                }
+            });
             commentBlock.setOnClickListener(openNoteByClick);
             optionsBlock.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -251,10 +258,24 @@ public class FeedRecyclerViewAdapter
                         VKSmartFeedApplication.getContext().getResources(),
                         R.drawable.ic_share_pressed_24dp,
                         null));
+                likeIcon.setImageDrawable(ResourcesCompat.getDrawable(
+                        VKSmartFeedApplication.getContext().getResources(),
+                        R.drawable.ic_favorite_pressed_24dp,
+                        null));
                 repostsCountText.setText(optimizeBigValues(repostCount));
                 likesCountText.setText(optimizeBigValues(likesCount));
+                mDataSet.get(getAdapterPosition()).setUserReposted(true);
             }
             else if (resultCode == 2) {
+                Toast.makeText(mContext, "Запись была удалена с вашей страницы.",
+                        Toast.LENGTH_LONG).show();
+                repostIcon.setImageDrawable(ResourcesCompat.getDrawable(
+                        VKSmartFeedApplication.getContext().getResources(),
+                        R.drawable.ic_share_white_24dp,
+                        null));
+                mDataSet.get(getAdapterPosition()).setUserReposted(false);
+            }
+            else if (resultCode == 3) {
                 Toast.makeText(mContext, mContext.getResources().getString(R.string.no_internet),
                         Toast.LENGTH_SHORT).show();
             }
@@ -346,7 +367,7 @@ public class FeedRecyclerViewAdapter
             ((DataObjectHolder) holder).contextText.setVisibility(tmpNote.getContext().equals("")
                     ? View.GONE
                     : View.VISIBLE);
-            ((DataObjectHolder) holder).seeMoreText.setVisibility(tmpNote.getContextPreview().equals("")
+            ((DataObjectHolder) holder).seeMoreText.setVisibility(tmpNote.getContextPreview().equals("") && !tmpNote.isExpanded()
                 ? View.GONE
                 : View.VISIBLE);
             ((DataObjectHolder) holder).seeMoreText.setOnClickListener(new View.OnClickListener() {
@@ -354,6 +375,7 @@ public class FeedRecyclerViewAdapter
                 public void onClick(View v) {
                     ((DataObjectHolder) holder).contextText.setText(getSpannableString(tmpNote.getContext()));
                     ((DataObjectHolder) holder).seeMoreText.setVisibility(View.GONE);
+                    tmpNote.setExpanded(true);
                 }
             });
             ((DataObjectHolder) holder).contextText.setText(((DataObjectHolder) holder).seeMoreText.getVisibility() == View.VISIBLE
@@ -410,9 +432,13 @@ public class FeedRecyclerViewAdapter
                     ((DataObjectHolder) holder).attachmentVideoPlatformText.setText(tmpNote
                             .getAttachmentsVideos().get(0).getPlatform());
                 }
-
-                ((DataObjectHolder) holder).attachmentVideoTimeText.setText(convertSecondsToReadableTime(tmpNote
-                        .getAttachmentsVideos().get(0).getDuration()));
+                if (tmpNote.getAttachmentsVideos().get(0).getDuration() == 0 &&
+                        tmpNote.getAttachmentsVideos().get(0).isLive()) {
+                    ((DataObjectHolder) holder).attachmentVideoTimeText.setText("LIVE");
+                } else {
+                    ((DataObjectHolder) holder).attachmentVideoTimeText.setText(convertSecondsToReadableTime(tmpNote
+                            .getAttachmentsVideos().get(0).getDuration()));
+                }
                 ((DataObjectHolder) holder).attachmentVideoTitleText.setText(tmpNote
                         .getAttachmentsVideos().get(0).getTitle());
                 ((DataObjectHolder) holder).attachmentVideoViewsText.setText(String.valueOf(tmpNote
@@ -719,10 +745,19 @@ public class FeedRecyclerViewAdapter
                     mContext));
         }
         while (linkMatcher.find()) {
-            spans.add(new LinkSpan(linkMatcher.start(),
-                    linkMatcher.end(),
-                    linkMatcher.group(),
-                    mContext));
+            LinkSpan span;
+            if (inputString.charAt(linkMatcher.start()) == '\n' || inputString.charAt(linkMatcher.start()) == ' ') {
+                span = new LinkSpan(linkMatcher.start() + 1,
+                        linkMatcher.end(),
+                        linkMatcher.group().substring(1),
+                        mContext);
+            } else {
+                span = new LinkSpan(linkMatcher.start(),
+                        linkMatcher.end(),
+                        linkMatcher.group(),
+                        mContext);
+            }
+            spans.add(span);
         }
         while (emailMatcher.find()) {
             spans.add(new EmailSpan(emailMatcher.start(),

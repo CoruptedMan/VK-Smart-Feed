@@ -14,46 +14,45 @@
         android:paddingStart="20dp"
         android:paddingEnd="20dp"
         android:id="@+id/repost_dialog_title" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:text="@string/on_my_wall"
-        android:textSize="16sp"
-        android:textColor="@color/color_text_primary"
-        android:gravity="center_vertical"
-        android:layout_height="wrap_content"
-        android:paddingStart="20dp"
-        android:paddingEnd="20dp"
-        android:paddingBottom="15dp"
-        android:paddingTop="15dp"
-        android:foreground="@drawable/selectable_effect"
-        android:id="@+id/repost_dialog_my_wall" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:text="@string/in_group"
-        android:textSize="16sp"
-        android:textColor="@color/color_text_primary"
-        android:gravity="center_vertical"
-        android:layout_height="wrap_content"
-        android:paddingStart="20dp"
-        android:paddingEnd="20dp"
-        android:paddingBottom="15dp"
-        android:paddingTop="15dp"
-        android:foreground="@drawable/selectable_effect"
-        android:id="@+id/repost_dialog_group" />
-
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="textMultiLine"
-        android:ems="10"
-        android:id="@+id/repost_dialog_message"
-        android:hint="@string/add_message"
-        android:textSize="16sp"
-        android:textColor="@color/color_text_primary"
-        android:minLines="2"
-        android:layout_marginEnd="20dp"
-        android:layout_marginStart="20dp"
-        android:gravity="top|center_vertical" />
+	
+	<Button
+			android:text="@string/on_my_wall"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:textAllCaps="false"
+			android:id="@+id/repost_dialog_my_wall"
+			style="@style/Widget.AppCompat.Button.Borderless"
+			android:textAlignment="viewStart"
+			android:textSize="16sp"
+			android:paddingBottom="15dp"
+			android:paddingEnd="20dp"
+			android:paddingStart="20dp"
+			android:paddingTop="15dp" />
+	<Button
+			android:text="@string/in_group"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:textAllCaps="false"
+			android:id="@+id/repost_dialog_group"
+			style="@style/Widget.AppCompat.Button.Borderless"
+			android:textAlignment="viewStart"
+			android:textSize="16sp"
+			android:paddingBottom="15dp"
+			android:paddingEnd="20dp"
+			android:paddingStart="20dp"
+			android:paddingTop="15dp" />
+	
+	<EditText
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:inputType="textMultiLine"
+			android:ems="10"
+			android:id="@+id/repost_dialog_message"
+			android:hint="@string/add_message"
+			android:textSize="16sp"
+			android:textColor="@color/color_text_primary"
+			android:minLines="2"
+			android:layout_marginEnd="15dp"
+			android:layout_marginStart="15dp"
+			android:gravity="top|center_vertical" />
 </LinearLayout>

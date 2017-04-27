@@ -18,7 +18,6 @@
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
-
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
@@ -28,7 +27,15 @@
             android:theme="@style/VK.Transparent"/>
         <activity
             android:name=".FeedActivity"
-            android:theme="@style/AppTheme.NoActionBarWithStatusBar"/>
+            android:theme="@style/AppTheme.NoActionBarWithStatusBar" >
+            <intent-filter android:autoVerify="true">
+	            <action android:name="android.intent.action.VIEW" />
+	            <category android:name="android.intent.category.DEFAULT" />
+	            <category android:name="android.intent.category.BROWSABLE" />
+	            <data android:scheme="http" android:host="www.vk.com" />
+	            <data android:scheme="https" android:host="m.vk.com" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".NoteViewActivity"
             android:theme="@style/AppTheme.NoActionBarWithStatusBar" />

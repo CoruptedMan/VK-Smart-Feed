@@ -33,8 +33,9 @@ public class LinkSpan extends MyClickableSpan {
 
     @Override
     public void onClick(View widget) {
-        VKRequest request = new VKRequest("utils.checkLink",
-                VKParameters.from("url", getString()));
+        System.out.println(this.toString());
+        VKRequest request = new VKRequest("utils.checkLink", VKParameters.from("url", getString()));
+        System.out.println(request.toString());
         request.executeSyncWithListener(new VKRequest.VKRequestListener() {
             @Override
             public void onComplete(VKResponse response) {
@@ -44,15 +45,15 @@ public class LinkSpan extends MyClickableSpan {
                     pE.printStackTrace();
                 }
             }
-
             @Override
             public void onError(VKError error) {
                 Log.e("checkLink", error.toString());
             }
         });
-        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(parsedUrl));
+        System.out.println(getString() + " | " + parsedUrl);
+        /*Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(parsedUrl));
         browserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        getContext().startActivity(browserIntent);
+        getContext().startActivity(browserIntent);*/
     }
 
     @Override

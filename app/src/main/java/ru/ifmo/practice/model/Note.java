@@ -2,10 +2,10 @@ package ru.ifmo.practice.model;
 
 import java.util.ArrayList;
 
-import ru.ifmo.practice.model.attachments.Link;
-import ru.ifmo.practice.model.attachments.Page;
-import ru.ifmo.practice.model.attachments.Photo;
-import ru.ifmo.practice.model.attachments.Video;
+import ru.ifmo.practice.model.attachment.Link;
+import ru.ifmo.practice.model.attachment.Page;
+import ru.ifmo.practice.model.attachment.Photo;
+import ru.ifmo.practice.model.attachment.Video;
 
 public class Note {
     private int                 likesCount;
@@ -25,6 +25,7 @@ public class Note {
     private boolean             canComment;
     private boolean             userReposted;
     private boolean             isAudioAttached;
+    private boolean             expanded;
     private ArrayList<Photo>    attachmentsPhotos;
     private ArrayList<Video>    attachmentsVideos;
 
@@ -156,6 +157,18 @@ public class Note {
 
     public boolean isUserReposted() {
         return userReposted;
+    }
+
+    public boolean isExpanded() {
+        return expanded;
+    }
+
+    public void setExpanded(boolean pExpanded) {
+        expanded = pExpanded;
+    }
+
+    public void setUserReposted(boolean pUserReposted) {
+        userReposted = pUserReposted;
     }
 
     public boolean isAudioAttached() {

@@ -1,6 +1,6 @@
 package ru.ifmo.practice.model;
 
-import ru.ifmo.practice.model.attachments.Photo;
+import ru.ifmo.practice.model.attachment.Photo;
 
 public class Comment {
     private long id;

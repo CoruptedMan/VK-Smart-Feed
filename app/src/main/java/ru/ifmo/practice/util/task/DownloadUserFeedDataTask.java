@@ -18,10 +18,10 @@ import java.util.concurrent.ExecutionException;
 import ru.ifmo.practice.FeedActivity;
 import ru.ifmo.practice.model.Account;
 import ru.ifmo.practice.model.Note;
-import ru.ifmo.practice.model.attachments.Link;
-import ru.ifmo.practice.model.attachments.Page;
-import ru.ifmo.practice.model.attachments.Photo;
-import ru.ifmo.practice.model.attachments.Video;
+import ru.ifmo.practice.model.attachment.Link;
+import ru.ifmo.practice.model.attachment.Page;
+import ru.ifmo.practice.model.attachment.Photo;
+import ru.ifmo.practice.model.attachment.Video;
 
 import static com.vk.sdk.VKUIHelper.getApplicationContext;
 import static ru.ifmo.practice.util.AppConsts.MIN_NOTES_COUNT;
@@ -486,6 +486,22 @@ public class DownloadUserFeedDataTask extends AsyncTask<VKRequest, Void, ArrayLi
                                         .get("platform")
                                         .toString();
                             }
+                            boolean videoLive = false;
+                            if (mResponse
+                                    .getJSONArray("items")
+                                    .getJSONObject(index)
+                                    .getJSONArray("attachments")
+                                    .getJSONObject(i)
+                                    .getJSONObject("video")
+                                    .has("live")) {
+                                 videoLive = Integer.parseInt(mResponse
+                                        .getJSONArray("items")
+                                        .getJSONObject(index)
+                                        .getJSONArray("attachments")
+                                        .getJSONObject(i)
+                                        .getJSONObject("video")
+                                        .get("live").toString()) == 1;
+                            }
                             Video video = new Video(videoId,
                                     videoOwnerId,
                                     videoDate,
@@ -496,7 +512,8 @@ public class DownloadUserFeedDataTask extends AsyncTask<VKRequest, Void, ArrayLi
                                     videoDescription,
                                     videoPlatform,
                                     videoAccessKey,
-                                    new Photo());
+                                    new Photo(),
+                                    videoLive);
                             try {
                                 video.getPhoto().setPhotoUrl(videoPhotoUrl);
                             } catch (ExecutionException | InterruptedException pE) {

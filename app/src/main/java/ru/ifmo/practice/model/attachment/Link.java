@@ -1,4 +1,4 @@
-package ru.ifmo.practice.model.attachments;
+package ru.ifmo.practice.model.attachment;
 
 public class Link {
     private String url;
