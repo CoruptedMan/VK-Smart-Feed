@@ -161,7 +161,11 @@ public class FeedActivity
             @Override
             public void onClick(View v) {
                 VKSdk.logout();
-                startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+                Intent loginActivityIntent = new Intent(getApplicationContext(), LoginActivity.class);
+                loginActivityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                loginActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                loginActivityIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                startActivity(loginActivityIntent);
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_right);
             }
         });
