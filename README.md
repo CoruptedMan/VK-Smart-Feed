@@ -1,3 +1,5 @@
+## deprecated
+
 # VK SmartFeed
 ###### ITMO, Computer Science. Second year winter practice. Styagov A., P3210.
 The main idea of this project is to create an Android app for viewing [VK feed](https://vk.com/feed) with some extra features unavailable by default [VK API](https://vk.com/dev/).
